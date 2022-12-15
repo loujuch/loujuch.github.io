@@ -185,7 +185,7 @@
       <span class="post-meta-item-text">发表于</span>
       
 
-      <time title="创建时间：2022-12-15 20:00:03 / 修改时间：21:20:47" itemprop="dateCreated datePublished" datetime="2022-12-15T20:00:03+08:00">2022-12-15</time>
+      <time title="创建时间：2022-12-15 20:00:03 / 修改时间：21:48:30" itemprop="dateCreated datePublished" datetime="2022-12-15T20:00:03+08:00">2022-12-15</time>
     </span>
 
   
@@ -198,96 +198,15 @@
     
     
     <div class="post-body" itemprop="articleBody">
-          <h2 id="作用"><a href="#作用" class="headerlink" title="作用"></a>作用</h2><p>用于计录磁盘挂载信息。系统开机时会主动读取该文件，根据读取的配置挂载磁盘。</p>
-<h2 id="挂载要求"><a href="#挂载要求" class="headerlink" title="挂载要求"></a>挂载要求</h2><ol>
-<li><p>根目录必须挂载且必须先于其他挂载点挂载。</p>
-</li>
-<li><p>挂载点必须是已经存在的目录。</p>
-</li>
-<li><p>挂载点必须遵守系统目录架构原则。</p>
-</li>
-<li><p>所有挂载点在同一时间只能被挂载一次。</p>
-</li>
-<li><p>所有分区在同一时间只能挂在一次。</p>
-</li>
-<li><p>若进行卸载，必须将工作目录退出挂载点（及其子目录）之外。</p>
-</li>
-</ol>
-<h2 id="格式"><a href="#格式" class="headerlink" title="格式"></a>格式</h2><p>以行为单位，每行为一条挂载信息，行格式为：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;file system&gt;	&lt;mount point&gt;	&lt;type&gt;	&lt;options&gt;	&lt;dump&gt;	&lt;pass&gt;</span><br></pre></td></tr></table></figure>
-
-<h3 id="file-system"><a href="#file-system" class="headerlink" title="file system"></a>file system</h3><p>装载了文件系统的磁盘设备文件的路径或Label或UUID</p>
-<h3 id="mount-point"><a href="#mount-point" class="headerlink" title="mount point"></a>mount point</h3><p>对应设备的挂载点，其值为目标挂载目录路径。</p>
-<h3 id="type"><a href="#type" class="headerlink" title="type"></a>type</h3><p>磁盘设备上搭载的文件系统的类型（ext2、ext3、ext4、reiserfs、nfs、vfat、swap等）。</p>
-<h3 id="options"><a href="#options" class="headerlink" title="options"></a>options</h3><p>挂载使用的参数，其部分值的意义如下：</p>
-<table>
-<thead>
-<tr>
-<th>参数</th>
-<th>含义</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>async&#x2F;sync</td>
-<td>是否以同步方式运行（默认async）</td>
-</tr>
-<tr>
-<td>auto&#x2F;noauto</td>
-<td>是否在启动或使用<code>mount -a</code>命令时自动挂载（默认为auto）</td>
-</tr>
-<tr>
-<td>rw&#x2F;ro</td>
-<td>以只读&#x2F;读写模式挂载（默认rw）</td>
-</tr>
-<tr>
-<td>exec&#x2F;noexec</td>
-<td>是否允许执行此分区的二进制文件（默认exec）</td>
-</tr>
-<tr>
-<td>user&#x2F;users&#x2F;nouser</td>
-<td>是否允许用户（组）使用mount命令挂载（默认nouser）</td>
-</tr>
-<tr>
-<td>suid&#x2F;nosuid</td>
-<td>是否允许SUID操作和设定SGID位（默认suid）</td>
-</tr>
-<tr>
-<td>usrquota</td>
-<td>启动文件系统支持磁盘配额模式</td>
-</tr>
-<tr>
-<td>grpquota</td>
-<td>启动文件系统对群组磁盘配额模式的支持</td>
-</tr>
-<tr>
-<td>Defaults</td>
-<td>对所有参数使用默认值</td>
-</tr>
-</tbody></table>
-<h3 id="dump"><a href="#dump" class="headerlink" title="dump"></a>dump</h3><p>能否被dump备份命令作用。</p>
-<p>0表示不被dump备份命令作用，1为被dump备份命令作用，一般的系统中设为0就行。</p>
-<h3 id="pass"><a href="#pass" class="headerlink" title="pass"></a>pass</h3><p>开机的过程中，系统默认会以fsck检验文件系统是否完整，该值决定需要检查的文件系统的检查顺序</p>
-<table>
-<thead>
-<tr>
-<th>值</th>
-<th>含义</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>0</td>
-<td>不被检查</td>
-</tr>
-<tr>
-<td>1</td>
-<td>最早检验（一般只有根目录会选择）</td>
-</tr>
-<tr>
-<td>2</td>
-<td>1级别检验完成之后进行检验</td>
-</tr>
-</tbody></table>
-
+          <p>/etc/fstab文件配置系统初始化时文件系统的挂载点等信息。</p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2022/12/15/etc-fstab%E6%96%87%E4%BB%B6/">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
       
     </div>
 
@@ -343,7 +262,7 @@
       <span class="post-meta-item-text">发表于</span>
       
 
-      <time title="创建时间：2022-12-15 18:55:36 / 修改时间：21:28:42" itemprop="dateCreated datePublished" datetime="2022-12-15T18:55:36+08:00">2022-12-15</time>
+      <time title="创建时间：2022-12-15 18:55:36 / 修改时间：21:47:30" itemprop="dateCreated datePublished" datetime="2022-12-15T18:55:36+08:00">2022-12-15</time>
     </span>
 
   
@@ -356,46 +275,15 @@
     
     
     <div class="post-body" itemprop="articleBody">
-          <h2 id="建立swap分区"><a href="#建立swap分区" class="headerlink" title="建立swap分区"></a>建立swap分区</h2><h3 id="建立swap"><a href="#建立swap" class="headerlink" title="建立swap"></a>建立swap</h3><h4 id="建立swap文件"><a href="#建立swap文件" class="headerlink" title="建立swap文件"></a>建立swap文件</h4><p>通过该方式创建的swap分区本质上是文件系统中的一个文件，其在磁盘上不一定连续分布。</p>
-<p>可以使用<code>dd</code>或<code>fallocate</code>命令建立指定大小的文件。</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">dd</span> <span class="keyword">if</span>=/dev/zero of=/swap bs=1MB count=4096</span><br></pre></td></tr></table></figure>
-
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">fallocate -l 4G /swap</span><br></pre></td></tr></table></figure>
-
-<h3 id="格式化文件或分区"><a href="#格式化文件或分区" class="headerlink" title="格式化文件或分区"></a>格式化文件或分区</h3><p>使用<code>mkswap</code>指令。</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mkswap /swap</span><br></pre></td></tr></table></figure>
-<h3 id="挂载交换分区"><a href="#挂载交换分区" class="headerlink" title="挂载交换分区"></a>挂载交换分区</h3><p>使用<code>swapon</code>指令挂载交换分区，该指令挂载的分区在重启后不会自动挂载。</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">swapon /swap</span><br></pre></td></tr></table></figure>
-
-<h3 id="设置开机自动挂载"><a href="#设置开机自动挂载" class="headerlink" title="设置开机自动挂载"></a>设置开机自动挂载</h3><p>修改<a href="/2022/12/15/etc-fstab%E6%96%87%E4%BB%B6/" title="&#x2F;etc&#x2F;fstab文件">&#x2F;etc&#x2F;fstab</a>文件，添加如下内容：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/swap	swap	swap	defaults	0	0</span><br></pre></td></tr></table></figure>
-
-<h2 id="删除交换分区"><a href="#删除交换分区" class="headerlink" title="删除交换分区"></a>删除交换分区</h2><h3 id="卸载交换分区"><a href="#卸载交换分区" class="headerlink" title="卸载交换分区"></a>卸载交换分区</h3><p>使用<code>swapoff</code>指令卸载交换分区。</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">swapoff /swap</span><br></pre></td></tr></table></figure>
-
-<h3 id="解除开机自动挂载"><a href="#解除开机自动挂载" class="headerlink" title="解除开机自动挂载"></a>解除开机自动挂载</h3><p>修改<a href="/2022/12/15/etc-fstab%E6%96%87%E4%BB%B6/" title="&#x2F;etc&#x2F;fstab文件">&#x2F;etc&#x2F;fstab</a>文件，删除对应内容。</p>
-<h3 id="释放对应资源"><a href="#释放对应资源" class="headerlink" title="释放对应资源"></a>释放对应资源</h3><h4 id="使用swap文件"><a href="#使用swap文件" class="headerlink" title="使用swap文件"></a>使用swap文件</h4><p>删除对应文件即可。</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">rm</span> /swap</span><br></pre></td></tr></table></figure>
-
-<h2 id="系统使用swap的行为"><a href="#系统使用swap的行为" class="headerlink" title="系统使用swap的行为"></a>系统使用swap的行为</h2><p>系统采用内核参数<code>vm.swappiness</code>控制系统使用<code>swap</code>的行为，其模式如下（以<code>mm</code>表示当前内存占用情况，表示当前需要内存占物理内存的比例）：</p>
-<ol>
-<li><p><code>mm</code>&lt;<code>vm.swapiness</code>：完全使用物理内存。</p>
-</li>
-<li><p><code>vm.swapiness</code>&lt;<code>mm</code>&lt;<code>vm.swapiness+swap_size</code>：使用<code>vm.swapiness</code>大小的物理内存，其余所需均使用<code>swap</code>。</p>
-</li>
-<li><p><code>vm.swapiness+swap_size</code>&lt;<code>mm</code>：<code>swap</code>已被完全使用，其余所需均来自物理内存。</p>
-</li>
-</ol>
-<h3 id="查看vm-swappiness"><a href="#查看vm-swappiness" class="headerlink" title="查看vm.swappiness"></a>查看<code>vm.swappiness</code></h3><p>使用<code>sysctl</code>指令。</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sysctl vm.swappiness</span><br></pre></td></tr></table></figure>
-
-<h3 id="暂时修改vm-swappiness"><a href="#暂时修改vm-swappiness" class="headerlink" title="暂时修改vm.swappiness"></a>暂时修改<code>vm.swappiness</code></h3><p>使用<code>sysctl</code>指令。</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sysctl vm.swappiness=&lt;new_val&gt;</span><br></pre></td></tr></table></figure>
-
-<h3 id="永久修改vm-swappiness"><a href="#永久修改vm-swappiness" class="headerlink" title="永久修改vm.swappiness"></a>永久修改<code>vm.swappiness</code></h3><p>修改<code>/etc/sysctl.conf</code>文件。</p>
-<p>编辑其中关于<code>vm.swappiness</code>的行。</p>
-<p>之后使用使用<code>sysctl</code>指令使配置生效。</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sysctl -p</span><br></pre></td></tr></table></figure>
+          <p>描述Linux下swap的创建、删除与系统使用swap的行为。</p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2022/12/15/swap%E5%88%86%E5%8C%BA%E6%93%8D%E4%BD%9C/">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
       
     </div>
 
