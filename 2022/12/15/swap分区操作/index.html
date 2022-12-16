@@ -214,7 +214,7 @@
     
     <div class="post-body" itemprop="articleBody">
         <h2 id="建立swap分区"><a href="#建立swap分区" class="headerlink" title="建立swap分区"></a>建立swap分区</h2><h3 id="建立swap"><a href="#建立swap" class="headerlink" title="建立swap"></a>建立swap</h3><h4 id="建立swap文件"><a href="#建立swap文件" class="headerlink" title="建立swap文件"></a>建立swap文件</h4><p>通过该方式创建的swap分区本质上是文件系统中的一个文件，其在磁盘上不一定连续分布。</p>
-<p>可以使用<a href="/2022/12/16/Linux-command-dd/" title="Linux_command_dd">dd</a>或<code>fallocate</code>命令建立指定大小的文件。</p>
+<p>可以使用<a href="/2022/12/16/Linux-command-dd/" title="dd命令">dd</a>或<code>fallocate</code>命令建立指定大小的文件。</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">dd</span> <span class="keyword">if</span>=/dev/zero of=/swap bs=1MB count=4096</span><br></pre></td></tr></table></figure>
 
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">fallocate -l 4G /swap</span><br></pre></td></tr></table></figure>
