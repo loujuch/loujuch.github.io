@@ -19,29 +19,32 @@
 
 <script class="next-config" data-name="main" type="application/json">{"hostname":"example.com","root":"/","images":"/images","scheme":"Mist","darkmode":false,"version":"8.14.0","exturl":false,"sidebar":{"position":"left","display":"hide","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js"></script>
 
-    <meta name="description" content="主要介绍CPU的性能指标和一些提高CPU处理能力的软件特征，以及CPU的一些特点。">
+    <meta name="description" content="页式内存管理常用于将逻辑地址转化为物理地址，本文简单的介绍了保护模式下页式内存管理的内容。">
 <meta property="og:type" content="article">
-<meta property="og:title" content="CPU指标简介">
-<meta property="og:url" content="http://example.com/2022/12/16/CPU%E6%8C%87%E6%A0%87/index.html">
+<meta property="og:title" content="保护模式下的页式内存管理">
+<meta property="og:url" content="http://example.com/2022/12/16/%E4%BF%9D%E6%8A%A4%E6%A8%A1%E5%BC%8F%E4%B8%8B%E7%9A%84%E9%A1%B5%E5%BC%8F%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86/index.html">
 <meta property="og:site_name" content="loujuch的博客">
-<meta property="og:description" content="主要介绍CPU的性能指标和一些提高CPU处理能力的软件特征，以及CPU的一些特点。">
+<meta property="og:description" content="页式内存管理常用于将逻辑地址转化为物理地址，本文简单的介绍了保护模式下页式内存管理的内容。">
 <meta property="og:locale" content="zh_CN">
-<meta property="article:published_time" content="2022-12-16T03:58:00.000Z">
-<meta property="article:modified_time" content="2022-12-16T08:27:48.779Z">
+<meta property="og:image" content="http://example.com/image/%E4%BF%9D%E6%8A%A4%E6%A8%A1%E5%BC%8F/ye_biao_ye_mu_lu_biao_jie_gou.png">
+<meta property="article:published_time" content="2022-12-16T11:13:14.000Z">
+<meta property="article:modified_time" content="2022-12-17T02:54:53.572Z">
 <meta property="article:author" content="loujuch">
 <meta property="article:tag" content="汇编语言与接口技术">
-<meta property="article:tag" content="CPU">
+<meta property="article:tag" content="保护模式">
+<meta property="article:tag" content="页式内存管理">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/image/%E4%BF%9D%E6%8A%A4%E6%A8%A1%E5%BC%8F/ye_biao_ye_mu_lu_biao_jie_gou.png">
 
 
-<link rel="canonical" href="http://example.com/2022/12/16/CPU%E6%8C%87%E6%A0%87/">
+<link rel="canonical" href="http://example.com/2022/12/16/%E4%BF%9D%E6%8A%A4%E6%A8%A1%E5%BC%8F%E4%B8%8B%E7%9A%84%E9%A1%B5%E5%BC%8F%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86/">
 
 
 
-<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"http://example.com/2022/12/16/CPU%E6%8C%87%E6%A0%87/","path":"2022/12/16/CPU指标/","title":"CPU指标简介"}</script>
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"http://example.com/2022/12/16/%E4%BF%9D%E6%8A%A4%E6%A8%A1%E5%BC%8F%E4%B8%8B%E7%9A%84%E9%A1%B5%E5%BC%8F%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86/","path":"2022/12/16/保护模式下的页式内存管理/","title":"保护模式下的页式内存管理"}</script>
 
 <script class="next-config" data-name="calendar" type="application/json">""</script>
-<title>CPU指标简介 | loujuch的博客</title>
+<title>保护模式下的页式内存管理 | loujuch的博客</title>
   
 
 
@@ -115,7 +118,7 @@
       <div class="sidebar-panel-container">
         <!--noindex-->
         <div class="post-toc-wrap sidebar-panel">
-            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%80%A7%E8%83%BD%E6%8C%87%E6%A0%87"><span class="nav-number">1.</span> <span class="nav-text">性能指标</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AD%97%E9%95%BF"><span class="nav-number">1.1.</span> <span class="nav-text">字长</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%BB%E9%A2%91"><span class="nav-number">1.2.</span> <span class="nav-text">主频</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%89%8D%E7%AB%AF%E6%80%BB%E7%BA%BF%E6%95%B0%E6%8D%AE%E5%B8%A6%E5%AE%BD"><span class="nav-number">1.3.</span> <span class="nav-text">前端总线数据带宽</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%AB%98%E9%80%9F%E7%BC%93%E5%86%B2%E5%AD%98%E5%82%A8%E5%99%A8"><span class="nav-number">1.4.</span> <span class="nav-text">高速缓冲存储器</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%B6%E9%80%A0%E5%B7%A5%E8%89%BA"><span class="nav-number">1.5.</span> <span class="nav-text">制造工艺</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B7%A5%E4%BD%9C%E7%94%B5%E5%8E%8B"><span class="nav-number">1.6.</span> <span class="nav-text">工作电压</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B0%81%E8%A3%85%E5%BD%A2%E5%BC%8F"><span class="nav-number">1.7.</span> <span class="nav-text">封装形式</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%BD%AF%E4%BB%B6%E7%89%B9%E5%BE%81"><span class="nav-number">2.</span> <span class="nav-text">软件特征</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%B6%85%E7%BA%BF%E7%A8%8B"><span class="nav-number">2.1.</span> <span class="nav-text">超线程</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%B6%85%E6%A0%87%E9%87%8F"><span class="nav-number">2.2.</span> <span class="nav-text">超标量</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%B6%85%E9%95%BF%E6%8C%87%E4%BB%A4%E5%AD%97"><span class="nav-number">2.3.</span> <span class="nav-text">超长指令字</span></a></li></ol></li></ol></div>
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%9B%B8%E5%85%B3%E5%AF%84%E5%AD%98%E5%99%A8"><span class="nav-number">1.</span> <span class="nav-text">相关寄存器</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%A1%B5%E8%A1%A8-x2F-%E9%A1%B5%E7%9B%AE%E5%BD%95%E8%A1%A8%E9%A1%B9%E7%BB%93%E6%9E%84"><span class="nav-number">2.</span> <span class="nav-text">页表&#x2F;页目录表项结构</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%A1%B5%E5%BC%8F%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86%E4%B8%8B%E7%9A%84%E5%AF%BB%E5%9D%80"><span class="nav-number">3.</span> <span class="nav-text">页式内存管理下的寻址</span></a></li></ol></div>
         </div>
         <!--/noindex-->
 
@@ -163,7 +166,7 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2022/12/16/CPU%E6%8C%87%E6%A0%87/">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2022/12/16/%E4%BF%9D%E6%8A%A4%E6%A8%A1%E5%BC%8F%E4%B8%8B%E7%9A%84%E9%A1%B5%E5%BC%8F%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/image/icon/myIcon.jpg">
@@ -176,12 +179,12 @@
     </span>
 
     <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="CPU指标简介 | loujuch的博客">
-      <meta itemprop="description" content="主要介绍CPU的性能指标和一些提高CPU处理能力的软件特征，以及CPU的一些特点。">
+      <meta itemprop="name" content="保护模式下的页式内存管理 | loujuch的博客">
+      <meta itemprop="description" content="页式内存管理常用于将逻辑地址转化为物理地址，本文简单的介绍了保护模式下页式内存管理的内容。">
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          CPU指标简介
+          保护模式下的页式内存管理
         </h1>
 
         <div class="post-meta-container">
@@ -191,15 +194,21 @@
         <i class="far fa-calendar"></i>
       </span>
       <span class="post-meta-item-text">发表于</span>
-      
 
-      <time title="创建时间：2022-12-16 11:58:00 / 修改时间：16:27:48" itemprop="dateCreated datePublished" datetime="2022-12-16T11:58:00+08:00">2022-12-16</time>
+      <time title="创建时间：2022-12-16 19:13:14" itemprop="dateCreated datePublished" datetime="2022-12-16T19:13:14+08:00">2022-12-16</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2022-12-17 10:54:53" itemprop="dateModified" datetime="2022-12-17T10:54:53+08:00">2022-12-17</time>
     </span>
 
   
 </div>
 
-            <div class="post-description">主要介绍CPU的性能指标和一些提高CPU处理能力的软件特征，以及CPU的一些特点。</div>
+            <div class="post-description">页式内存管理常用于将逻辑地址转化为物理地址，本文简单的介绍了保护模式下页式内存管理的内容。</div>
         </div>
       </header>
 
@@ -207,33 +216,46 @@
     
     
     <div class="post-body" itemprop="articleBody">
-        <h2 id="性能指标"><a href="#性能指标" class="headerlink" title="性能指标"></a>性能指标</h2><h3 id="字长"><a href="#字长" class="headerlink" title="字长"></a>字长</h3><p>字长即CPU能一次处理的二进制数的位数，通常为32位或64位。</p>
-<h3 id="主频"><a href="#主频" class="headerlink" title="主频"></a>主频</h3><p>主频也叫时钟频率，是CPU内部工作的协调器。一个时钟周期即是CPU工作的最小时间单位。</p>
-<p>外频（系统时钟）是系统总线的工作频率，即CPU与周边设备传输数据的频率，计算机中各分系统中所有不同频率的时钟都与系统时钟相关联。</p>
-<p>倍频是指CPU和系统总线之间工作频率相差的倍数，倍频最低为1.5且必须为0.5的倍数。</p>
-<h3 id="前端总线数据带宽"><a href="#前端总线数据带宽" class="headerlink" title="前端总线数据带宽"></a>前端总线数据带宽</h3><p>前端总线即连接北桥芯片的总线，北桥芯片主要用来处理高速信号。</p>
-<p>当前，为了加快对内存的操作，内存控制器被逐步集成到了处理器中。CPU直接和内存通信，不再通过北桥，于是前端总线便消失了。</p>
-<p>前端总线的数据带宽&#x3D;（传输频率×数据位宽）÷8（即1s内传输的字节数）。</p>
-<p>传输频率通常为外频的1倍或数倍。</p>
-<h3 id="高速缓冲存储器"><a href="#高速缓冲存储器" class="headerlink" title="高速缓冲存储器"></a>高速缓冲存储器</h3><p>Cache目的是协调主频和内存总线频率之间的差异。</p>
-<p>现代CPU通常有L1、L2、L3三级缓存，其中L1缓存与CPU同频并常采用哈佛结构，分为数据缓存和指令缓存。</p>
-<h3 id="制造工艺"><a href="#制造工艺" class="headerlink" title="制造工艺"></a>制造工艺</h3><p>即CPU中晶体管门电路的尺寸，影响CPU的集成度。通常为7nm或5nm。</p>
-<h3 id="工作电压"><a href="#工作电压" class="headerlink" title="工作电压"></a>工作电压</h3><p>CPU的工作电压一般包括CPU的核心电压与I&#x2F;O电压两部分。</p>
-<p>降低电压可以提高CPU主频、降低CPU的功耗并减少CPU发热量。</p>
-<h3 id="封装形式"><a href="#封装形式" class="headerlink" title="封装形式"></a>封装形式</h3><ol>
-<li><p>双列直插式封装技术DIP</p>
+        <p>保护模式下，每页的大小为4KB，CPU的寻值范围为4GB，每个页表项&#x2F;页目录项占4B，故采用2级页表最为合适。</p>
+<p>为了加强程序的封闭性并提高计算机使用的方便性，通常每个<a href="/2022/12/16/%E4%BF%9D%E6%8A%A4%E6%A8%A1%E5%BC%8F%E4%B8%8B%E7%9A%84%E4%BB%BB%E5%8A%A1%E7%8A%B6%E6%80%81%E6%AE%B5/" title="保护模式下的任务机制">任务</a>都拥有独立的页表（独立的虚拟地址空间）。</p>
+<h2 id="相关寄存器"><a href="#相关寄存器" class="headerlink" title="相关寄存器"></a>相关寄存器</h2><p>分页机制的开启与使用与<a href="/2022/12/16/x86%E5%AF%84%E5%AD%98%E5%99%A8/" title="x86寄存器">CR寄存器</a>有极大关系。</p>
+<p><code>CR0</code>中存在开启页式内存管理的标志位，用于开启分页机制。</p>
+<p><code>CR2</code>用于保存发生页异常时报告出错信息。被访问的线性地址所在页不在内存中时，引发缺页异常，处理器把引起页异常的线性地址保存在CR2。</p>
+<p><code>CR3</code>存放页目录表的起始物理地址的高20位（因为按4KB划分页面，故页目录表的起始地址的低12位一定是0），用于指定页目录表的位置。</p>
+<h2 id="页表-x2F-页目录表项结构"><a href="#页表-x2F-页目录表项结构" class="headerlink" title="页表&#x2F;页目录表项结构"></a>页表&#x2F;页目录表项结构</h2><p><img src="/../image/%E4%BF%9D%E6%8A%A4%E6%A8%A1%E5%BC%8F/ye_biao_ye_mu_lu_biao_jie_gou.png" alt="页表/页目录表项结构" title="页表/页目录表项结构"></p>
+<p>其中各个字段含义如下：</p>
+<ol>
+<li><p>P：存在位；为1表示该页存在于物理内存中。</p>
 </li>
-<li><p>插针网格阵列封装技术PGA（socket架构）</p>
+<li><p>RW：读写位；为1表示可读可写，为0表示可读不可写。</p>
 </li>
-<li><p>球栅阵列封装技术BGA（socket架构）</p>
+<li><p>US：普通用户&#x2F;超级用户位；为1时，表示处于User级，0、1、2、3特权的程序都可以访问该页；为0，表示处于Supervisor级，只允许特权级别为0、1、2的程序访问。</p>
 </li>
-<li><p>触点阵列封装技术LGA（socket架构）</p>
+<li><p>PWT：页级通写位；为1表示采用通写方式，为0表示回写方式。</p>
+</li>
+<li><p>PCD：页级高速缓存禁止位；为1表示该页启用高速缓存。</p>
+</li>
+<li><p>A：访问位；为1表示该页被CPU访问过。</p>
+</li>
+<li><p>D：脏页位；CPU对一个页面执行写操作时，就会设置对应页表项的D位为1。</p>
+</li>
+<li><p>PAT：页属性表位；比较复杂，通常置0。</p>
+</li>
+<li><p>G：全局位；为1表示是全局页（该页将在高速缓存TLB中一直保存），为0表示不是全局页。</p>
+</li>
+<li><p>AVL：可用位；软件可自由使用。</p>
 </li>
 </ol>
-<h2 id="软件特征"><a href="#软件特征" class="headerlink" title="软件特征"></a>软件特征</h2><h3 id="超线程"><a href="#超线程" class="headerlink" title="超线程"></a>超线程</h3><p>将一个物理处理器内核转化为两个逻辑内核。</p>
-<p>原理：CPU中具有大量模块化的部分，其中与之有关的为运算处理单元（PU）以及架构状态单元（AS）；普通处理器中PU与AS是一一对应的，而在超线程CPU中，使用两个两个AS共享一个PU，以此来达到将一个物理处理器内核转化为两个逻辑内核的目的。</p>
-<h3 id="超标量"><a href="#超标量" class="headerlink" title="超标量"></a>超标量</h3><p>超标量指在CPU中有一条以上的流水线，因此可以每时钟周期内完成一条以上的指令。要求CPU拥有多组功能部件。</p>
-<h3 id="超长指令字"><a href="#超长指令字" class="headerlink" title="超长指令字"></a>超长指令字</h3><p>其基本思想是将多个相互无依赖的指令封装到一条超长的指令字，能够简化硬件电路。</p>
+<h2 id="页式内存管理下的寻址"><a href="#页式内存管理下的寻址" class="headerlink" title="页式内存管理下的寻址"></a>页式内存管理下的寻址</h2><ol>
+<li><p>程序提交虚拟地址请求读取。</p>
+</li>
+<li><p>CPU根据<code>CR3</code>寄存器找到对应页目录表入口地址，并使用虚拟地址的高10位作索引得到对应页表地址，并进行安全检查。</p>
+</li>
+<li><p>CPU根据索引所得的页表地址页表地址得到对应的页表入口，并使用虚拟地址的中10位作索引得到对应的页索引，并进行安全检查。</p>
+</li>
+<li><p>CPU从页索引中取出高20为，将其与虚拟地址的低12位组合形成最终的物理地址。</p>
+</li>
+</ol>
 
     </div>
 
@@ -244,20 +266,21 @@
     <footer class="post-footer">
           <div class="post-tags">
               <a href="/tags/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80%E4%B8%8E%E6%8E%A5%E5%8F%A3%E6%8A%80%E6%9C%AF/" rel="tag"># 汇编语言与接口技术</a>
-              <a href="/tags/CPU/" rel="tag"># CPU</a>
+              <a href="/tags/%E4%BF%9D%E6%8A%A4%E6%A8%A1%E5%BC%8F/" rel="tag"># 保护模式</a>
+              <a href="/tags/%E9%A1%B5%E5%BC%8F%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86/" rel="tag"># 页式内存管理</a>
           </div>
 
         
 
           <div class="post-nav">
             <div class="post-nav-item">
-                <a href="/2022/12/16/Linux-command-dd/" rel="prev" title="dd命令">
-                  <i class="fa fa-chevron-left"></i> dd命令
+                <a href="/2022/12/16/%E4%BF%9D%E6%8A%A4%E6%A8%A1%E5%BC%8F%E4%B8%8B%E7%9A%84%E6%AE%B5%E5%BC%8F%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86/" rel="prev" title="保护模式下的段式内存管理">
+                  <i class="fa fa-chevron-left"></i> 保护模式下的段式内存管理
                 </a>
             </div>
             <div class="post-nav-item">
-                <a href="/2022/12/16/x86%E5%AF%84%E5%AD%98%E5%99%A8/" rel="next" title="x86寄存器">
-                  x86寄存器 <i class="fa fa-chevron-right"></i>
+                <a href="/2022/12/16/%E4%BF%9D%E6%8A%A4%E6%A8%A1%E5%BC%8F%E4%B8%8B%E7%9A%84%E7%89%B9%E6%9D%83%E7%BA%A7%E6%9C%BA%E5%88%B6/" rel="next" title="保护模式下的特权级保护机制">
+                  保护模式下的特权级保护机制 <i class="fa fa-chevron-right"></i>
                 </a>
             </div>
           </div>

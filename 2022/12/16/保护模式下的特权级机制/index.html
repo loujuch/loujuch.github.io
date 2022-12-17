@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 6.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css" integrity="sha256-Z1K5uhUaJXA7Ll0XrZ/0JhX4lAtZFpT6jkKrEDT0drU=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"example.com","root":"/","images":"/images","scheme":"Mist","darkmode":false,"version":"8.14.0","exturl":false,"sidebar":{"position":"left","display":"hide","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="保护模式下使用特权级机制为系统数据提供严格的保护机制。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="保护模式下的特权级保护机制">
+<meta property="og:url" content="http://example.com/2022/12/16/%E4%BF%9D%E6%8A%A4%E6%A8%A1%E5%BC%8F%E4%B8%8B%E7%9A%84%E7%89%B9%E6%9D%83%E7%BA%A7%E6%9C%BA%E5%88%B6/index.html">
+<meta property="og:site_name" content="loujuch的博客">
+<meta property="og:description" content="保护模式下使用特权级机制为系统数据提供严格的保护机制。">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2022-12-16T11:13:26.000Z">
+<meta property="article:modified_time" content="2022-12-17T06:10:46.741Z">
+<meta property="article:author" content="loujuch">
+<meta property="article:tag" content="汇编语言与接口技术">
+<meta property="article:tag" content="保护模式">
+<meta property="article:tag" content="特权级机制">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="http://example.com/2022/12/16/%E4%BF%9D%E6%8A%A4%E6%A8%A1%E5%BC%8F%E4%B8%8B%E7%9A%84%E7%89%B9%E6%9D%83%E7%BA%A7%E6%9C%BA%E5%88%B6/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"http://example.com/2022/12/16/%E4%BF%9D%E6%8A%A4%E6%A8%A1%E5%BC%8F%E4%B8%8B%E7%9A%84%E7%89%B9%E6%9D%83%E7%BA%A7%E6%9C%BA%E5%88%B6/","path":"2022/12/16/保护模式下的特权级机制/","title":"保护模式下的特权级保护机制"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>保护模式下的特权级保护机制 | loujuch的博客</title>
+  
+
+
+
+
+
+
+  <script async defer data-website-id="" src=""></script>
+
+  <script defer data-domain="" src=""></script>
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">loujuch的博客</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li>
+  </ul>
+</nav>
+
+
+
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%A3%85%E5%85%A5%E4%BF%9D%E6%8A%A4"><span class="nav-number">1.</span> <span class="nav-text">装入保护</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E4%BF%9D%E6%8A%A4"><span class="nav-number">2.</span> <span class="nav-text">数据保护</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BB%A3%E7%A0%81%E4%BF%9D%E6%8A%A4"><span class="nav-number">3.</span> <span class="nav-text">代码保护</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%AE%B5%E5%86%85%E8%B7%B3%E8%BD%AC"><span class="nav-number">3.1.</span> <span class="nav-text">段内跳转</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%AE%B5%E9%97%B4%E8%B7%B3%E8%BD%AC"><span class="nav-number">3.2.</span> <span class="nav-text">段间跳转</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%9B%B4%E6%8E%A5%E8%B7%B3%E8%BD%AC"><span class="nav-number">3.2.1.</span> <span class="nav-text">直接跳转</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%97%B4%E6%8E%A5%E8%B7%B3%E8%BD%AC"><span class="nav-number">3.2.2.</span> <span class="nav-text">间接跳转</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%80%BB%E7%BB%93"><span class="nav-number">3.2.3.</span> <span class="nav-text">总结</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#IO%E4%BF%9D%E6%8A%A4"><span class="nav-number">4.</span> <span class="nav-text">IO保护</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#IO%E6%95%8F%E6%84%9F%E6%93%8D%E4%BD%9C%E8%A6%81%E6%B1%82"><span class="nav-number">4.1.</span> <span class="nav-text">IO敏感操作要求</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#IOPL"><span class="nav-number">4.2.</span> <span class="nav-text">IOPL</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#IO%E8%AE%B8%E5%8F%AF%E4%BD%8D%E5%9B%BE"><span class="nav-number">4.3.</span> <span class="nav-text">IO许可位图</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="loujuch"
+      src="/image/icon/myIcon.jpg">
+  <p class="site-author-name" itemprop="name">loujuch</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">11</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">12</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2022/12/16/%E4%BF%9D%E6%8A%A4%E6%A8%A1%E5%BC%8F%E4%B8%8B%E7%9A%84%E7%89%B9%E6%9D%83%E7%BA%A7%E6%9C%BA%E5%88%B6/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/image/icon/myIcon.jpg">
+      <meta itemprop="name" content="loujuch">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="loujuch的博客">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="保护模式下的特权级保护机制 | loujuch的博客">
+      <meta itemprop="description" content="保护模式下使用特权级机制为系统数据提供严格的保护机制。">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          保护模式下的特权级保护机制
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2022-12-16 19:13:26" itemprop="dateCreated datePublished" datetime="2022-12-16T19:13:26+08:00">2022-12-16</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2022-12-17 14:10:46" itemprop="dateModified" datetime="2022-12-17T14:10:46+08:00">2022-12-17</time>
+    </span>
+
+  
+</div>
+
+            <div class="post-description">保护模式下使用特权级机制为系统数据提供严格的保护机制。</div>
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <p>特权级保护主要涉及三个概念，分别为：</p>
+<ol>
+<li><p>CPL：当前代码段的权限，存在与当前CS的后两位（代码执行后自动将当前代码段的DPL放入CS的RPL中）。</p>
+</li>
+<li><p>DPL：目标段的权限，存在于目标的段描述符上。</p>
+</li>
+<li><p>RPL：请求的权限，存在于访问时指定的段选择子的后两位上。</p>
+</li>
+</ol>
+<p>这些概念均与<a href="/2022/12/16/%E4%BF%9D%E6%8A%A4%E6%A8%A1%E5%BC%8F%E4%B8%8B%E7%9A%84%E6%AE%B5%E5%BC%8F%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86/" title="保护模式下的段式内存管理">分段机制</a>相关。</p>
+<h2 id="装入保护"><a href="#装入保护" class="headerlink" title="装入保护"></a>装入保护</h2><p>当数据装入段寄存器时，进行以下检查：</p>
+<ol>
+<li><p>CS：段描述符中的E位必须为1。</p>
+</li>
+<li><p>DS、SS：段描述符中的E位必须为0。</p>
+</li>
+</ol>
+<h2 id="数据保护"><a href="#数据保护" class="headerlink" title="数据保护"></a>数据保护</h2><p>当前代码访问数据时，需要进行以下检查：</p>
+<ol>
+<li><p>检查段描述符的W位与请求类型：判断该数据段是否可写，对写入该段的命令进行相应检查。</p>
+</li>
+<li><p>检查段描述符的R位与请求类型：判断该代码段是否可读，对读取该段的命令进行相应检查。</p>
+</li>
+<li><p>检查段描述符段界限与访问偏移量：判断是否访问该段内容。</p>
+</li>
+<li><p>进行特权级检查：高特权级代码可以访问低特权级数据，即要求DPL≥MAX（CPL，RPL）。（但给SS赋值时还要求RPL&#x3D;CPL）</p>
+</li>
+</ol>
+<h2 id="代码保护"><a href="#代码保护" class="headerlink" title="代码保护"></a>代码保护</h2><p>主要是对代码的跳转（jmp）和调用（call）进行保护。</p>
+<p>在代码保护中，不允许代码进行主动降级（因为高特权级代码可以访问低特权级数据数据，因此高优先级代码的功能相当于低优先级代码的超集，因此为了系统安全不允许高优先级代码主动降级）。代码唯一降低优先级的情况是低优先级代码通过<code>call</code>指令提高优先级后返回原优先级。</p>
+<h3 id="段内跳转"><a href="#段内跳转" class="headerlink" title="段内跳转"></a>段内跳转</h3><p>段内跳转时不需要更新<code>CS</code>的值，故不需要进行特权级检查。</p>
+<p>因此进行段内转移时，只需要进行段界限与访问偏移量检查即可。</p>
+<h3 id="段间跳转"><a href="#段间跳转" class="headerlink" title="段间跳转"></a>段间跳转</h3><p>段间跳转根据是否通过<a href="/2022/12/16/%E4%BF%9D%E6%8A%A4%E6%A8%A1%E5%BC%8F%E4%B8%8B%E7%9A%84%E9%97%A8%E6%9C%BA%E5%88%B6/" title="保护模式下的门机制">门机制</a>分为直接跳转与间接跳转。</p>
+<h4 id="直接跳转"><a href="#直接跳转" class="headerlink" title="直接跳转"></a>直接跳转</h4><p>首先进行限长检查（段界限与访问偏移量检查）。</p>
+<p>随后进行执行特权检查：</p>
+<ol>
+<li><p>CPL&#x3D;DPL：可以进行跳转。</p>
+</li>
+<li><p>CPL&gt;DPL：只有目标为一致代码段时可以进行跳转。</p>
+</li>
+</ol>
+<blockquote>
+<p>一致性代码段：为了使得低优先级代码可以调用高优先级代码而引入（增强低优先级程序功能）。对一致性代码段，转移后的CPL依从转移前的CPL。</p>
+</blockquote>
+<p>综上所述，进行直接跳转不会影响执行代码的CPL。</p>
+<h4 id="间接跳转"><a href="#间接跳转" class="headerlink" title="间接跳转"></a>间接跳转</h4><p>首先要求当前代码能够“迈过门槛”：DPL（GATE）≥MAX（CPL，RPL）。</p>
+<p>接下来根据实际情况看是否能“通过门框”：</p>
+<ol>
+<li><p>使用<code>jmp</code>指令时“通过门框”的要求与<a href="#%E7%9B%B4%E6%8E%A5%E8%B7%B3%E8%BD%AC">直接跳转</a>的要求相同，并且不会影响执行代码的CPL。</p>
+</li>
+<li><p>使用<code>call</code>指令时“通过门框”的要求为“DPL（CODE）≤CPL”，其特权级可能提升。</p>
+</li>
+</ol>
+<h4 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h4><p>上面摆出来的多种情况其实本质上都是为了保证以下原则：</p>
+<ol>
+<li><p>代码的优先级不可以主动降低，因此通过门时会存在“门框”。</p>
+</li>
+<li><p>代码的优先级不可以永久的提高（用户代码不可以成为内核代码），因此使用<code>jmp</code>跳转时不能够改变CPL。</p>
+</li>
+<li><p>一致性代码段本身就是为了给低优先级代码调用的，其行为应当与所处优先级无关（不然降低优先级将无法运行），因此访问一致性代码段后不改变CPL。</p>
+</li>
+<li><p>为了对多个特权级的行为进行管理，故通过门时会有“门槛”。（有些门是给RPL&#x3D;1、2的操作系统外围进程而不是RPL&#x3D;3的用户进程使用的）</p>
+</li>
+</ol>
+<h2 id="IO保护"><a href="#IO保护" class="headerlink" title="IO保护"></a>IO保护</h2><p>IO保护使用I&#x2F;O特权级IOPL和<a href="/2022/12/16/%E4%BF%9D%E6%8A%A4%E6%A8%A1%E5%BC%8F%E4%B8%8B%E7%9A%84%E4%BB%BB%E5%8A%A1%E7%8A%B6%E6%80%81%E6%AE%B5/" title="保护模式下的任务机制">任务状态段</a>中I&#x2F;O许可位图的方法来控制与外设的IO。</p>
+<h3 id="IO敏感操作要求"><a href="#IO敏感操作要求" class="headerlink" title="IO敏感操作要求"></a>IO敏感操作要求</h3><table>
+<thead>
+<tr>
+<th>指令</th>
+<th>功能</th>
+<th>执行条件</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>CLI</td>
+<td>关中断（置IF&#x3D;0）</td>
+<td>IOPL≥CPL</td>
+</tr>
+<tr>
+<td>STI</td>
+<td>开中断（置IF&#x3D;1）</td>
+<td>IOPL≥CPL</td>
+</tr>
+<tr>
+<td>IN</td>
+<td>指定端口读数据</td>
+<td>IOPL≥CPL或许可位图允许</td>
+</tr>
+<tr>
+<td>OUT</td>
+<td>指定端口写数据</td>
+<td>IOPL≥CPL或许可位图允许</td>
+</tr>
+<tr>
+<td>INS</td>
+<td>指定端口连续读数据</td>
+<td>IOPL≥CPL或许可位图允许</td>
+</tr>
+<tr>
+<td>OUTS</td>
+<td>指定端口连续写数据</td>
+<td>IOPL≥CPL或许可位图允许</td>
+</tr>
+</tbody></table>
+<h3 id="IOPL"><a href="#IOPL" class="headerlink" title="IOPL"></a>IOPL</h3><p>IOPL由<a href="/2022/12/16/x86%E5%AF%84%E5%AD%98%E5%99%A8/" title="x86寄存器">eflags寄存器</a>的第12、13位指定。</p>
+<h3 id="IO许可位图"><a href="#IO许可位图" class="headerlink" title="IO许可位图"></a>IO许可位图</h3><p>I&#x2F;O许可位图是位图结构，实际上是一个二进制位串。位串中的每一位对应一个I&#x2F;O地址，其第n位对应I&#x2F;O地址n，为0时表示绝对可访问，为1时表示需经过IOPL检查。</p>
+<p>Intel 80x86系列计算机的I&#x2F;O地址空间范围是0000H～0FFFFH，所以I&#x2F;O许可位图的二进制位串最大为8KB。</p>
+<p>I&#x2F;O许可位图的大小s等于<a href="/2022/12/16/%E4%BF%9D%E6%8A%A4%E6%A8%A1%E5%BC%8F%E4%B8%8B%E7%9A%84%E4%BB%BB%E5%8A%A1%E7%8A%B6%E6%80%81%E6%AE%B5/" title="保护模式下的任务机制">TSS段</a>的长度减去IO位图基址，它定义了IO地址空间0～s×8–1的许可位。CPU认为大于或等于s×8的I&#x2F;O地址许可位全部为1；且I&#x2F;O许可位图必须以0FFh结尾。</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80%E4%B8%8E%E6%8E%A5%E5%8F%A3%E6%8A%80%E6%9C%AF/" rel="tag"># 汇编语言与接口技术</a>
+              <a href="/tags/%E4%BF%9D%E6%8A%A4%E6%A8%A1%E5%BC%8F/" rel="tag"># 保护模式</a>
+              <a href="/tags/%E7%89%B9%E6%9D%83%E7%BA%A7%E6%9C%BA%E5%88%B6/" rel="tag"># 特权级机制</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2022/12/16/%E4%BF%9D%E6%8A%A4%E6%A8%A1%E5%BC%8F%E4%B8%8B%E7%9A%84%E9%A1%B5%E5%BC%8F%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86/" rel="prev" title="保护模式下的页式内存管理">
+                  <i class="fa fa-chevron-left"></i> 保护模式下的页式内存管理
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2022/12/16/%E4%BF%9D%E6%8A%A4%E6%A8%A1%E5%BC%8F%E4%B8%8B%E7%9A%84%E9%97%A8%E6%9C%BA%E5%88%B6/" rel="next" title="保护模式下的门机制">
+                  保护模式下的门机制 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">loujuch</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/mist/" rel="noopener" target="_blank">NexT.Mist</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+  
+
+
+
+
+
+</body>
+</html>
