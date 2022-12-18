@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 6.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css" integrity="sha256-Z1K5uhUaJXA7Ll0XrZ/0JhX4lAtZFpT6jkKrEDT0drU=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"example.com","root":"/","images":"/images","scheme":"Mist","darkmode":false,"version":"8.14.0","exturl":false,"sidebar":{"position":"left","display":"hide","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="计算机系统中的数据存储系统主要包含高速缓存、内存和外存，本文就这三部分进行简要介绍。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="存储系统">
+<meta property="og:url" content="http://example.com/2022/12/18/%E5%AD%98%E5%82%A8%E7%B3%BB%E7%BB%9F/index.html">
+<meta property="og:site_name" content="loujuch的博客">
+<meta property="og:description" content="计算机系统中的数据存储系统主要包含高速缓存、内存和外存，本文就这三部分进行简要介绍。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://example.com/image/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%B3%BB%E7%BB%9F%E7%A1%AC%E4%BB%B6/%E5%AD%98%E5%82%A8%E5%99%A8%E5%B1%B1%E7%BB%93%E6%9E%84.png">
+<meta property="og:image" content="http://example.com/image/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%B3%BB%E7%BB%9F%E7%A1%AC%E4%BB%B6/%E8%B4%AF%E9%80%9A%E6%9F%A5%E6%89%BE%E5%BC%8F%E7%BB%93%E6%9E%84.png">
+<meta property="og:image" content="http://example.com/image/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%B3%BB%E7%BB%9F%E7%A1%AC%E4%BB%B6/%E6%97%81%E8%B7%AF%E8%AF%BB%E5%87%BA%E5%BC%8F%E7%BB%93%E6%9E%84.png">
+<meta property="og:image" content="http://example.com/image/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%B3%BB%E7%BB%9F%E7%A1%AC%E4%BB%B6/cache%E7%BB%93%E6%9E%84.png">
+<meta property="og:image" content="http://example.com/image/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%B3%BB%E7%BB%9F%E7%A1%AC%E4%BB%B6/cache%E5%9C%B0%E5%9D%80%E5%88%86%E5%89%B2.png">
+<meta property="og:image" content="http://example.com/image/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%B3%BB%E7%BB%9F%E7%A1%AC%E4%BB%B6/%E5%86%85%E5%AD%98%E7%89%A9%E7%90%86%E7%BB%93%E6%9E%84%E5%88%86%E7%B1%BB.png">
+<meta property="og:image" content="http://example.com/image/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%B3%BB%E7%BB%9F%E7%A1%AC%E4%BB%B6/SDRAM%E5%86%85%E5%AD%98%E8%8A%AF%E7%89%87%E7%AE%A1%E8%84%9A.png">
+<meta property="article:published_time" content="2022-12-18T00:14:00.000Z">
+<meta property="article:modified_time" content="2022-12-18T04:30:34.593Z">
+<meta property="article:author" content="loujuch">
+<meta property="article:tag" content="汇编语言与接口技术">
+<meta property="article:tag" content="硬件基础">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/image/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%B3%BB%E7%BB%9F%E7%A1%AC%E4%BB%B6/%E5%AD%98%E5%82%A8%E5%99%A8%E5%B1%B1%E7%BB%93%E6%9E%84.png">
+
+
+<link rel="canonical" href="http://example.com/2022/12/18/%E5%AD%98%E5%82%A8%E7%B3%BB%E7%BB%9F/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"http://example.com/2022/12/18/%E5%AD%98%E5%82%A8%E7%B3%BB%E7%BB%9F/","path":"2022/12/18/存储系统/","title":"存储系统"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>存储系统 | loujuch的博客</title>
+  
+
+
+
+
+
+
+  <script async defer data-website-id="" src=""></script>
+
+  <script defer data-domain="" src=""></script>
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">loujuch的博客</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li>
+  </ul>
+</nav>
+
+
+
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AD%98%E5%82%A8%E5%99%A8%E5%B1%B1"><span class="nav-number">1.</span> <span class="nav-text">存储器山</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8E%9F%E5%9B%A0"><span class="nav-number">1.1.</span> <span class="nav-text">原因</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BB%93%E6%9E%84"><span class="nav-number">1.2.</span> <span class="nav-text">结构</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%AB%98%E9%80%9F%E7%BC%93%E5%86%B2%E5%AD%98%E5%82%A8%E5%99%A8%EF%BC%88Cache%EF%BC%89"><span class="nav-number">2.</span> <span class="nav-text">高速缓冲存储器（Cache）</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%AE%BF%E9%97%AE%E7%BB%93%E6%9E%84"><span class="nav-number">2.1.</span> <span class="nav-text">访问结构</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%B4%AF%E9%80%9A%E6%9F%A5%E6%89%BE%E5%BC%8F%E7%BB%93%E6%9E%84"><span class="nav-number">2.1.1.</span> <span class="nav-text">贯通查找式结构</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%97%81%E8%B7%AF%E8%AF%BB%E5%87%BA%E5%BC%8F%E7%BB%93%E6%9E%84"><span class="nav-number">2.1.2.</span> <span class="nav-text">旁路读出式结构</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Cache%E7%BB%93%E6%9E%84"><span class="nav-number">2.2.</span> <span class="nav-text">Cache结构</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%98%A0%E5%B0%84%E6%9C%BA%E5%88%B6"><span class="nav-number">2.3.</span> <span class="nav-text">映射机制</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9B%BF%E6%8D%A2%E7%AD%96%E7%95%A5"><span class="nav-number">2.4.</span> <span class="nav-text">替换策略</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Cache%E5%B1%82%E6%AC%A1%E7%BB%93%E6%9E%84"><span class="nav-number">2.5.</span> <span class="nav-text">Cache层次结构</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Cache%E4%B8%80%E8%87%B4%E6%80%A7%E5%8D%8F%E8%AE%AE"><span class="nav-number">2.6.</span> <span class="nav-text">Cache一致性协议</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%8D%95%E6%A0%B8%E7%8A%B6%E6%80%81%E4%B8%8B%E7%9A%84Cache%E4%B8%80%E8%87%B4%E6%80%A7%E5%8D%8F%E8%AE%AE"><span class="nav-number">2.6.1.</span> <span class="nav-text">单核状态下的Cache一致性协议</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E6%9C%AA%E5%91%BD%E4%B8%AD%E6%97%B6"><span class="nav-number">2.6.1.1.</span> <span class="nav-text">未命中时</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%91%BD%E4%B8%AD%E6%97%B6"><span class="nav-number">2.6.2.</span> <span class="nav-text">命中时</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%A4%9A%E6%A0%B8%E7%8A%B6%E6%80%81%E4%B8%8B%E7%9A%84Cache%E4%B8%80%E8%87%B4%E6%80%A7%E5%8D%8F%E8%AE%AE"><span class="nav-number">2.6.3.</span> <span class="nav-text">多核状态下的Cache一致性协议</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%86%85%E9%83%A8%E5%AD%98%E5%82%A8%E5%99%A8"><span class="nav-number">3.</span> <span class="nav-text">内部存储器</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%86%85%E5%AD%98%E7%89%A9%E7%90%86%E7%BB%93%E6%9E%84%E5%88%86%E7%B1%BB"><span class="nav-number">3.1.</span> <span class="nav-text">内存物理结构分类</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#RAM"><span class="nav-number">3.1.1.</span> <span class="nav-text">RAM</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%8F%8C%E6%9E%81%E5%9E%8B"><span class="nav-number">3.1.1.1.</span> <span class="nav-text">双极型</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#MOS"><span class="nav-number">3.1.1.2.</span> <span class="nav-text">MOS</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#%E9%9D%99%E6%80%81RAM%EF%BC%88SRAM%EF%BC%89"><span class="nav-number">3.1.1.2.1.</span> <span class="nav-text">静态RAM（SRAM）</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#%E5%8A%A8%E6%80%81RAM%EF%BC%88DRAM%EF%BC%89"><span class="nav-number">3.1.1.2.2.</span> <span class="nav-text">动态RAM（DRAM）</span></a></li></ol></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#ROM"><span class="nav-number">3.1.2.</span> <span class="nav-text">ROM</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E6%8E%A9%E6%A8%A1%E5%9E%8B%EF%BC%88MROM%EF%BC%89"><span class="nav-number">3.1.2.1.</span> <span class="nav-text">掩模型（MROM）</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%8F%AF%E7%BC%96%E7%A8%8B%E5%8F%AA%E8%AF%BB%E5%AD%98%E5%82%A8%E5%99%A8%EF%BC%88PROM%EF%BC%89"><span class="nav-number">3.1.2.2.</span> <span class="nav-text">可编程只读存储器（PROM）</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%8F%AF%E6%93%A6%E9%99%A4%E5%8F%AF%E7%BC%96%E7%A8%8B%E7%9A%84%E5%8F%AA%E8%AF%BB%E5%AD%98%E5%82%A8%E5%99%A8%EF%BC%88EPROM%EF%BC%89"><span class="nav-number">3.1.2.3.</span> <span class="nav-text">可擦除可编程的只读存储器（EPROM）</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E9%97%AA%E5%AD%98%EF%BC%88Flash-Memory%EF%BC%89"><span class="nav-number">3.1.2.4.</span> <span class="nav-text">闪存（Flash Memory）</span></a></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8F%82%E6%95%B0%E6%8C%87%E6%A0%87"><span class="nav-number">3.2.</span> <span class="nav-text">参数指标</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%AE%B9%E9%87%8F"><span class="nav-number">3.2.1.</span> <span class="nav-text">容量</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%86%85%E5%AD%98%E5%B8%A6%E5%AE%BD"><span class="nav-number">3.2.2.</span> <span class="nav-text">内存带宽</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%86%85%E5%AD%98%E6%A8%A1%E7%BB%84%E6%8E%A5%E5%8F%A3"><span class="nav-number">3.3.</span> <span class="nav-text">内存模组接口</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#SDRAM%E5%86%85%E5%AD%98%E8%8A%AF%E7%89%87%E7%AE%A1%E8%84%9A"><span class="nav-number">3.4.</span> <span class="nav-text">SDRAM内存芯片管脚</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#SDRAM%E8%AF%BB%E5%8F%96%E8%BF%87%E7%A8%8B"><span class="nav-number">3.5.</span> <span class="nav-text">SDRAM读取过程</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8A%A0%E5%BF%AB%E4%BC%A0%E8%BE%93%E9%80%9F%E5%BA%A6%E7%9A%84%E6%96%B9%E5%BC%8F"><span class="nav-number">3.6.</span> <span class="nav-text">加快传输速度的方式</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#DDR"><span class="nav-number">3.6.1.</span> <span class="nav-text">DDR</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#DDR2"><span class="nav-number">3.6.2.</span> <span class="nav-text">DDR2</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#DDR3"><span class="nav-number">3.6.3.</span> <span class="nav-text">DDR3</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#DDR4"><span class="nav-number">3.6.4.</span> <span class="nav-text">DDR4</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%BE%85%E5%8A%A9%E5%AD%98%E5%82%A8%E5%99%A8%EF%BC%88%E5%A4%96%E9%83%A8%E5%AD%98%E5%82%A8%E5%99%A8%EF%BC%89"><span class="nav-number">4.</span> <span class="nav-text">辅助存储器（外部存储器）</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%86%E7%B1%BB"><span class="nav-number">4.1.</span> <span class="nav-text">分类</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#HDD"><span class="nav-number">4.2.</span> <span class="nav-text">HDD</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%8E%A5%E5%8F%A3%E5%8E%86%E5%8F%B2"><span class="nav-number">4.2.1.</span> <span class="nav-text">接口历史</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#HDD%E4%B8%BB%E8%A6%81%E6%8A%80%E6%9C%AF%E6%8C%87%E6%A0%87"><span class="nav-number">4.2.2.</span> <span class="nav-text">HDD主要技术指标</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86"><span class="nav-number">4.2.3.</span> <span class="nav-text">工作原理</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#CHS%E7%BC%96%E7%A0%81"><span class="nav-number">4.2.3.1.</span> <span class="nav-text">CHS编码</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#LBA%E7%BC%96%E7%A0%81"><span class="nav-number">4.2.3.2.</span> <span class="nav-text">LBA编码</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%AF%BB%E5%86%99%E6%96%B9%E6%B3%95"><span class="nav-number">4.2.4.</span> <span class="nav-text">读写方法</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#NCQ%E6%8A%80%E6%9C%AF"><span class="nav-number">4.2.5.</span> <span class="nav-text">NCQ技术</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#SSD"><span class="nav-number">4.3.</span> <span class="nav-text">SSD</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%97%AA%E5%AD%98%E8%8A%AF%E7%89%87"><span class="nav-number">4.3.1.</span> <span class="nav-text">闪存芯片</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E6%93%8D%E4%BD%9C%E6%8C%87%E4%BB%A4"><span class="nav-number">4.3.1.1.</span> <span class="nav-text">操作指令</span></a></li></ol></li></ol></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="loujuch"
+      src="/image/icon/myIcon.jpg">
+  <p class="site-author-name" itemprop="name">loujuch</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">15</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">14</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2022/12/18/%E5%AD%98%E5%82%A8%E7%B3%BB%E7%BB%9F/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/image/icon/myIcon.jpg">
+      <meta itemprop="name" content="loujuch">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="loujuch的博客">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="存储系统 | loujuch的博客">
+      <meta itemprop="description" content="计算机系统中的数据存储系统主要包含高速缓存、内存和外存，本文就这三部分进行简要介绍。">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          存储系统
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+      
+
+      <time title="创建时间：2022-12-18 08:14:00 / 修改时间：12:30:34" itemprop="dateCreated datePublished" datetime="2022-12-18T08:14:00+08:00">2022-12-18</time>
+    </span>
+
+  
+</div>
+
+            <div class="post-description">计算机系统中的数据存储系统主要包含高速缓存、内存和外存，本文就这三部分进行简要介绍。</div>
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h2 id="存储器山"><a href="#存储器山" class="headerlink" title="存储器山"></a>存储器山</h2><h3 id="原因"><a href="#原因" class="headerlink" title="原因"></a>原因</h3><p>目前存储技术存在价格和速度间的矛盾。</p>
+<p>为了平衡该矛盾，利用程序的局部性原理，计算机系统采用了存储器山的结构在较低廉的价格下获取较快速度。</p>
+<blockquote>
+<p>局部性原理：在一个较短的时间间隔内，CPU访问的内存地址通常集中在整个地址空间的较小范围内。</p>
+</blockquote>
+<h3 id="结构"><a href="#结构" class="headerlink" title="结构"></a>结构</h3><p><img src="/../image/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%B3%BB%E7%BB%9F%E7%A1%AC%E4%BB%B6/%E5%AD%98%E5%82%A8%E5%99%A8%E5%B1%B1%E7%BB%93%E6%9E%84.png" alt="存储器山结构" title="存储器山结构"></p>
+<h2 id="高速缓冲存储器（Cache）"><a href="#高速缓冲存储器（Cache）" class="headerlink" title="高速缓冲存储器（Cache）"></a>高速缓冲存储器（Cache）</h2><p>Cache是位于CPU与主存之间的临时存储器，机制完全由硬件来实现，对CPU不透明。</p>
+<h3 id="访问结构"><a href="#访问结构" class="headerlink" title="访问结构"></a>访问结构</h3><h4 id="贯通查找式结构"><a href="#贯通查找式结构" class="headerlink" title="贯通查找式结构"></a>贯通查找式结构</h4><p>CPU与内存通信必须经过Cache，Cache平均访问时间&#x3D;Cache访问时间+（1-命中率）×未命中时主存访问时间（一定会访问一次Cache）。</p>
+<p><img src="/../image/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%B3%BB%E7%BB%9F%E7%A1%AC%E4%BB%B6/%E8%B4%AF%E9%80%9A%E6%9F%A5%E6%89%BE%E5%BC%8F%E7%BB%93%E6%9E%84.png" alt="Cache贯通查找式结构" title="Cache贯通查找式结构"></p>
+<h4 id="旁路读出式结构"><a href="#旁路读出式结构" class="headerlink" title="旁路读出式结构"></a>旁路读出式结构</h4><p>CPU可以与内存直接通信，Cache平均访问时间&#x3D;命中率×Cache访问时间+（1-命中率）×未命中时主存访问时间（不一定会访问Cache）。</p>
+<p><img src="/../image/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%B3%BB%E7%BB%9F%E7%A1%AC%E4%BB%B6/%E6%97%81%E8%B7%AF%E8%AF%BB%E5%87%BA%E5%BC%8F%E7%BB%93%E6%9E%84.png" alt="Cache旁路读出式结构" title="Cache旁路读出式结构"></p>
+<h3 id="Cache结构"><a href="#Cache结构" class="headerlink" title="Cache结构"></a>Cache结构</h3><p>Cache结构图如下：</p>
+<p><img src="/../image/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%B3%BB%E7%BB%9F%E7%A1%AC%E4%BB%B6/cache%E7%BB%93%E6%9E%84.png" alt="Cache结构" title="Cache结构"></p>
+<p>对于Cache而言，对其参数要求：当前CPU寻址地址宽度&#x3D;s+t+b。</p>
+<h3 id="映射机制"><a href="#映射机制" class="headerlink" title="映射机制"></a>映射机制</h3><p>当一个访存请求到来时，将CPU提交的请求地址分为以下三部分：</p>
+<p><img src="/../image/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%B3%BB%E7%BB%9F%E7%A1%AC%E4%BB%B6/cache%E5%9C%B0%E5%9D%80%E5%88%86%E5%89%B2.png" alt="Cache地址分割结构" title="Cache地址分割结构"></p>
+<p>其中组索引用于索引当前地址所属Cache组，标记用于判断该地址是否在Cache组中，块偏移用于确定读取的块位置。</p>
+<p>Cache中的数据以行为单位进行更替，其中一行的大小为B字节。</p>
+<h3 id="替换策略"><a href="#替换策略" class="headerlink" title="替换策略"></a>替换策略</h3><p>常用的替换算法包括随机算法、FIFO算法和LRU算法等。</p>
+<h3 id="Cache层次结构"><a href="#Cache层次结构" class="headerlink" title="Cache层次结构"></a>Cache层次结构</h3><p>当前大部分CPU均包含两级Cache结构，分别被称为<code>L1</code>、<code>L2</code>，部分高端CPU还具有<code>L3</code>。</p>
+<p>现代微机中<code>L1</code>缓存采用哈佛结构，分为数据缓存和指令缓存。</p>
+<h3 id="Cache一致性协议"><a href="#Cache一致性协议" class="headerlink" title="Cache一致性协议"></a>Cache一致性协议</h3><p>目前为止，CPU对内存的操作只包含读和写：</p>
+<ol>
+<li><p>读操作：不涉及数据改变，因此不会导致数据不一致问题。</p>
+</li>
+<li><p>写操作：将改变数据，存在数据不一致问题。</p>
+</li>
+</ol>
+<p>因此为了解决数据不一致问题，引入了Cache一致性协议。</p>
+<h4 id="单核状态下的Cache一致性协议"><a href="#单核状态下的Cache一致性协议" class="headerlink" title="单核状态下的Cache一致性协议"></a>单核状态下的Cache一致性协议</h4><p>单核状态下不涉及多CPU的同步问题，因此较为简单。</p>
+<h5 id="未命中时"><a href="#未命中时" class="headerlink" title="未命中时"></a>未命中时</h5><p>将修改后的数据直接写入内存，并根据需要判断该数据是否调入Cache。</p>
+<h4 id="命中时"><a href="#命中时" class="headerlink" title="命中时"></a>命中时</h4><ol>
+<li><p>直写式：CPU在向Cache写入数据的同时，立即把数据写入内存。</p>
+<p> 不会导致数据不一致问题，简单可靠。</p>
+<p> 会降低写入速度。</p>
+</li>
+<li><p>回写式：CPU只向Cache写入数据，同时将Cache上的脏位置1，当脏位为1的Cache被调出时将其内容更新到内存中。</p>
+<p> 写入速度快。</p>
+<p> 回写前暂时出现数据不一致问题，结构复杂。</p>
+</li>
+</ol>
+<h4 id="多核状态下的Cache一致性协议"><a href="#多核状态下的Cache一致性协议" class="headerlink" title="多核状态下的Cache一致性协议"></a>多核状态下的Cache一致性协议</h4><p>多核状态下还需要进行多CPU的同步，使用MESI协议。</p>
+<p>MESI对应的是修改、独占、共享、无效四种缓存段状态。</p>
+<ol>
+<li><p>修改（M）：相当于脏段，表示该段内存已被修改，其在其他处理器缓存中的拷贝立即转为无效状态。当其被替换或被标记为无效，则立即回写如内存。</p>
+</li>
+<li><p>独占（E）：与对应内存块内容保持一致，其他处理器中对应的相同缓存拷贝被标注为无效。</p>
+</li>
+<li><p>共享（S）：与对应内存块内容保持一致，但其他的处理器也可以具有相同的拷贝。</p>
+</li>
+<li><p>无效（I）：表示该缓存块未加载或更改未写入。</p>
+</li>
+</ol>
+<p>只有当处于M或E状态时才可以执行写入操作，因此，在第一次写入内存前须先申请进入独占状态。</p>
+<h2 id="内部存储器"><a href="#内部存储器" class="headerlink" title="内部存储器"></a>内部存储器</h2><p>内部存储器被分为只读存储器（ROM）和随机存取存储器（RAM）两大类。</p>
+<h3 id="内存物理结构分类"><a href="#内存物理结构分类" class="headerlink" title="内存物理结构分类"></a>内存物理结构分类</h3><p><img src="/../image/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%B3%BB%E7%BB%9F%E7%A1%AC%E4%BB%B6/%E5%86%85%E5%AD%98%E7%89%A9%E7%90%86%E7%BB%93%E6%9E%84%E5%88%86%E7%B1%BB.png" alt="内存物理结构分类" title="内存物理结构分类"></p>
+<h4 id="RAM"><a href="#RAM" class="headerlink" title="RAM"></a>RAM</h4><p>RAM即一般情况下“内存”的形态，支持随机存取，但一旦失去外部供电信息立即消失。</p>
+<h5 id="双极型"><a href="#双极型" class="headerlink" title="双极型"></a>双极型</h5><p>采用晶体管触发器为基本存储单位，存取速度快、晶体管较多（集成度相对于MOS型低，功耗大，成本高）。</p>
+<p>常用在速度要求较高的计算机或者作为Cache。</p>
+<h5 id="MOS"><a href="#MOS" class="headerlink" title="MOS"></a>MOS</h5><h6 id="静态RAM（SRAM）"><a href="#静态RAM（SRAM）" class="headerlink" title="静态RAM（SRAM）"></a>静态RAM（SRAM）</h6><p>采用六管构成的触发器作为基本存储单位（集成度与功耗在双极型与DRAM之间，不需要定期刷新）。</p>
+<h6 id="动态RAM（DRAM）"><a href="#动态RAM（DRAM）" class="headerlink" title="动态RAM（DRAM）"></a>动态RAM（DRAM）</h6><p>采用单管线路组成基本存储单位（集成度高、功耗低，依靠电容存储电荷，需要定期充电刷新）。</p>
+<h4 id="ROM"><a href="#ROM" class="headerlink" title="ROM"></a>ROM</h4><p>ROM为只读随机存储器，在计算机系统中通常作为固件使用。</p>
+<h5 id="掩模型（MROM）"><a href="#掩模型（MROM）" class="headerlink" title="掩模型（MROM）"></a>掩模型（MROM）</h5><p>由制造厂家写入数据，用户不能修改掩模ROM中的数据。</p>
+<p>适用于成批生产的定型产品，降低单片成本。</p>
+<h5 id="可编程只读存储器（PROM）"><a href="#可编程只读存储器（PROM）" class="headerlink" title="可编程只读存储器（PROM）"></a>可编程只读存储器（PROM）</h5><p>制造时在节点之间加入熔丝或者二极管，通过烧断熔丝或者击穿二极管完成编程，这一过程是不可逆转的。因此一旦写入则内容不能再改变。</p>
+<h5 id="可擦除可编程的只读存储器（EPROM）"><a href="#可擦除可编程的只读存储器（EPROM）" class="headerlink" title="可擦除可编程的只读存储器（EPROM）"></a>可擦除可编程的只读存储器（EPROM）</h5><p>可以多次改写，写入速度较慢。</p>
+<p>擦写一般需要借助编程工具，使用时作为只读存储器来使用。</p>
+<p>常见的包括紫外光可擦除ROM（UVEPROM）和电可擦除ROM（EEPROM）。</p>
+<h5 id="闪存（Flash-Memory）"><a href="#闪存（Flash-Memory）" class="headerlink" title="闪存（Flash Memory）"></a>闪存（Flash Memory）</h5><p>每个记忆单元都有一个“控制闸”和“浮动闸”，利用高电场改变“浮动闸”的临界电压进行编程操作。</p>
+<p>读速度与DRAM相当，写速度慢10~100倍。</p>
+<h3 id="参数指标"><a href="#参数指标" class="headerlink" title="参数指标"></a>参数指标</h3><h4 id="容量"><a href="#容量" class="headerlink" title="容量"></a>容量</h4><p>在一个内存颗粒中将其具有的存储单元（cell）划分为规格相同的多张矩阵，其中每个矩阵被称为逻辑Bank（L_Bank，一个时钟周期内只允许对一个逻辑BANK进行操作），每个cell的位数称为数据深度&#x2F;位宽（一次操作能同时读写的位数）。</p>
+<p>逻辑BANK的地址线是通用的，只要再有一个逻辑BANK编号加以区别就可以了（BANK0到BANK3）。</p>
+<p>当读取数据时，需要指定矩阵的行和列，将对应的存储单元读出。</p>
+<p>存储单元数量&#x3D;行数×列数×数据深度×L_Bank的数量÷8。</p>
+<p>内存的物理Bank：</p>
+<blockquote>
+<p>传统内存系统为了保证CPU的正常工作，必须一次传输完CPU在一个传输周期内所需要的数据。而CPU在一个传输周期能接受的数据容量就是CPU数据总线的位宽。当时控制内存与CPU之间数据交换的北桥芯片也因此将内存总线的数据位宽等同于CPU数据总线的位宽，而这个位宽就称之为物理Bank的位宽。所以内存必须要组织成物理Bank来与CPU进行交互。</p>
+</blockquote>
+<p>综上所述，逻辑Rank与物理Rank是不同的概念，简单来说物理Rank是在于CPU的交互中抽象出来的，其值相当于各个芯片位宽的之和。</p>
+<h4 id="内存带宽"><a href="#内存带宽" class="headerlink" title="内存带宽"></a>内存带宽</h4><p>用于衡量内存的数据传输速度。</p>
+<p>带宽&#x3D;总线宽度×总线频率×一个时钟周期内交换的数据包个数。</p>
+<blockquote>
+<p>目前总线的宽度为64位。</p>
+</blockquote>
+<p>例：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">PC100 SDRAM外频100MHz时，带宽=64×100/8=800MB/s</span><br><span class="line">PC133 SDRAM外频133MHz时，带宽=64×133/8=1064MB/s</span><br><span class="line">DDR DRAM外频100MHz时，带宽=64×100×2/8=1.6GB/s</span><br></pre></td></tr></table></figure>
+
+<h3 id="内存模组接口"><a href="#内存模组接口" class="headerlink" title="内存模组接口"></a>内存模组接口</h3><ol>
+<li><p>SIMM</p>
+</li>
+<li><p>DIMM</p>
+</li>
+</ol>
+<h3 id="SDRAM内存芯片管脚"><a href="#SDRAM内存芯片管脚" class="headerlink" title="SDRAM内存芯片管脚"></a>SDRAM内存芯片管脚</h3><p><img src="/../image/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%B3%BB%E7%BB%9F%E7%A1%AC%E4%BB%B6/SDRAM%E5%86%85%E5%AD%98%E8%8A%AF%E7%89%87%E7%AE%A1%E8%84%9A.png" alt="SDRAM内存芯片管脚" title="SDRAM内存芯片管脚"></p>
+<h3 id="SDRAM读取过程"><a href="#SDRAM读取过程" class="headerlink" title="SDRAM读取过程"></a>SDRAM读取过程</h3><h3 id="加快传输速度的方式"><a href="#加快传输速度的方式" class="headerlink" title="加快传输速度的方式"></a>加快传输速度的方式</h3><h4 id="DDR"><a href="#DDR" class="headerlink" title="DDR"></a>DDR</h4><p>能够在够在时钟的上升沿和下降沿各传输一次数据，因此一个时钟周期内传输两次数据（双倍速率同步动态随机存储器）。</p>
+<h4 id="DDR2"><a href="#DDR2" class="headerlink" title="DDR2"></a>DDR2</h4><p>在系统时钟的上升&#x2F;下降沿进行数据传输，但其DQS采用差分信号，预读取能力更高，内存每个时钟能够以4倍外部总线的速度读&#x2F;写数据。</p>
+<h4 id="DDR3"><a href="#DDR3" class="headerlink" title="DDR3"></a>DDR3</h4><p>在系统时钟的上升&#x2F;下降沿进行数据传输，并采用差分信号。工作电压更低且内核的频率只有接口频率的1&#x2F;8。</p>
+<p>例：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">DDR3-800的核心工作频率只有100MHz。</span><br></pre></td></tr></table></figure>
+
+<h4 id="DDR4"><a href="#DDR4" class="headerlink" title="DDR4"></a>DDR4</h4><p>比DDR3有了以下优化：</p>
+<ol>
+<li><p>DDR4有16bit预取机制（DDR3为8bit）。</p>
+</li>
+<li><p>DDR4同样内核频率下理论速度是DDR3的两倍。</p>
+</li>
+<li><p>工作电压降低。</p>
+</li>
+<li><p>增加了DBI、CRC等功能。</p>
+</li>
+</ol>
+<h2 id="辅助存储器（外部存储器）"><a href="#辅助存储器（外部存储器）" class="headerlink" title="辅助存储器（外部存储器）"></a>辅助存储器（外部存储器）</h2><h3 id="分类"><a href="#分类" class="headerlink" title="分类"></a>分类</h3><ol>
+<li><p>传统机械硬盘HDD</p>
+</li>
+<li><p>固态硬盘SSD</p>
+</li>
+<li><p>混合硬盘HHD</p>
+</li>
+</ol>
+<h3 id="HDD"><a href="#HDD" class="headerlink" title="HDD"></a>HDD</h3><p>HDD由硬盘片、硬盘驱动电机和读写磁头等组装并封装在一起，被称为温彻斯特盘。</p>
+<h4 id="接口历史"><a href="#接口历史" class="headerlink" title="接口历史"></a>接口历史</h4><ol>
+<li><p>1984年，IBM在AT机中引入了新的驱动和控制一体的硬盘驱动器，称为AT Attachment（ATA）</p>
+</li>
+<li><p>1986年，Compaq在Deskpro 386 中引入硬盘驱动器，称IDE（Integrated DriveElectronics）</p>
+</li>
+<li><p>当前SATA接口使用最为广泛。</p>
+</li>
+</ol>
+<h4 id="HDD主要技术指标"><a href="#HDD主要技术指标" class="headerlink" title="HDD主要技术指标"></a>HDD主要技术指标</h4><ol>
+<li><p>容量（Volume）</p>
+</li>
+<li><p>转速（Rotational Speed）</p>
+</li>
+<li><p>时间参数</p>
+</li>
+<li><p>缓存</p>
+</li>
+<li><p>硬盘的数据传输率</p>
+</li>
+<li><p>接口类型</p>
+</li>
+</ol>
+<h4 id="工作原理"><a href="#工作原理" class="headerlink" title="工作原理"></a>工作原理</h4><p>为了方便管理，将磁盘上的分区按以下方式编码：</p>
+<ol>
+<li><p>每个磁盘片有两个磁盘面，磁盘面按照上到下的顺序从0依次编号。</p>
+</li>
+<li><p>磁盘面上的磁道按外到里的顺序从0依次编号，最外侧为0磁道。</p>
+</li>
+<li><p>磁道按圆弧段分为扇区，扇区字节数为固定大小的值（典型尺寸为512B、1024B和4096B）</p>
+</li>
+</ol>
+<h5 id="CHS编码"><a href="#CHS编码" class="headerlink" title="CHS编码"></a>CHS编码</h5><p>用4个二进制位表示磁头号，用10个二进制位表示磁道号，用6个二进制位表示扇区号。</p>
+<h5 id="LBA编码"><a href="#LBA编码" class="headerlink" title="LBA编码"></a>LBA编码</h5><p>与硬盘规格有关。</p>
+<p>从0开始编码，按照扇区、磁道、磁头的顺序依次递增。</p>
+<p>例：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">假定硬盘的磁头数为nH、磁道数为nC、每个磁道的扇区数为nS，则硬盘的可用扇区总数为nH×nC×nS。设一个扇区在LBA编址模式中的地址为L，在CHS编址模式的地址为&lt;C,H,S&gt;</span><br><span class="line"></span><br><span class="line">LBA==（（C×nH + H）×nS）+S–1</span><br></pre></td></tr></table></figure>
+
+<h4 id="读写方法"><a href="#读写方法" class="headerlink" title="读写方法"></a>读写方法</h4><ol>
+<li><p>PIO方式读写硬盘（程序控制方法）。</p>
+</li>
+<li><p>DMA方式读取硬盘。</p>
+</li>
+</ol>
+<h4 id="NCQ技术"><a href="#NCQ技术" class="headerlink" title="NCQ技术"></a>NCQ技术</h4><p>对数据请求进行优化排序，尽可能少移动磁头。</p>
+<h3 id="SSD"><a href="#SSD" class="headerlink" title="SSD"></a>SSD</h3><p>固态硬盘的接口规范和定义、功能及使用方法上与普通硬盘的相同。</p>
+<p>固态硬盘没有磁头，结构在一块PCB上，由固态存储单元、主控芯片、传输接口以及一些小元件所组成。</p>
+<h4 id="闪存芯片"><a href="#闪存芯片" class="headerlink" title="闪存芯片"></a>闪存芯片</h4><p>由非易失性存储器NVM组成，先擦后写（FLASH的写操作只能将数据位从1写成0，不能从0写成1）。</p>
+<p>擦除操作的最小单位是一个区块，而不是单个字节或单个扇区。</p>
+<h5 id="操作指令"><a href="#操作指令" class="headerlink" title="操作指令"></a>操作指令</h5><ol>
+<li><p>读写接口</p>
+<p> 在物理结构上分成若干个区块，区块之间相互独立。一个区块包括多个块。每个块的大小是512或2048字节。</p>
+</li>
+<li><p>擦除</p>
+<p> 向NAND FLASH发出一个“擦除”操作命令，可以擦除整个块的内容。</p>
+</li>
+<li><p>操作指令</p>
+<p> 必须输入一串特殊的指令（NOR FLASH），或者完成一段时序（NANDFLASH）才能将数据写入到FLASH中。</p>
+</li>
+</ol>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80%E4%B8%8E%E6%8E%A5%E5%8F%A3%E6%8A%80%E6%9C%AF/" rel="tag"># 汇编语言与接口技术</a>
+              <a href="/tags/%E7%A1%AC%E4%BB%B6%E5%9F%BA%E7%A1%80/" rel="tag"># 硬件基础</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2022/12/17/x86%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80%E5%B8%B8%E7%94%A8%E4%BC%AA%E6%8C%87%E4%BB%A4/" rel="prev" title="x86汇编语言常用伪指令">
+                  <i class="fa fa-chevron-left"></i> x86汇编语言常用伪指令
+                </a>
+            </div>
+            <div class="post-nav-item">
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">loujuch</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/mist/" rel="noopener" target="_blank">NexT.Mist</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+  
+
+
+
+
+
+</body>
+</html>
