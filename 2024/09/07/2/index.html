@@ -20,23 +20,23 @@
     var CONFIG = {"hostname":"example.com","root":"/","scheme":"Mist","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
   </script>
 
-  <meta name="description" content="Git四个区域  工作区(workspack)：实际修改代码的地方，是程序员能够直接操作的地方。  暂存区(staging area)：用于存放临时的改动，修改后不可恢复。  本地仓库(local repository)：安全存放数据的位置，将各个版本的信息存放在此，可以随时回滚。  远程仓库(remote repository)：托管代码的服务器，方便在不同的机器上进行开发。   文件状态 Gi">
+  <meta name="description" content="本地仓库与远程仓库远程仓库本质上是一个在远端存放提交的代码的地方。严格来说，远程仓库与本地仓库并不存在绝对的一一对应的联系，但是为了能够更好的进行协作，通常会人为的创建两者间的联系（比如创建分支间的关系）。 一个最大的特点是，在本地仓库中无法创建没有镜像的分支，因而在没有远程仓库时，本地仓库的全部镜像将会被组织成一棵树。但在远程仓库中这一限制就不那么明显。对于远程仓库而言，由于可能会有不同的协作者">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Git基本概念">
-<meta property="og:url" content="http://example.com/2024/09/06/0/index.html">
+<meta property="og:title" content="Git远程仓库介绍">
+<meta property="og:url" content="http://example.com/2024/09/07/2/index.html">
 <meta property="og:site_name" content="Code Bank">
-<meta property="og:description" content="Git四个区域  工作区(workspack)：实际修改代码的地方，是程序员能够直接操作的地方。  暂存区(staging area)：用于存放临时的改动，修改后不可恢复。  本地仓库(local repository)：安全存放数据的位置，将各个版本的信息存放在此，可以随时回滚。  远程仓库(remote repository)：托管代码的服务器，方便在不同的机器上进行开发。   文件状态 Gi">
+<meta property="og:description" content="本地仓库与远程仓库远程仓库本质上是一个在远端存放提交的代码的地方。严格来说，远程仓库与本地仓库并不存在绝对的一一对应的联系，但是为了能够更好的进行协作，通常会人为的创建两者间的联系（比如创建分支间的关系）。 一个最大的特点是，在本地仓库中无法创建没有镜像的分支，因而在没有远程仓库时，本地仓库的全部镜像将会被组织成一棵树。但在远程仓库中这一限制就不那么明显。对于远程仓库而言，由于可能会有不同的协作者">
 <meta property="og:locale">
-<meta property="og:image" content="http://example.com/2024/09/06/0/0.png">
-<meta property="og:image" content="http://example.com/2024/09/06/0/1.png">
-<meta property="article:published_time" content="2024-09-06T12:00:10.000Z">
-<meta property="article:modified_time" content="2024-09-07T04:48:47.140Z">
+<meta property="og:image" content="http://example.com/2024/09/07/2/0.png">
+<meta property="og:image" content="http://example.com/2024/09/07/2/1.png">
+<meta property="article:published_time" content="2024-09-07T08:55:12.000Z">
+<meta property="article:modified_time" content="2024-09-07T15:33:34.966Z">
 <meta property="article:author" content="Loujuch">
 <meta property="article:tag" content="Git">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="http://example.com/2024/09/06/0/0.png">
+<meta name="twitter:image" content="http://example.com/2024/09/07/2/0.png">
 
-<link rel="canonical" href="http://example.com/2024/09/06/0/">
+<link rel="canonical" href="http://example.com/2024/09/07/2/">
 
 
 <script id="page-configurations">
@@ -49,7 +49,7 @@
   };
 </script>
 
-  <title>Git基本概念 | Code Bank</title>
+  <title>Git远程仓库介绍 | Code Bank</title>
   
 
 
@@ -154,7 +154,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2024/09/06/0/">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2024/09/07/2/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -167,7 +167,7 @@
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          Git基本概念
+          Git远程仓库介绍
         </h1>
 
         <div class="post-meta">
@@ -176,16 +176,10 @@
                 <i class="fa fa-calendar-o"></i>
               </span>
               <span class="post-meta-item-text">Posted on</span>
+              
 
-              <time title="Created: 2024-09-06 20:00:10" itemprop="dateCreated datePublished" datetime="2024-09-06T20:00:10+08:00">2024-09-06</time>
+              <time title="Created: 2024-09-07 16:55:12 / Modified: 23:33:34" itemprop="dateCreated datePublished" datetime="2024-09-07T16:55:12+08:00">2024-09-07</time>
             </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2024-09-07 12:48:47" itemprop="dateModified" datetime="2024-09-07T12:48:47+08:00">2024-09-07</time>
-              </span>
 
           
 
@@ -198,30 +192,10 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <h2 id="Git四个区域"><a href="#Git四个区域" class="headerlink" title="Git四个区域"></a>Git四个区域</h2><p><img src="/2024/09/06/0/0.png"></p>
-<ul>
-<li><p>工作区(<code>workspack</code>)：实际修改代码的地方，是程序员能够直接操作的地方。</p>
-</li>
-<li><p>暂存区(<code>staging area</code>)：用于存放临时的改动，修改后不可恢复。</p>
-</li>
-<li><p>本地仓库(<code>local repository</code>)：安全存放数据的位置，将各个版本的信息存放在此，可以随时回滚。</p>
-</li>
-<li><p>远程仓库(<code>remote repository</code>)：托管代码的服务器，方便在不同的机器上进行开发。</p>
-</li>
-</ul>
-<h2 id="文件状态"><a href="#文件状态" class="headerlink" title="文件状态"></a>文件状态</h2><p><img src="/2024/09/06/0/1.png"></p>
-<p>Git为文件存在4种状态：</p>
-<ul>
-<li><p><code>untracked</code>：未被Git管理的文件。</p>
-</li>
-<li><p><code>modified</code>：代表已经被Git管理的文件，但该文件与暂存区对应的文件相比存在修改。Git只关心文件整体的修改，通过对比文件的SHA-1值判断文件是否被修改。</p>
-</li>
-<li><p><code>staged</code>：当前已经被提交到暂存区的文件。</p>
-</li>
-<li><p><code>unmodified</code>：当前已经提交形成镜像的文件。</p>
-</li>
-</ul>
-<p>除此之外，对于具有远端仓库的文件，根据是否上传到远端仓库还可以分为<code>pushed</code>和<code>unPushed</code>。</p>
+        <h2 id="本地仓库与远程仓库"><a href="#本地仓库与远程仓库" class="headerlink" title="本地仓库与远程仓库"></a>本地仓库与远程仓库</h2><p>远程仓库本质上是一个在远端存放提交的代码的地方。严格来说，远程仓库与本地仓库并不存在绝对的一一对应的联系，但是为了能够更好的进行协作，通常会人为的创建两者间的联系（比如创建分支间的关系）。</p>
+<p>一个最大的特点是，在本地仓库中无法创建没有镜像的分支，因而在没有远程仓库时，本地仓库的全部镜像将会被组织成一棵树。但在远程仓库中这一限制就不那么明显。对于远程仓库而言，由于可能会有不同的协作者进行提交，两笔提交间可能不会有任何联系，因此引入远程仓库后镜像完全可能被组织为森林。</p>
+<p><img src="/2024/09/07/2/0.png"></p>
+<p><img src="/2024/09/07/2/1.png"></p>
 
     </div>
 
@@ -240,13 +214,10 @@
         
     <div class="post-nav">
       <div class="post-nav-item">
-    <a href="/2024/09/05/1/" rel="prev" title="Git常用操作">
-      <i class="fa fa-chevron-left"></i> Git常用操作
+    <a href="/2024/09/07/1/" rel="prev" title="Git分支管理">
+      <i class="fa fa-chevron-left"></i> Git分支管理
     </a></div>
-      <div class="post-nav-item">
-    <a href="/2024/09/07/0/" rel="next" title="Git本地文件管理">
-      Git本地文件管理 <i class="fa fa-chevron-right"></i>
-    </a></div>
+      <div class="post-nav-item"></div>
     </div>
       </footer>
     
@@ -305,7 +276,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Git%E5%9B%9B%E4%B8%AA%E5%8C%BA%E5%9F%9F"><span class="nav-number">1.</span> <span class="nav-text">Git四个区域</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%96%87%E4%BB%B6%E7%8A%B6%E6%80%81"><span class="nav-number">2.</span> <span class="nav-text">文件状态</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%9C%AC%E5%9C%B0%E4%BB%93%E5%BA%93%E4%B8%8E%E8%BF%9C%E7%A8%8B%E4%BB%93%E5%BA%93"><span class="nav-number">1.</span> <span class="nav-text">本地仓库与远程仓库</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 
