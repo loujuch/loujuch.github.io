@@ -145,75 +145,6 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2024/08/24/6/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="Loujuch">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Code Bank">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2024/08/24/6/" class="post-title-link" itemprop="url">hexo 的全局`_config.yml`文件的有效配置项</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">Posted on</span>
-              
-
-              <time title="Created: 2024-08-24 11:38:56 / Modified: 12:06:06" itemprop="dateCreated datePublished" datetime="2024-08-24T11:38:56+08:00">2024-08-24</time>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h2 id="post-asset-folder"><a href="#post-asset-folder" class="headerlink" title="post_asset_folder"></a><code>post_asset_folder</code></h2><p>当<code>post_asset_folder</code>为<code>true</code>时，<code>hexo new &lt;title&gt;</code>指令会在对应的文件生成路径下生成一个同名文件夹。可以使用<code>asset_*</code>类的选项该文件夹内的资源，如加载图片是可以使用<code>&#123;% asset_img image.jpg %&#125;</code>进行加载。</p>
-<p>在<code>hexo-renderer-marked 3.1.0</code>后提供了新选项，可以使用<code>![](image.jpg)</code>的方式加载图片，具体打开形式如下：</p>
-<figure class="highlight yml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">post_asset_folder:</span> <span class="literal">true</span></span><br><span class="line"><span class="attr">marked:</span></span><br><span class="line">  <span class="attr">prependRoot:</span> <span class="literal">true</span></span><br><span class="line">  <span class="attr">postAsset:</span> <span class="literal">true</span></span><br></pre></td></tr></table></figure>
-
-<h2 id="permalink"><a href="#permalink" class="headerlink" title="permalink"></a><code>permalink</code></h2><p>表示文章的永久链接格式，通俗来说就是访问该文章是域名后面的部分。通常将其设置为：</p>
-<figure class="highlight yml"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">permalink:</span> <span class="string">:year/:month/:day/:name/</span></span><br></pre></td></tr></table></figure>
-
-<h2 id="new-post-name"><a href="#new-post-name" class="headerlink" title="new_post_name"></a><code>new_post_name</code></h2><p>创建新文章的路径名。通常将其设置为：</p>
-<figure class="highlight yml"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">new_post_name:</span> <span class="string">:year/:month/:day/:title.md</span></span><br></pre></td></tr></table></figure>
-
-<p>这样可以使得不同日期写的文章放置在不同的文件夹下，便于管理。</p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
     <link itemprop="mainEntityOfPage" href="http://example.com/2024/08/17/4/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -634,7 +565,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">16</span>
+          <span class="site-state-item-count">15</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
