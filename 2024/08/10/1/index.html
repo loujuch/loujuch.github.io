@@ -20,15 +20,15 @@
     var CONFIG = {"hostname":"example.com","root":"/","scheme":"Mist","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
   </script>
 
-  <meta name="description" content="编辑系统文件&#x2F;etc&#x2F;apt&#x2F;sources.list，其中阿里云源如下： 1234567891011deb https:&#x2F;&#x2F;mirrors.aliyun.com&#x2F;debian&#x2F; bookworm main non-free non-free-firmware contribdeb-src https:&#x2F;&#x2F;mirrors.aliyun.com&#x2F;debian&#x2F; bookworm main non-f">
+  <meta name="description" content="因为要配置使用https的源，这需要先确保安装证书认证工具： 1sudo apt install ca-certificates -y  编辑系统文件&#x2F;etc&#x2F;apt&#x2F;sources.list，其中阿里云源如下： 1234567891011deb https:&#x2F;&#x2F;mirrors.aliyun.com&#x2F;debian&#x2F; bookworm main non-free non-free-firmware">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Debian 12更换apt源">
 <meta property="og:url" content="http://example.com/2024/08/10/1/index.html">
 <meta property="og:site_name" content="Code Bank">
-<meta property="og:description" content="编辑系统文件&#x2F;etc&#x2F;apt&#x2F;sources.list，其中阿里云源如下： 1234567891011deb https:&#x2F;&#x2F;mirrors.aliyun.com&#x2F;debian&#x2F; bookworm main non-free non-free-firmware contribdeb-src https:&#x2F;&#x2F;mirrors.aliyun.com&#x2F;debian&#x2F; bookworm main non-f">
+<meta property="og:description" content="因为要配置使用https的源，这需要先确保安装证书认证工具： 1sudo apt install ca-certificates -y  编辑系统文件&#x2F;etc&#x2F;apt&#x2F;sources.list，其中阿里云源如下： 1234567891011deb https:&#x2F;&#x2F;mirrors.aliyun.com&#x2F;debian&#x2F; bookworm main non-free non-free-firmware">
 <meta property="og:locale">
 <meta property="article:published_time" content="2024-08-10T02:34:09.000Z">
-<meta property="article:modified_time" content="2024-08-24T07:45:47.967Z">
+<meta property="article:modified_time" content="2024-09-21T11:49:42.189Z">
 <meta property="article:author" content="Loujuch">
 <meta property="article:tag" content="环境配置">
 <meta name="twitter:card" content="summary">
@@ -181,7 +181,7 @@
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2024-08-24 15:45:47" itemprop="dateModified" datetime="2024-08-24T15:45:47+08:00">2024-08-24</time>
+                <time title="Modified: 2024-09-21 19:49:42" itemprop="dateModified" datetime="2024-09-21T19:49:42+08:00">2024-09-21</time>
               </span>
 
           
@@ -195,10 +195,13 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <p>编辑系统文件<code>/etc/apt/sources.list</code>，其中阿里云源如下：</p>
+        <p>因为要配置使用<code>https</code>的源，这需要先确保安装证书认证工具：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">sudo</span> apt install ca-certificates -y</span><br></pre></td></tr></table></figure>
+
+<p>编辑系统文件<code>/etc/apt/sources.list</code>，其中阿里云源如下：</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">deb https://mirrors.aliyun.com/debian/ bookworm main non-free non-free-firmware contrib</span><br><span class="line">deb-src https://mirrors.aliyun.com/debian/ bookworm main non-free non-free-firmware contrib</span><br><span class="line"></span><br><span class="line">deb https://mirrors.aliyun.com/debian-security/ bookworm-security main</span><br><span class="line">deb-src https://mirrors.aliyun.com/debian-security/ bookworm-security main</span><br><span class="line"></span><br><span class="line">deb https://mirrors.aliyun.com/debian/ bookworm-updates main non-free non-free-firmware contrib</span><br><span class="line">deb-src https://mirrors.aliyun.com/debian/ bookworm-updates main non-free non-free-firmware contrib</span><br><span class="line"></span><br><span class="line">deb https://mirrors.aliyun.com/debian/ bookworm-backports main non-free non-free-firmware contrib</span><br><span class="line">deb-src https://mirrors.aliyun.com/debian/ bookworm-backports main non-free non-free-firmware contrib</span><br></pre></td></tr></table></figure>
 
-<p>之后使用<code>sudo apt update</code>更新源。</p>
+<p>使用<code>sudo apt update</code>更新源。</p>
 
     </div>
 
@@ -295,12 +298,12 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">15</span>
+          <span class="site-state-item-count">18</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
       <div class="site-state-item site-state-tags">
-        <span class="site-state-item-count">9</span>
+        <span class="site-state-item-count">10</span>
         <span class="site-state-item-name">tags</span>
       </div>
   </nav>
