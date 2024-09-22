@@ -29,11 +29,10 @@
 <meta property="og:locale">
 <meta property="og:image" content="http://example.com/2024/09/22/0/5.png">
 <meta property="og:image" content="http://example.com/2024/09/22/0/0.png">
-<meta property="og:image" content="http://example.com/2024/09/22/0/2.jpg">
 <meta property="og:image" content="http://example.com/2024/09/22/0/3.png">
 <meta property="og:image" content="http://example.com/2024/09/22/0/4.png">
 <meta property="article:published_time" content="2024-09-22T01:46:06.000Z">
-<meta property="article:modified_time" content="2024-09-22T03:11:34.312Z">
+<meta property="article:modified_time" content="2024-09-22T03:14:32.342Z">
 <meta property="article:author" content="Loujuch">
 <meta property="article:tag" content="OpenGL">
 <meta property="article:tag" content="计算机图形学">
@@ -182,7 +181,7 @@
               <span class="post-meta-item-text">Posted on</span>
               
 
-              <time title="Created: 2024-09-22 09:46:06 / Modified: 11:11:34" itemprop="dateCreated datePublished" datetime="2024-09-22T09:46:06+08:00">2024-09-22</time>
+              <time title="Created: 2024-09-22 09:46:06 / Modified: 11:14:32" itemprop="dateCreated datePublished" datetime="2024-09-22T09:46:06+08:00">2024-09-22</time>
             </span>
 
           
@@ -225,15 +224,8 @@
 <h2 id="几何着色器"><a href="#几何着色器" class="headerlink" title="几何着色器"></a>几何着色器</h2><p>几何着色器是一个可选的着色器，可以选择是否对其进行实现。</p>
 <p>几何着色器的操作单位为图元，其可以获得该图元所有相连顶点的输出信息，并修改顶点信息甚至创建新的顶点，从而修改图形的形状。</p>
 <h2 id="光栅化"><a href="#光栅化" class="headerlink" title="光栅化"></a>光栅化</h2><p>在OpenGL中，光栅化能够将图元投射到二维屏幕上，从而生成一个一个的待填充像素。在这一过程中，对于非顶点的像素片段，其输入值由其关联顶点通过插值计算得到。</p>
-<p>光栅化可以分为两个部分：</p>
-<ol>
-<li><p>将图元投射到屏幕上：</p>
-<p> <img src="/2024/09/22/0/2.jpg"></p>
-</li>
-<li><p>离散化，将投影后的图像转变为到像素坐标：</p>
-<p> <img src="/2024/09/22/0/3.png"></p>
-</li>
-</ol>
+<p>光栅化实质上是离散化，其将逻辑上连续的图形分割成为一个个离散的像素：</p>
+<p><img src="/2024/09/22/0/3.png"></p>
 <h2 id="片段着色器"><a href="#片段着色器" class="headerlink" title="片段着色器"></a>片段着色器</h2><p>片段着色器作用在每一个片段上，对于每一个片段，通过对所在图元的顶点输出进行插值获得相应的输入。这一部分一般用于赋予片段颜色、添加纹理或者处理光线等。</p>
 <h2 id="片段测试"><a href="#片段测试" class="headerlink" title="片段测试"></a>片段测试</h2><p>片段测试部分主要判断对应的片段是否需要进行显示或如何显示，其主要过程如下：</p>
 <p><img src="/2024/09/22/0/4.png"></p>
