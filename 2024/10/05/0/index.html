@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 7.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"example.com","root":"/","scheme":"Mist","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="概况CPP foreach循环是CPP11引入的新特性，其能够很轻易地完成对可迭代对象的遍历，一般而言，一个典型的foreach循环结构如下： 123for (const auto &amp;item : contain) &#123;    do_something(item);&#125;  可迭代对象可迭代对象（上述示例中的contain）是一个可以使用迭代器遍历的对象，其要求满足以下条件：">
+<meta property="og:type" content="article">
+<meta property="og:title" content="CPP foreach循环浅析">
+<meta property="og:url" content="http://example.com/2024/10/05/0/index.html">
+<meta property="og:site_name" content="Code Bank">
+<meta property="og:description" content="概况CPP foreach循环是CPP11引入的新特性，其能够很轻易地完成对可迭代对象的遍历，一般而言，一个典型的foreach循环结构如下： 123for (const auto &amp;item : contain) &#123;    do_something(item);&#125;  可迭代对象可迭代对象（上述示例中的contain）是一个可以使用迭代器遍历的对象，其要求满足以下条件：">
+<meta property="og:locale">
+<meta property="article:published_time" content="2024-10-05T15:31:55.000Z">
+<meta property="article:modified_time" content="2024-10-05T15:53:11.981Z">
+<meta property="article:author" content="Loujuch">
+<meta property="article:tag" content="CPP">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://example.com/2024/10/05/0/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-Hans'
+  };
+</script>
+
+  <title>CPP foreach循环浅析 | Code Bank</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Code Bank</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>Archives</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2024/10/05/0/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Loujuch">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Code Bank">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          CPP foreach循环浅析
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+              
+
+              <time title="Created: 2024-10-05 23:31:55 / Modified: 23:53:11" itemprop="dateCreated datePublished" datetime="2024-10-05T23:31:55+08:00">2024-10-05</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h2 id="概况"><a href="#概况" class="headerlink" title="概况"></a>概况</h2><p>CPP foreach循环是CPP11引入的新特性，其能够很轻易地完成对可迭代对象的遍历，一般而言，一个典型的foreach循环结构如下：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> (<span class="type">const</span> <span class="keyword">auto</span> &amp;item : contain) &#123;</span><br><span class="line">    <span class="built_in">do_something</span>(item);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="可迭代对象"><a href="#可迭代对象" class="headerlink" title="可迭代对象"></a>可迭代对象</h2><p>可迭代对象（上述示例中的contain）是一个可以使用迭代器遍历的对象，其要求满足以下条件：</p>
+<ol>
+<li><p>实现了<code>begin</code>方法，并要求该方法返回一个迭代器且无参数，一个典型的声明如下：</p>
+<p> <code>iterator begin() const;</code></p>
+</li>
+<li><p>实现了<code>end</code>方法，并要求该方法返回一个迭代器且无参数，一个典型的声明如下：</p>
+<p> <code>iterator end() const;</code></p>
+</li>
+</ol>
+<p>而迭代器要求满足以下条件：</p>
+<ol>
+<li><p>实现了相应的构造函数和赋值函数。</p>
+</li>
+<li><p>实现了<code>operator++</code>方法，一个典型的声明如下：</p>
+<p> <code>iterator &amp;operator++();</code></p>
+</li>
+<li><p>实现了<code>operator!=</code>方法，一个典型的声明如下：</p>
+<p> <code>bool operator!=(const iterator &amp;) const;</code></p>
+</li>
+<li><p>实现了<code>operator*</code>方法，一个典型的声明如下：</p>
+<p> <code>T &amp;operator*() const;</code></p>
+</li>
+</ol>
+<h2 id="等价代码"><a href="#等价代码" class="headerlink" title="等价代码"></a>等价代码</h2><p>实际上CPP中的foreach循环是一种语法糖，其等价于如下代码：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">    iterator first = contain.<span class="built_in">begin</span>();</span><br><span class="line">    iterator last = contain.<span class="built_in">end</span>();</span><br><span class="line">    <span class="keyword">while</span> (first != last) &#123;</span><br><span class="line">        <span class="built_in">do_something</span>(*first);</span><br><span class="line">        ++first;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="代码示例"><a href="#代码示例" class="headerlink" title="代码示例"></a>代码示例</h2><p>下面展示了一个对自定义可迭代对象进行迭代的Demo示例：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Range</span> &#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="keyword">class</span> <span class="title class_">RangeIterator</span> &#123;</span><br><span class="line">    <span class="keyword">public</span>:</span><br><span class="line">        <span class="function"><span class="keyword">explicit</span> <span class="title">RangeIterator</span><span class="params">(std::<span class="type">size_t</span> i)</span> :m_number_(i) &#123;</span></span><br><span class="line">            std::cout &lt;&lt; __FILE__ &lt;&lt; <span class="string">&#x27;:&#x27;</span> &lt;&lt; __LINE__ &lt;&lt; <span class="string">&quot; ictor&quot;</span> &lt;&lt; std::endl;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="built_in">RangeIterator</span>(<span class="type">const</span> RangeIterator &amp;it) :<span class="built_in">RangeIterator</span>(it.m_number_) &#123;</span><br><span class="line">            std::cout &lt;&lt; __FILE__ &lt;&lt; <span class="string">&#x27;:&#x27;</span> &lt;&lt; __LINE__ &lt;&lt; <span class="string">&quot; icopy_ctor&quot;</span> &lt;&lt; std::endl;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="built_in">RangeIterator</span>(RangeIterator &amp;&amp;it) :<span class="built_in">RangeIterator</span>(it.m_number_) &#123;</span><br><span class="line">            std::cout &lt;&lt; __FILE__ &lt;&lt; <span class="string">&#x27;:&#x27;</span> &lt;&lt; __LINE__ &lt;&lt; <span class="string">&quot; imove_ctor&quot;</span> &lt;&lt; std::endl;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        RangeIterator &amp;<span class="keyword">operator</span>=(<span class="type">const</span> RangeIterator &amp;it) &#123;</span><br><span class="line">            m_number_ = it.m_number_;</span><br><span class="line">            std::cout &lt;&lt; __FILE__ &lt;&lt; <span class="string">&#x27;:&#x27;</span> &lt;&lt; __LINE__ &lt;&lt; <span class="string">&quot; icopy&quot;</span> &lt;&lt; std::endl;</span><br><span class="line">            <span class="keyword">return</span> *<span class="keyword">this</span>;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        RangeIterator &amp;<span class="keyword">operator</span>=(RangeIterator &amp;&amp;it) &#123;</span><br><span class="line">            m_number_ = it.m_number_;</span><br><span class="line">            std::cout &lt;&lt; __FILE__ &lt;&lt; <span class="string">&#x27;:&#x27;</span> &lt;&lt; __LINE__ &lt;&lt; <span class="string">&quot; imove&quot;</span> &lt;&lt; std::endl;</span><br><span class="line">            <span class="keyword">return</span> *<span class="keyword">this</span>;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="type">bool</span> <span class="keyword">operator</span>!=(<span class="type">const</span> RangeIterator &amp;rit) <span class="type">const</span> &#123;</span><br><span class="line">            std::cout &lt;&lt; __FILE__ &lt;&lt; <span class="string">&#x27;:&#x27;</span> &lt;&lt; __LINE__ &lt;&lt; <span class="string">&quot; operator!=&quot;</span> &lt;&lt; std::endl;</span><br><span class="line">            <span class="keyword">return</span> m_number_ != rit.m_number_;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        RangeIterator &amp;<span class="keyword">operator</span>++() &#123;</span><br><span class="line">            std::cout &lt;&lt; __FILE__ &lt;&lt; <span class="string">&#x27;:&#x27;</span> &lt;&lt; __LINE__ &lt;&lt; <span class="string">&quot; operator++&quot;</span> &lt;&lt; std::endl;</span><br><span class="line">            ++m_number_;</span><br><span class="line">            <span class="keyword">return</span> *<span class="keyword">this</span>;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        std::<span class="type">size_t</span> <span class="keyword">operator</span>*() <span class="type">const</span> &#123;</span><br><span class="line">            std::cout &lt;&lt; __FILE__ &lt;&lt; <span class="string">&#x27;:&#x27;</span> &lt;&lt; __LINE__ &lt;&lt; <span class="string">&quot; *&quot;</span> &lt;&lt; std::endl;</span><br><span class="line">            <span class="keyword">return</span> m_number_;</span><br><span class="line">        &#125;</span><br><span class="line">    <span class="keyword">private</span>:</span><br><span class="line">        std::<span class="type">size_t</span> m_number_;</span><br><span class="line">    &#125;;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function"><span class="keyword">explicit</span> <span class="title">Range</span><span class="params">(std::<span class="type">size_t</span> first = <span class="number">0</span>, std::<span class="type">size_t</span> last = SIZE_MAX)</span> :</span></span><br><span class="line"><span class="function">        m_first_(first), m_last_(last) &#123;</span></span><br><span class="line">        std::cout &lt;&lt; __FILE__ &lt;&lt; <span class="string">&#x27;:&#x27;</span> &lt;&lt; __LINE__ &lt;&lt; <span class="string">&quot; ctor&quot;</span> &lt;&lt; std::endl;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="built_in">Range</span>(<span class="type">const</span> Range &amp;range) :</span><br><span class="line">        <span class="built_in">m_first_</span>(range.m_first_), <span class="built_in">m_last_</span>(range.m_last_) &#123;</span><br><span class="line">        std::cout &lt;&lt; __FILE__ &lt;&lt; <span class="string">&#x27;:&#x27;</span> &lt;&lt; __LINE__ &lt;&lt; <span class="string">&quot; copy_ctor&quot;</span> &lt;&lt; std::endl;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="built_in">Range</span>(Range &amp;&amp;range) :</span><br><span class="line">        <span class="built_in">m_first_</span>(std::<span class="built_in">move</span>(range.m_first_)), <span class="built_in">m_last_</span>(std::<span class="built_in">move</span>(range.m_last_)) &#123;</span><br><span class="line">        std::cout &lt;&lt; __FILE__ &lt;&lt; <span class="string">&#x27;:&#x27;</span> &lt;&lt; __LINE__ &lt;&lt; <span class="string">&quot; move_ctor&quot;</span> &lt;&lt; std::endl;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    Range &amp;<span class="keyword">operator</span>=(<span class="type">const</span> Range &amp;range) &#123;</span><br><span class="line">        m_first_ = range.m_first_;</span><br><span class="line">        m_last_ = range.m_last_;</span><br><span class="line">        std::cout &lt;&lt; __FILE__ &lt;&lt; <span class="string">&#x27;:&#x27;</span> &lt;&lt; __LINE__ &lt;&lt; <span class="string">&quot; copy&quot;</span> &lt;&lt; std::endl;</span><br><span class="line">        <span class="keyword">return</span> *<span class="keyword">this</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    Range &amp;<span class="keyword">operator</span>=(Range &amp;&amp;range) &#123;</span><br><span class="line">        m_first_ = std::<span class="built_in">move</span>(range.m_first_);</span><br><span class="line">        m_last_ = std::<span class="built_in">move</span>(range.m_last_);</span><br><span class="line">        std::cout &lt;&lt; __FILE__ &lt;&lt; <span class="string">&#x27;:&#x27;</span> &lt;&lt; __LINE__ &lt;&lt; <span class="string">&quot; move_ctor&quot;</span> &lt;&lt; std::endl;</span><br><span class="line">        <span class="keyword">return</span> *<span class="keyword">this</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function">RangeIterator <span class="title">begin</span><span class="params">()</span> <span class="type">const</span> </span>&#123;</span><br><span class="line">        std::cout &lt;&lt; __FILE__ &lt;&lt; <span class="string">&#x27;:&#x27;</span> &lt;&lt; __LINE__ &lt;&lt; <span class="string">&quot; begin&quot;</span> &lt;&lt; std::endl;</span><br><span class="line">        <span class="keyword">return</span> m_first_;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function">RangeIterator <span class="title">end</span><span class="params">()</span> <span class="type">const</span> </span>&#123;</span><br><span class="line">        std::cout &lt;&lt; __FILE__ &lt;&lt; <span class="string">&#x27;:&#x27;</span> &lt;&lt; __LINE__ &lt;&lt; <span class="string">&quot; end&quot;</span> &lt;&lt; std::endl;</span><br><span class="line">        <span class="keyword">return</span> m_last_;</span><br><span class="line">    &#125;</span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">    RangeIterator m_first_;</span><br><span class="line">    RangeIterator m_last_;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">for</span> (<span class="type">const</span> <span class="keyword">auto</span> &amp;i : <span class="built_in">Range</span>(<span class="number">0</span>, <span class="number">4</span>)) &#123;</span><br><span class="line">        std::cout &lt;&lt; __FILE__ &lt;&lt; <span class="string">&#x27;:&#x27;</span> &lt;&lt; __LINE__ &lt;&lt; <span class="string">&#x27; &#x27;</span> &lt;&lt; i &lt;&lt; std::endl;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>编译运行后的结果为：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">test0.cpp:8 ictor</span><br><span class="line">test0.cpp:8 ictor</span><br><span class="line">test0.cpp:52 ctor</span><br><span class="line">test0.cpp:80 begin</span><br><span class="line">test0.cpp:8 ictor</span><br><span class="line">test0.cpp:12 icopy_ctor</span><br><span class="line">test0.cpp:85 end</span><br><span class="line">test0.cpp:8 ictor</span><br><span class="line">test0.cpp:12 icopy_ctor</span><br><span class="line">test0.cpp:32 operator!=</span><br><span class="line">test0.cpp:43 *</span><br><span class="line">test0.cpp:95 0</span><br><span class="line">test0.cpp:37 operator++</span><br><span class="line">test0.cpp:32 operator!=</span><br><span class="line">test0.cpp:43 *</span><br><span class="line">test0.cpp:95 1</span><br><span class="line">test0.cpp:37 operator++</span><br><span class="line">test0.cpp:32 operator!=</span><br><span class="line">test0.cpp:43 *</span><br><span class="line">test0.cpp:95 2</span><br><span class="line">test0.cpp:37 operator++</span><br><span class="line">test0.cpp:32 operator!=</span><br><span class="line">test0.cpp:43 *</span><br><span class="line">test0.cpp:95 3</span><br><span class="line">test0.cpp:37 operator++</span><br><span class="line">test0.cpp:32 operator!=</span><br></pre></td></tr></table></figure>
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/CPP/" rel="tag"># CPP</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2024/09/22/0/" rel="prev" title="OpenGL渲染管线简介">
+      <i class="fa fa-chevron-left"></i> OpenGL渲染管线简介
+    </a></div>
+      <div class="post-nav-item"></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%A6%82%E5%86%B5"><span class="nav-number">1.</span> <span class="nav-text">概况</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%AF%E8%BF%AD%E4%BB%A3%E5%AF%B9%E8%B1%A1"><span class="nav-number">2.</span> <span class="nav-text">可迭代对象</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%AD%89%E4%BB%B7%E4%BB%A3%E7%A0%81"><span class="nav-number">3.</span> <span class="nav-text">等价代码</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BB%A3%E7%A0%81%E7%A4%BA%E4%BE%8B"><span class="nav-number">4.</span> <span class="nav-text">代码示例</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Loujuch</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">20</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">13</span>
+        <span class="site-state-item-name">tags</span>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2024</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Loujuch</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://mist.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a>
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>
