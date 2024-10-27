@@ -145,6 +145,396 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2024/10/27/0/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Loujuch">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Code Bank">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2024/10/27/0/" class="post-title-link" itemprop="url">hexo next主题设置</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+              
+
+              <time title="Created: 2024-10-27 21:39:13 / Modified: 21:55:56" itemprop="dateCreated datePublished" datetime="2024-10-27T21:39:13+08:00">2024-10-27</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="设置目录默认展开"><a href="#设置目录默认展开" class="headerlink" title="设置目录默认展开"></a>设置目录默认展开</h2><ol>
+<li><p>修改<code>themes/next/_config.yml</code>，搜索<code>custom_file_path</code>，去除<code>style</code>前的<code>#</code>注释符。</p>
+</li>
+<li><p>创建<code>source/_data/styles.styl</code>文件，添加下述内容：</p>
+ <figure class="highlight styl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//文章目录默认展开</span></span><br><span class="line"><span class="selector-class">.post-toc</span> <span class="selector-class">.nav</span> <span class="selector-class">.nav-child</span> &#123; </span><br><span class="line">    <span class="attribute">display</span>: block; </span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//文章目录字体大小调整</span></span><br><span class="line"><span class="selector-class">.post-toc</span> <span class="selector-tag">ol</span> &#123;  </span><br><span class="line">    <span class="attribute">font-size</span> : <span class="number">13px</span>;     </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>修改<code>themes/next/_config.yml</code>，搜索<code>toc</code>，将<code>wrap</code>设为<code>true</code>。</p>
+</li>
+</ol>
+<h2 id="设置中文目录跳转"><a href="#设置中文目录跳转" class="headerlink" title="设置中文目录跳转"></a>设置中文目录跳转</h2><p>在<code>next</code>中，有时中文目录难以跳转，通过浏览器检查，可以发现如下问题：</p>
+<p><img src="/2024/10/27/0/0.png"></p>
+<p>根据Github issue的回应，对<code>themes/next/source/js/utils.js</code>修改如下，需要删除两行、添加两行：</p>
+<p><img src="/2024/10/27/0/1.png"></p>
+<p>添加的两行分别为：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">var target = document.getElementById(decodeURI(link.getAttribute(&#x27;href&#x27;)).replace(&#x27;#&#x27;, &#x27;&#x27;));</span><br><span class="line"></span><br><span class="line">return target;</span><br></pre></td></tr></table></figure>
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2024/10/21/0/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Loujuch">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Code Bank">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2024/10/21/0/" class="post-title-link" itemprop="url">Win10下获取文件对应的MD5值</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+              
+
+              <time title="Created: 2024-10-21 22:28:48 / Modified: 22:33:40" itemprop="dateCreated datePublished" datetime="2024-10-21T22:28:48+08:00">2024-10-21</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="Windows-系统自带工具-certutil"><a href="#Windows-系统自带工具-certutil" class="headerlink" title="Windows 系统自带工具 certutil"></a>Windows 系统自带工具 certutil</h2><p>在Cmd终端或PowerShell中使用certutil，命令如下：</p>
+<figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">certutil -hashfile &lt;file_name&gt; MD5</span><br></pre></td></tr></table></figure>
+
+<p>输出结果为<code>&lt;file_name&gt;</code>的MD5值。</p>
+<h2 id="使用-Git-Bash-命令窗口中的-md5sum-exe"><a href="#使用-Git-Bash-命令窗口中的-md5sum-exe" class="headerlink" title="使用 Git Bash 命令窗口中的 md5sum.exe"></a>使用 Git Bash 命令窗口中的 md5sum.exe</h2><p>如果安装了Git，鼠标右键点击时可以在菜单中选择进入<code>Git Bash</code>，其包含<code>md5sum.exe</code>计算文件MD5值：</p>
+<figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">md5sum.exe &lt;file_name&gt;</span><br></pre></td></tr></table></figure>
+
+<p>输出结果为<code>&lt;file_name&gt;</code>的MD5值。</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2024/10/20/0/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Loujuch">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Code Bank">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2024/10/20/0/" class="post-title-link" itemprop="url">C++多线程基础</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2024-10-20 17:59:24" itemprop="dateCreated datePublished" datetime="2024-10-20T17:59:24+08:00">2024-10-20</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2024-10-27 22:05:46" itemprop="dateModified" datetime="2024-10-27T22:05:46+08:00">2024-10-27</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="线程"><a href="#线程" class="headerlink" title="线程"></a>线程</h2><h3 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h3><p>线程（内核线程）是操作系统进行任务调度的基本单位，一般来说，操作系统以线程为单位进行处理机调度。</p>
+<p>通常一个线程只具有控制流、处理机和栈等少量运行中必不可少资源，因此必须依靠进程提供相应的系统资源等才能正常运行。因此线程必须与进程绑定，当进程退出时，其内部的线程都将全部退出。一个进程可以有多个线程，它们共享该线程提供的系统资源等。</p>
+<h3 id="线程状态"><a href="#线程状态" class="headerlink" title="线程状态"></a>线程状态</h3><p>线程存在许多状态，其转换图如下：</p>
+<p><img src="/2024/10/20/0/0.png"></p>
+<h3 id="分离线程与可结合线程"><a href="#分离线程与可结合线程" class="headerlink" title="分离线程与可结合线程"></a>分离线程与可结合线程</h3><p>Linux线程被分为分离线程与可结合线程，默认情况下创建的线程为可结合线程。两者的区别如下：</p>
+<ol>
+<li><p>是否可以join：分离线程不可以使用join进行结合，可结合线程能够使用join进行结合。</p>
+</li>
+<li><p>资源释放时机：分离线程在线程运行结束后自动释放，可结合线程在调用join结束后释放。</p>
+</li>
+</ol>
+<h2 id="CPP线程库"><a href="#CPP线程库" class="headerlink" title="CPP线程库"></a>CPP线程库</h2><p>在C++11中引入了<code>std::thread</code>类用于创建和管理线程，并在<code>std::this_thread</code>命名空间中引入了一些方法用于更好的对当前线程进行控制。</p>
+<h3 id="std-thread"><a href="#std-thread" class="headerlink" title="std::thread"></a>std::thread</h3><h4 id="API"><a href="#API" class="headerlink" title="API"></a>API</h4><h5 id="创建"><a href="#创建" class="headerlink" title="创建"></a>创建</h5><table>
+<thead>
+<tr>
+<th>方法</th>
+<th>含义</th>
+<th>备注</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>thread() noexcept;</td>
+<td>默认构造函数</td>
+<td>创建一个空线程对象，该对象不对应任何实际线程</td>
+</tr>
+<tr>
+<td>template &lt;class Fn, class… Args&gt;<br>explicit thread(Fn&amp;&amp; fn, Args&amp;&amp;… args);</td>
+<td>初始化构造函数</td>
+<td>根据输入参数创建一个线程，该线程为可结合线程，并且创建后线程立即进入就绪状态。<br>线程中将会自动运行<code>fn(args...)</code>函数</td>
+</tr>
+<tr>
+<td>thread(thread&amp;&amp; x) noexcept;</td>
+<td>移动构造函数</td>
+<td>只涉及线程控制权的转移，调用后新建的线程对象将能够控制输入对象原先管理的实际线程，输入对象变为空线程对象</td>
+</tr>
+</tbody></table>
+<h5 id="移动"><a href="#移动" class="headerlink" title="移动"></a>移动</h5><table>
+<thead>
+<tr>
+<th>方法</th>
+<th>含义</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>thread&amp; operator&#x3D;(thread&amp;&amp; rhs) noexcept;</td>
+<td>移动赋值，仅涉及线程管理权的转移，使用后调用对象获取传入参数实际对应的实际线程的管理权，传入参数变为空对象。</td>
+</tr>
+<tr>
+<td>void swap(std::thread&amp; other) noexcept;</td>
+<td>交换两个线程对象内实际管理线程的管理权。</td>
+</tr>
+</tbody></table>
+<h5 id="状态获取"><a href="#状态获取" class="headerlink" title="状态获取"></a>状态获取</h5><table>
+<thead>
+<tr>
+<th>方法</th>
+<th>含义</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>bool joinable() const noexcept;</td>
+<td>返回是否为活动进程，通常相当于<code>get_id()!=std::thread::id ()</code>。</td>
+</tr>
+<tr>
+<td>std::thread::id get_id() const noexcept;</td>
+<td>返回线程id，线程id在操作系统范围内是唯一的。</td>
+</tr>
+<tr>
+<td>static unsigned int hardware_concurrency() noexcept;</td>
+<td>返回硬件支持的最大并行线程数。对于计算密集型任务，通常用于进行参考。</td>
+</tr>
+</tbody></table>
+<h5 id="线程管理"><a href="#线程管理" class="headerlink" title="线程管理"></a>线程管理</h5><table>
+<thead>
+<tr>
+<th>方法</th>
+<th>含义</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>void join();</td>
+<td>join该对象管理的实际线程，调用该方法的线程将被阻塞直到对应线程对象运行完成且资源完成回收。<br>Linux下，可结合线程只有在调用join后才会释放栈等相关资源。<br>若在不是可结合线程的线程对象上调用该方法将抛出std::system_error。<br>调用结束后原线程对象变为空对象。</td>
+</tr>
+<tr>
+<td>void detach();</td>
+<td>detach相应的线程，调用该方法后该对象管理的线程将处于分离状态。<br>Linux中，分离线程在程序运行结束后将会立即释放资源。<br>若在不是可结合线程的线程对象上调用该方法将抛出std::system_error。<br>调用结束后原线程对象变为空对象。</td>
+</tr>
+</tbody></table>
+<h4 id="参数"><a href="#参数" class="headerlink" title="参数"></a>参数</h4><h5 id="函数参数传递"><a href="#函数参数传递" class="headerlink" title="函数参数传递"></a>函数参数传递</h5><p>对函数而言，共有4种参数：</p>
+<ol>
+<li><p>值参数</p>
+</li>
+<li><p>左值引用</p>
+</li>
+<li><p>常量左值引用</p>
+</li>
+<li><p>右值引用</p>
+</li>
+</ol>
+<p>同时有两种参数传递方式：</p>
+<ol>
+<li><p>值传递：在调用函数时创建对应副本，可以被分为初始化构造、拷贝构造与移动构造。</p>
+</li>
+<li><p>引用传递：不发生拷贝，类似传入指针。</p>
+</li>
+</ol>
+<h5 id="测试代码与执行结果"><a href="#测试代码与执行结果" class="headerlink" title="测试代码与执行结果"></a>测试代码与执行结果</h5><p>使用如下代码进行测试，其中被注释的部分表示会导致编译错误：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;string&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;thread&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">TestClass</span> &#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="built_in">TestClass</span>(<span class="type">const</span> std::string &amp;s) : <span class="built_in">str</span>(s) &#123;</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&quot;DCtor&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="built_in">TestClass</span>(<span class="type">const</span> TestClass &amp;t) : <span class="built_in">str</span>(<span class="string">&quot;Copy_&quot;</span> + t.str) &#123;</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&quot;CCtor&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="built_in">TestClass</span>(TestClass &amp;&amp;t) : <span class="built_in">str</span>(<span class="string">&quot;Move_&quot;</span> + t.str) &#123;</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&quot;MCtor&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    TestClass &amp;<span class="keyword">operator</span>=(<span class="type">const</span> TestClass &amp;t) &#123;</span><br><span class="line">        str = <span class="string">&quot;CopyA_&quot;</span> + t.str;</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&quot;CAssign&quot;</span>);</span><br><span class="line">        <span class="keyword">return</span> *<span class="keyword">this</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    TestClass &amp;<span class="keyword">operator</span>=(TestClass &amp;&amp;t) &#123;</span><br><span class="line">        str = <span class="string">&quot;MoveA_&quot;</span> + t.str;</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&quot;MAssign&quot;</span>);</span><br><span class="line">        <span class="keyword">return</span> *<span class="keyword">this</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    ~<span class="built_in">TestClass</span>() &#123;</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&quot;Dtor&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">friend</span> std::ostream &amp;<span class="keyword">operator</span>&lt;&lt;(std::ostream &amp;out, <span class="type">const</span> TestClass &amp;tc) &#123;</span><br><span class="line">        <span class="keyword">return</span> out &lt;&lt; <span class="string">&quot;Print: &quot;</span> &lt;&lt; tc.str;</span><br><span class="line">    &#125;</span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">    <span class="function"><span class="type">void</span> <span class="title">print</span><span class="params">(<span class="type">const</span> <span class="type">char</span> *s)</span> </span>&#123;</span><br><span class="line">        std::cout &lt;&lt; s &lt;&lt; <span class="string">&quot;: &quot;</span> &lt;&lt; str &lt;&lt; std::endl;</span><br><span class="line">    &#125;</span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">    std::string str;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">func1</span><span class="params">(TestClass a)</span> </span>&#123;</span><br><span class="line">    std::cout &lt;&lt; a &lt;&lt; std::endl;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">func2</span><span class="params">(TestClass &amp;b)</span> </span>&#123;</span><br><span class="line">    std::cout &lt;&lt; b &lt;&lt; std::endl;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">func3</span><span class="params">(<span class="type">const</span> TestClass &amp;c)</span> </span>&#123;</span><br><span class="line">    std::cout &lt;&lt; c &lt;&lt; std::endl;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">func4</span><span class="params">(TestClass &amp;&amp;d)</span> </span>&#123;</span><br><span class="line">    std::cout &lt;&lt; d &lt;&lt; std::endl;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">test1</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="function">TestClass <span class="title">t</span><span class="params">(__func__)</span></span>;</span><br><span class="line">    std::cout &lt;&lt; __func__ &lt;&lt; <span class="string">&#x27;+&#x27;</span> &lt;&lt; std::endl;</span><br><span class="line">    <span class="comment">// std::thread(func2, __func__).join();</span></span><br><span class="line">    <span class="comment">// std::cout &lt;&lt; &quot;==============================&quot; &lt;&lt; std::endl;</span></span><br><span class="line">    std::<span class="built_in">thread</span>(func1, t).<span class="built_in">join</span>();</span><br><span class="line">    std::cout &lt;&lt; <span class="string">&quot;==============================&quot;</span> &lt;&lt; std::endl;</span><br><span class="line">    std::<span class="built_in">thread</span>(func1, std::<span class="built_in">ref</span>(t)).<span class="built_in">join</span>();</span><br><span class="line">    std::cout &lt;&lt; <span class="string">&quot;==============================&quot;</span> &lt;&lt; std::endl;</span><br><span class="line">    std::<span class="built_in">thread</span>(func1, std::<span class="built_in">cref</span>(t)).<span class="built_in">join</span>();</span><br><span class="line">    std::cout &lt;&lt; <span class="string">&quot;==============================&quot;</span> &lt;&lt; std::endl;</span><br><span class="line">    std::<span class="built_in">thread</span>(func1, std::<span class="built_in">move</span>(t)).<span class="built_in">join</span>();</span><br><span class="line">    std::cout &lt;&lt; __func__ &lt;&lt; <span class="string">&#x27;-&#x27;</span> &lt;&lt; std::endl;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">test2</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="function">TestClass <span class="title">t</span><span class="params">(__func__)</span></span>;</span><br><span class="line">    std::cout &lt;&lt; __func__ &lt;&lt; <span class="string">&#x27;+&#x27;</span> &lt;&lt; std::endl;</span><br><span class="line">    <span class="comment">// std::thread(func2, __func__).join();</span></span><br><span class="line">    <span class="comment">// std::cout &lt;&lt; &quot;==============================&quot; &lt;&lt; std::endl;</span></span><br><span class="line">    <span class="comment">// std::thread(func2, t).join();</span></span><br><span class="line">    <span class="comment">// std::cout &lt;&lt; &quot;==============================&quot; &lt;&lt; std::endl;</span></span><br><span class="line">    std::<span class="built_in">thread</span>(func2, std::<span class="built_in">ref</span>(t)).<span class="built_in">join</span>();</span><br><span class="line">    std::cout &lt;&lt; <span class="string">&quot;==============================&quot;</span> &lt;&lt; std::endl;</span><br><span class="line">    <span class="comment">// std::thread(func2, std::cref(t)).join();</span></span><br><span class="line">    <span class="comment">// std::cout &lt;&lt; &quot;==============================&quot; &lt;&lt; std::endl;</span></span><br><span class="line">    <span class="comment">// std::thread(func2, std::move(t)).join();</span></span><br><span class="line">    <span class="comment">// std::cout &lt;&lt; __func__ &lt;&lt; &#x27;-&#x27; &lt;&lt; std::endl;</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">test3</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="function">TestClass <span class="title">t</span><span class="params">(__func__)</span></span>;</span><br><span class="line">    std::cout &lt;&lt; __func__ &lt;&lt; <span class="string">&#x27;+&#x27;</span> &lt;&lt; std::endl;</span><br><span class="line">    <span class="comment">// std::thread(func3, __func__).join();</span></span><br><span class="line">    <span class="comment">// std::cout &lt;&lt; &quot;==============================&quot; &lt;&lt; std::endl;</span></span><br><span class="line">    std::<span class="built_in">thread</span>(func3, t).<span class="built_in">join</span>();</span><br><span class="line">    std::cout &lt;&lt; <span class="string">&quot;==============================&quot;</span> &lt;&lt; std::endl;</span><br><span class="line">    std::<span class="built_in">thread</span>(func3, std::<span class="built_in">ref</span>(t)).<span class="built_in">join</span>();</span><br><span class="line">    std::cout &lt;&lt; <span class="string">&quot;==============================&quot;</span> &lt;&lt; std::endl;</span><br><span class="line">    std::<span class="built_in">thread</span>(func3, std::<span class="built_in">cref</span>(t)).<span class="built_in">join</span>();</span><br><span class="line">    std::cout &lt;&lt; <span class="string">&quot;==============================&quot;</span> &lt;&lt; std::endl;</span><br><span class="line">    std::<span class="built_in">thread</span>(func3, std::<span class="built_in">move</span>(t)).<span class="built_in">join</span>();</span><br><span class="line">    std::cout &lt;&lt; __func__ &lt;&lt; <span class="string">&#x27;-&#x27;</span> &lt;&lt; std::endl;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">test4</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="function">TestClass <span class="title">t</span><span class="params">(__func__)</span></span>;</span><br><span class="line">    std::cout &lt;&lt; __func__ &lt;&lt; <span class="string">&#x27;+&#x27;</span> &lt;&lt; std::endl;</span><br><span class="line">    <span class="comment">// std::thread(func4, __func__).join();</span></span><br><span class="line">    <span class="comment">// std::cout &lt;&lt; &quot;==============================&quot; &lt;&lt; std::endl;</span></span><br><span class="line">    std::<span class="built_in">thread</span>(func4, t).<span class="built_in">join</span>();</span><br><span class="line">    std::cout &lt;&lt; <span class="string">&quot;==============================&quot;</span> &lt;&lt; std::endl;</span><br><span class="line">    <span class="comment">// std::thread(func4, std::ref(t)).join();</span></span><br><span class="line">    <span class="comment">// std::cout &lt;&lt; &quot;==============================&quot; &lt;&lt; std::endl;</span></span><br><span class="line">    <span class="comment">// std::thread(func4, std::cref(t)).join();</span></span><br><span class="line">    <span class="comment">// std::cout &lt;&lt; &quot;==============================&quot; &lt;&lt; std::endl;</span></span><br><span class="line">    std::<span class="built_in">thread</span>(func4, std::<span class="built_in">move</span>(t)).<span class="built_in">join</span>();</span><br><span class="line">    std::cout &lt;&lt; __func__ &lt;&lt; <span class="string">&#x27;-&#x27;</span> &lt;&lt; std::endl;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">(<span class="type">int</span> argc, <span class="type">char</span> *argv[])</span> </span>&#123;</span><br><span class="line">    <span class="built_in">test1</span>();</span><br><span class="line">    std::cout &lt;&lt; std::endl;</span><br><span class="line">    <span class="built_in">test2</span>();</span><br><span class="line">    std::cout &lt;&lt; std::endl;</span><br><span class="line">    <span class="built_in">test3</span>();</span><br><span class="line">    std::cout &lt;&lt; std::endl;</span><br><span class="line">    <span class="built_in">test4</span>();</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>使用如下命令进行编译运行：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">g++ test.cpp -o <span class="built_in">test</span> -std=c++17</span><br></pre></td></tr></table></figure>
+
+<p>结果如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br></pre></td><td class="code"><pre><span class="line">DCtor: test1</span><br><span class="line">test1+</span><br><span class="line">CCtor: Copy_test1</span><br><span class="line">MCtor: Move_Copy_test1</span><br><span class="line">Print: Move_Copy_test1</span><br><span class="line">Dtor: Move_Copy_test1</span><br><span class="line">Dtor: Copy_test1</span><br><span class="line">==============================</span><br><span class="line">CCtor: Copy_test1</span><br><span class="line">Print: Copy_test1</span><br><span class="line">Dtor: Copy_test1</span><br><span class="line">==============================</span><br><span class="line">CCtor: Copy_test1</span><br><span class="line">Print: Copy_test1</span><br><span class="line">Dtor: Copy_test1</span><br><span class="line">==============================</span><br><span class="line">MCtor: Move_test1</span><br><span class="line">MCtor: Move_Move_test1</span><br><span class="line">Print: Move_Move_test1</span><br><span class="line">Dtor: Move_Move_test1</span><br><span class="line">Dtor: Move_test1</span><br><span class="line">test1-</span><br><span class="line">Dtor: test1</span><br><span class="line"></span><br><span class="line">DCtor: test2</span><br><span class="line">test2+</span><br><span class="line">Print: test2</span><br><span class="line">==============================</span><br><span class="line">Dtor: test2</span><br><span class="line"></span><br><span class="line">DCtor: test3</span><br><span class="line">test3+</span><br><span class="line">CCtor: Copy_test3</span><br><span class="line">Print: Copy_test3</span><br><span class="line">Dtor: Copy_test3</span><br><span class="line">==============================</span><br><span class="line">Print: test3</span><br><span class="line">==============================</span><br><span class="line">Print: test3</span><br><span class="line">==============================</span><br><span class="line">MCtor: Move_test3</span><br><span class="line">Print: Move_test3</span><br><span class="line">Dtor: Move_test3</span><br><span class="line">test3-</span><br><span class="line">Dtor: test3</span><br><span class="line"></span><br><span class="line">DCtor: test4</span><br><span class="line">test4+</span><br><span class="line">CCtor: Copy_test4</span><br><span class="line">Print: Copy_test4</span><br><span class="line">Dtor: Copy_test4</span><br><span class="line">==============================</span><br><span class="line">MCtor: Move_test4</span><br><span class="line">Print: Move_test4</span><br><span class="line">Dtor: Move_test4</span><br><span class="line">test4-</span><br><span class="line">Dtor: test4</span><br></pre></td></tr></table></figure>
+
+<h5 id="分析"><a href="#分析" class="headerlink" title="分析"></a>分析</h5><p>实际上，在调用初始化构造函数创建一个实际线程时需要进行三次次参数传递，分别是：</p>
+<ol>
+<li><p>从调用函数传递到构造函数中。在这一步中将会使用万能引用，因此全是引用传递。</p>
+</li>
+<li><p>在构造函数函数中在堆上建立相应的<code>_Invoker</code>对象，传递到新线程中。在这一步中将会创建对应变量，其传递方式由目标函数参数的种类和传入方式决定，其具体传递方法如下表：</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>T</th>
+<th>T&amp;</th>
+<th>const T&amp;</th>
+<th>T&amp;&amp;</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>t</strong></td>
+<td>拷贝</td>
+<td>–</td>
+<td>拷贝</td>
+<td>拷贝</td>
+</tr>
+<tr>
+<td><strong>std::ref(t)</strong></td>
+<td>拷贝</td>
+<td>引用</td>
+<td>引用</td>
+<td>–</td>
+</tr>
+<tr>
+<td><strong>std::cref(t)</strong></td>
+<td>拷贝</td>
+<td>–</td>
+<td>引用</td>
+<td>–</td>
+</tr>
+<tr>
+<td><strong>std::move(t)</strong></td>
+<td>移动</td>
+<td>–</td>
+<td>移动</td>
+<td>移动</td>
+</tr>
+</tbody></table>
+</li>
+<li><p>在新线程中调用目标函数。在这一步中将会采用目标函数对应参数的种类决定传递方式，其中值传递将会以移动形式调用，引用传递将使用进行引用传递。</p>
+</li>
+</ol>
+<h3 id="std-this-thread"><a href="#std-this-thread" class="headerlink" title="std::this_thread"></a>std::this_thread</h3><h4 id="方法"><a href="#方法" class="headerlink" title="方法"></a>方法</h4><p><code>std::this_thread</code>命名空间中引入了一些方法，这些方法只作用于调用改代码的线程，用于更好的控制线程运行。这些方法如下：</p>
+<table>
+<thead>
+<tr>
+<th>方法</th>
+<th>含义</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>void yield() noexcept;</td>
+<td>请求操作系统进行新一轮的线程调度，在希望当前运行线程让出处理器时调用。</td>
+</tr>
+<tr>
+<td>std::thread::id get_id() noexcept;</td>
+<td>返回当前线程的线程id。</td>
+</tr>
+<tr>
+<td>template &lt;class Rep, class Period&gt;<br>void sleep_for(const std::chrono::duration&lt;Rep, Period&gt;&amp; sleep_duration);</td>
+<td>当前线程休眠一段时间。通常情况下是当前线程进入阻塞状态sleep_duration，随后进入就绪状态等待运行。<br>由于存在调度延时等，在时间上可能存在较大误差。</td>
+</tr>
+<tr>
+<td>template &lt;class Clock, class Duration&gt;<br>void sleep_until(const std::chrono::time_point&lt;Clock, Duration&gt;&amp; sleep_time);</td>
+<td>当前线程休眠直到指定时间。通常情况下是当前线程进入阻塞状态直到sleep_time，随后进入就绪状态等待运行。<br>由于存在调度延时等，在时间上可能存在较大误差。</td>
+</tr>
+</tbody></table>
+<h4 id="示例"><a href="#示例" class="headerlink" title="示例"></a>示例</h4><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;thread&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;chrono&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> std::chrono_literals;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">func</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">auto</span> id = std::this_thread::<span class="built_in">get_id</span>();</span><br><span class="line">    std::cout &lt;&lt; id &lt;&lt; std::endl;</span><br><span class="line">    std::this_thread::<span class="built_in">sleep_for</span>(<span class="number">2000</span>ms);</span><br><span class="line">    std::this_thread::<span class="built_in">sleep_until</span>(std::chrono::steady_clock::<span class="built_in">now</span>() + <span class="number">2000</span>ms);std::this_thread::<span class="built_in">yield</span>();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">(<span class="type">int</span> argc, <span class="type">char</span> *argv[])</span> </span>&#123;</span><br><span class="line">    std::<span class="built_in">thread</span>(func).<span class="built_in">join</span>();</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
     <link itemprop="mainEntityOfPage" href="http://example.com/2024/10/05/0/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -771,295 +1161,10 @@
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2024/09/06/0/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="Loujuch">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Code Bank">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2024/09/06/0/" class="post-title-link" itemprop="url">Git基本概念</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">Posted on</span>
-
-              <time title="Created: 2024-09-06 20:00:10" itemprop="dateCreated datePublished" datetime="2024-09-06T20:00:10+08:00">2024-09-06</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2024-09-07 12:48:47" itemprop="dateModified" datetime="2024-09-07T12:48:47+08:00">2024-09-07</time>
-              </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h2 id="Git四个区域"><a href="#Git四个区域" class="headerlink" title="Git四个区域"></a>Git四个区域</h2><p><img src="/2024/09/06/0/0.png"></p>
-<ul>
-<li><p>工作区(<code>workspack</code>)：实际修改代码的地方，是程序员能够直接操作的地方。</p>
-</li>
-<li><p>暂存区(<code>staging area</code>)：用于存放临时的改动，修改后不可恢复。</p>
-</li>
-<li><p>本地仓库(<code>local repository</code>)：安全存放数据的位置，将各个版本的信息存放在此，可以随时回滚。</p>
-</li>
-<li><p>远程仓库(<code>remote repository</code>)：托管代码的服务器，方便在不同的机器上进行开发。</p>
-</li>
-</ul>
-<h2 id="文件状态"><a href="#文件状态" class="headerlink" title="文件状态"></a>文件状态</h2><p><img src="/2024/09/06/0/1.png"></p>
-<p>Git为文件存在4种状态：</p>
-<ul>
-<li><p><code>untracked</code>：未被Git管理的文件。</p>
-</li>
-<li><p><code>modified</code>：代表已经被Git管理的文件，但该文件与暂存区对应的文件相比存在修改。Git只关心文件整体的修改，通过对比文件的SHA-1值判断文件是否被修改。</p>
-</li>
-<li><p><code>staged</code>：当前已经被提交到暂存区的文件。</p>
-</li>
-<li><p><code>unmodified</code>：当前已经提交形成镜像的文件。</p>
-</li>
-</ul>
-<p>除此之外，对于具有远端仓库的文件，根据是否上传到远端仓库还可以分为<code>pushed</code>和<code>unPushed</code>。</p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2024/09/05/1/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="Loujuch">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Code Bank">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2024/09/05/1/" class="post-title-link" itemprop="url">Git常用操作</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">Posted on</span>
-
-              <time title="Created: 2024-09-05 22:45:19" itemprop="dateCreated datePublished" datetime="2024-09-05T22:45:19+08:00">2024-09-05</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2024-09-07 17:07:02" itemprop="dateModified" datetime="2024-09-07T17:07:02+08:00">2024-09-07</time>
-              </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h2 id="本地操作"><a href="#本地操作" class="headerlink" title="本地操作"></a>本地操作</h2><h3 id="创建仓库"><a href="#创建仓库" class="headerlink" title="创建仓库"></a>创建仓库</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git init &lt;初始化路径&gt;</span><br></pre></td></tr></table></figure>
-
-<p><code>git init &lt;初始化路径&gt;</code>用于初始化本地仓库，使用后对应目录下的文件全部变为<code>untracked</code>状态。</p>
-<h3 id="提交修改"><a href="#提交修改" class="headerlink" title="提交修改"></a>提交修改</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">git add &lt;目标文件或目录&gt;</span><br><span class="line"></span><br><span class="line">git commit</span><br></pre></td></tr></table></figure>
-
-<p><code>git add &lt;目标文件或目录&gt;</code>将<code>untracked</code>或<code>modified</code>状态的文件加入暂存区且将状态转为<code>staged</code>。</p>
-<p><code>git commit</code>将读取暂存区的文件，并生成对应快照挂载到快照树中，同时移动头指针指向新提交的快照。之后所有处于<code>staged</code>的文件全部转换为<code>unmodify</code>状态。</p>
-<h3 id="分支的创建与选择"><a href="#分支的创建与选择" class="headerlink" title="分支的创建与选择"></a>分支的创建与选择</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 创建并转到目标分支</span></span><br><span class="line">git checkout -b &lt;分支名&gt;</span><br><span class="line"></span><br><span class="line"><span class="comment"># 创建目标分支</span></span><br><span class="line">git branch &lt;分支名&gt;</span><br><span class="line"></span><br><span class="line"><span class="comment"># 转到目标分支</span></span><br><span class="line">git checkout &lt;分支名&gt;</span><br></pre></td></tr></table></figure>
-
-<h3 id="合并分支和解决冲突"><a href="#合并分支和解决冲突" class="headerlink" title="合并分支和解决冲突"></a>合并分支和解决冲突</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 合并当前分支和目标分支，可能会因为发生冲突而没有完成合并。之后需要手动将解决冲突</span></span><br><span class="line">git merge &lt;分支名&gt;</span><br><span class="line"></span><br><span class="line"><span class="comment"># 解决了冲突文件后需要将修改提交到缓存区</span></span><br><span class="line">git add &lt;冲突文件名&gt;</span><br><span class="line"></span><br><span class="line"><span class="comment"># 解决冲突后继续进行合并g</span></span><br><span class="line"></span><br><span class="line">it merge --<span class="built_in">continue</span></span><br></pre></td></tr></table></figure>
-
-<h3 id="回退版本"><a href="#回退版本" class="headerlink" title="回退版本"></a>回退版本</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">git reset [--soft | --mixed | --hard] [&lt;目标版本&gt;]</span><br><span class="line">git reset [--soft | --mixed | --hard] [&lt;目标版本&gt;] [&lt;目标文件列表&gt;]</span><br></pre></td></tr></table></figure>
-
-<p><code>git reset</code>用于进行版本回退，在未带任何参数的情况下默认回退到最新一次提交，相当于丢弃工作区的修改。</p>
-<p><code>git reset</code>存在三种标志，若省略则默认为<code>--mixed</code>，其各个标志的作用如下：</p>
-<ul>
-<li><p><code>--soft</code>：只会移动头指针，不会修改工作区和暂存区内容。</p>
-</li>
-<li><p><code>--mixed</code>：移动头指针并重置暂存区为目标提交的内容，不会修改工作区修改。</p>
-</li>
-<li><p><code>--hard</code>移动头指针并重置暂存区和工作区为目标提交的内容，注意这会丢失工作区修改！</p>
-</li>
-</ul>
-<p><code>&lt;目标版本&gt;</code>有多种格式，若省略则默认为<code>HEAD</code>：</p>
-<ul>
-<li><p><code>HEAD</code>是一个预设标志，代表当前头指针指向的版本，用于实现相对位置定位：</p>
-<ul>
-<li><p><code>HEAD^</code>：<code>HEAD</code>对应版本的上一个版本，<code>^</code>符号可以多次重复，如<code>HEAD^^</code>代表<code>HEAD</code>的上两个版本，以此类推。</p>
-</li>
-<li><p><code>HEAD~1</code>：<code>HEAD</code>对应版本的上一个版本，<code>~</code>符号后的数字可以自行指定，如<code>HEAD~2</code>代表<code>HEAD</code>对应版本的上两个版本，以此类推。</p>
-</li>
-</ul>
-</li>
-<li><p><code>&lt;目标版本&gt;</code>也可是是对应版本的版本号，这将会直接转到对应版本，这不仅可以进行版本的回退，也可以用于恢复到当前版本的后几个版本或其他分支。</p>
-</li>
-<li><p><code>&lt;目标版本&gt;</code>还可以是远程分支，这相当于回退到该远程分支对应的版本。</p>
-</li>
-</ul>
-<p><code>&lt;目标文件列表&gt;</code>是需要回退版本的文件，通常情况下不会显示指定，也就是回退整个项目。</p>
-<h3 id="文件控制"><a href="#文件控制" class="headerlink" title="文件控制"></a>文件控制</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">git <span class="built_in">rm</span></span><br><span class="line">git <span class="built_in">mv</span></span><br></pre></td></tr></table></figure>
-
-<p>因为Git不会自行跟踪文件的删除情况，因此仅在工作区删除文件时Git并不会自动的在项目中删除对应的文件，这时需要使用<code>git rm</code>和<code>git mv</code>显示指定对文件的删除和移动操作。</p>
-<p>默认情况下，<code>git rm</code>和<code>git mv</code>会与<code>rm</code>和<code>mv</code>一样直接删除或移动工作区的文件，如果只希望结束对目标文件的追踪而不会修改对应的工作区文件，需要添加<code>--cached</code>标志。</p>
-<h3 id="文件状态与文件修改查询"><a href="#文件状态与文件修改查询" class="headerlink" title="文件状态与文件修改查询"></a>文件状态与文件修改查询</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">git status</span><br><span class="line">git diff</span><br></pre></td></tr></table></figure>
-
-<p><code>git status</code>用于显示上次提交后整个项目中各个被修改的文件对应的状态。</p>
-<p><code>git diff</code>获得两个版本间的文件差异。主要使用方式如下：</p>
-<ul>
-<li><p><code>git diff</code>：比较当前工作区和暂存区的区别。</p>
-</li>
-<li><p><code>git diff --cached</code>：比较暂存区和HEAD指向版本的区别。</p>
-</li>
-<li><p><code>git diff &lt;branch0&gt; &lt;branch1&gt;</code>：比较<code>&lt;branch0&gt;</code>和<code>&lt;branch1&gt;</code>两个版本间的区别。</p>
-</li>
-</ul>
-<h3 id="查看日志"><a href="#查看日志" class="headerlink" title="查看日志"></a>查看日志</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">git <span class="built_in">log</span></span><br><span class="line">git reflog</span><br></pre></td></tr></table></figure>
-
-<p><code>git log</code>打印当前<code>HEAD</code>指针指向的节点向分支树根部的路径上的全部节点的信息，包括节点哈希值标识、注释等。注意，在移动头指针后将会改变其打印出的的节点信息。</p>
-<p><code>git reflog</code>打印出<code>ref log</code>，其记录了Git仓库中<code>HEAD</code>指针引用的变化，其基本上包含全部的提交信息。</p>
-<h2 id="Git远程常用操作"><a href="#Git远程常用操作" class="headerlink" title="Git远程常用操作"></a>Git远程常用操作</h2><h3 id="下载远程仓库"><a href="#下载远程仓库" class="headerlink" title="下载远程仓库"></a>下载远程仓库</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 从URL下载并添加远程仓库</span></span><br><span class="line">git <span class="built_in">clone</span> &lt;仓库url&gt;</span><br></pre></td></tr></table></figure>
-
-<h3 id="远程仓库配置"><a href="#远程仓库配置" class="headerlink" title="远程仓库配置"></a>远程仓库配置</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 显示远程仓库信息</span></span><br><span class="line">git remote -v</span><br><span class="line"></span><br><span class="line"><span class="comment"># 添加仓库</span></span><br><span class="line">git remote add &lt;仓库名&gt; &lt;仓库url&gt;</span><br><span class="line"></span><br><span class="line"><span class="comment"># 移除仓库</span></span><br><span class="line">git remote remove &lt;仓库名&gt;</span><br><span class="line"></span><br><span class="line"><span class="comment"># 重设仓库url</span></span><br><span class="line">git remote set-url &lt;仓库名&gt; &lt;仓库url&gt;</span><br></pre></td></tr></table></figure>
-
-<h3 id="推送代码"><a href="#推送代码" class="headerlink" title="推送代码"></a>推送代码</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 推送本地的分支版本上传到远程并合并，若在当前分支下工作可省略&lt;本地分支名&gt;</span></span><br><span class="line">git push &lt;远程主机名&gt; &lt;本地分支名&gt;:&lt;远程分支名&gt;</span><br><span class="line"></span><br><span class="line"><span class="comment"># 本地版本与远程版本有差异时徐娅强制推送，若在当前分支下工作可省略&lt;本地分支名&gt;</span></span><br><span class="line">git push --force &lt;远程主机名&gt; &lt;本地分支名&gt;:&lt;远程分支名&gt;</span><br><span class="line"></span><br><span class="line"><span class="comment"># 删除&lt;远程分支&gt;</span></span><br><span class="line">git push &lt;远程主机名&gt; --delete &lt;远程分支名&gt;</span><br></pre></td></tr></table></figure>
-
-<h3 id="拉取代码"><a href="#拉取代码" class="headerlink" title="拉取代码"></a>拉取代码</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 拉取远程仓库代码</span></span><br><span class="line">git fetch &lt;远程主机名&gt;</span><br><span class="line"></span><br><span class="line"><span class="comment"># 拉取远程仓库代码并与指定分支进行合并</span></span><br><span class="line">git pull [远程仓库名] [分支名]</span><br></pre></td></tr></table></figure>
-
-<h3 id="将本地分支和远程分支关联"><a href="#将本地分支和远程分支关联" class="headerlink" title="将本地分支和远程分支关联"></a>将本地分支和远程分支关联</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 将远程分支和本地分支关联</span></span><br><span class="line">git branch -u &lt;远程分支&gt; &lt;本地分支&gt;</span><br></pre></td></tr></table></figure>
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2024/09/04/0/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="Loujuch">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Code Bank">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2024/09/04/0/" class="post-title-link" itemprop="url">解决raw.githubusercontent.com无法访问的问题</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">Posted on</span>
-
-              <time title="Created: 2024-09-04 23:35:02" itemprop="dateCreated datePublished" datetime="2024-09-04T23:35:02+08:00">2024-09-04</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2024-09-05 22:45:09" itemprop="dateModified" datetime="2024-09-05T22:45:09+08:00">2024-09-05</time>
-              </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>国内无法访问<code>raw.githubusercontent.com</code>的原因基本是DNS污染，因此修改<code>hosts</code>可以解决该问题，例如使用<code>IPAddress.com</code>等网站查到真实IP后自行修改。同时，GitHub上也存在项目<a target="_blank" rel="noopener" href="https://github.com/521xueweihan/GitHub520">GitHub520</a>对其进行实时更新（强烈推荐该项目）。</p>
-<p><code>hosts</code>的位置：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"># Windows</span><br><span class="line">C:\Windows\System32\drivers\etc\hosts</span><br><span class="line"></span><br><span class="line"># Linux</span><br><span class="line">/etc/hosts</span><br></pre></td></tr></table></figure>
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
-    <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="extend next" rel="next" href="/page/2/"><i class="fa fa-angle-right" aria-label="Next page"></i></a>
+    <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="page-number" href="/page/3/">3</a><a class="extend next" rel="next" href="/page/2/"><i class="fa fa-angle-right" aria-label="Next page"></i></a>
   </nav>
 
 
@@ -1125,12 +1230,12 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">20</span>
+          <span class="site-state-item-count">23</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
       <div class="site-state-item site-state-tags">
-        <span class="site-state-item-count">13</span>
+        <span class="site-state-item-count">16</span>
         <span class="site-state-item-name">tags</span>
       </div>
   </nav>
