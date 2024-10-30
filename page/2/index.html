@@ -145,6 +145,123 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2024/09/07/0/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Loujuch">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Code Bank">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2024/09/07/0/" class="post-title-link" itemprop="url">Git本地文件管理</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+              
+
+              <time title="Created: 2024-09-07 11:55:36 / Modified: 14:02:31" itemprop="dateCreated datePublished" datetime="2024-09-07T11:55:36+08:00">2024-09-07</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="Git文件存储"><a href="#Git文件存储" class="headerlink" title="Git文件存储"></a>Git文件存储</h2><p>Git将历史文件、快照等信息存储在工作区根目录的<code>.git/objects</code>目录下。<code>objects</code>用于存放镜像和实际文件等信息，其内部文件分为三种类型，分别为：</p>
+<ul>
+<li><p>Blob：用于文件，将文件内容压缩成二进制文件后进行存储。</p>
+</li>
+<li><p>Tree：用于文件夹，存储的内容为文件夹下的文件类型、文件名和文件哈希值等，同样是使用二进制压缩存储。</p>
+</li>
+<li><p>Commit：代表快照，包含该快照所包含的文件和一些控制信息等，使用二进制压缩存储。</p>
+</li>
+</ul>
+<p>同时，Git将这些文件的哈希值作为分组和标识的依据。具体来说，将文件放置在以文件哈希值的前两位命名的文件夹中，并使用文件哈希值除前两位的部分作为文件名。</p>
+<h2 id="Git进行本地管理的过程图解"><a href="#Git进行本地管理的过程图解" class="headerlink" title="Git进行本地管理的过程图解"></a>Git进行本地管理的过程图解</h2><p>图中各元素含义如下：</p>
+<ul>
+<li><p>方形：实际存储数据的文件。</p>
+</li>
+<li><p>菱形：目录，即文件的索引。</p>
+</li>
+<li><p>圆形：快照文件。</p>
+</li>
+<li><p>圆角矩形：头指针或分支指针。</p>
+</li>
+<li><p>实线：被指对象被另一端对象的引用，可以被另一端对象索引查找。</p>
+</li>
+<li><p>虚线：被指对象是另一端对象的压缩。</p>
+</li>
+</ul>
+<p>接下来给出Git进行本地文件管理的过程对应的图解：</p>
+<ol>
+<li>假设目前项目中只有两个文件，并完成了一次提交，这回生成对应的压缩对象、索引文件、快照文件，并设置好索引和指针。其对应的内部状态如下：</li>
+</ol>
+<p><img src="/2024/09/07/0/0.png"></p>
+<ol start="2">
+<li>现在修改其中一个文件，这会丢失文件与压缩对象的对应关系，于是文件变为<code>modified</code>状态。此时内部状态变为：</li>
+</ol>
+<p><img src="/2024/09/07/0/1.png"></p>
+<ol start="3">
+<li>现在使用<code>git add</code>添加修改，此时会对其修改文件创建压缩对象，并修改暂存区索引，于是文件变为<code>staged</code>状态。此时内部状态变为：</li>
+</ol>
+<p><img src="/2024/09/07/0/2.png"></p>
+<ol start="4">
+<li>现在使用<code>git commit</code>提交修改，这会生成此时的暂存区索引的压缩文件，并创建新的镜像对象，并将其指向上一提交镜像和当前暂存区压缩文件，之后相应的移动头指针和分支指针。此时内部状态变为：</li>
+</ol>
+<p><img src="/2024/09/07/0/3.png"></p>
+<h2 id="一些常见问题"><a href="#一些常见问题" class="headerlink" title="一些常见问题"></a>一些常见问题</h2><ol>
+<li>修改文件的局部时，是否会存储整个文件？</li>
+</ol>
+<blockquote>
+<p>是的。当修改一个文件的局部时，将会重新生成对应文件的整个文件的镜像，而不是生成文件修改的镜像。</p>
+<p>同时，只会新增被修改文件的镜像，而未修改文件不会形成相应的镜像。</p>
+<p>因此，Git不适合管理那些经常会进行修改的较大文件，而更加适合对大量的、通常只会做局部修改的较小文件和不经常修改的较大文件进行管理。这符合编程项目的特点——大量较小的编程文本文件，不经常修改的较大的库文件。</p>
+</blockquote>
+<ol start="2">
+<li>当多次<code>git add</code>同一文件时，是否会生成对应的镜像文件？</li>
+</ol>
+<blockquote>
+<p>视该文件hash是否改变而定。</p>
+<p><code>git add</code>会计算待添加文件的hash，并在当前的文件仓库中进行查找，只有当未找到时才会创建对应的文件。之后会设置相应的索引。</p>
+<p>因此若多次添加的文件hash一致时，不会生成对应的镜像文件。甚至如果多个文件的hash相同时也只会生成一个对应的镜像文件。</p>
+<p>当多次添加的文件hash不一致时，一般就会生成对应的镜像文件了。</p>
+</blockquote>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
     <link itemprop="mainEntityOfPage" href="http://example.com/2024/09/06/0/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1339,67 +1456,6 @@
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2024/08/17/3/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="Loujuch">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Code Bank">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2024/08/17/3/" class="post-title-link" itemprop="url">Ubuntu 22.04终端无法打开的一种可能原因和解决方案</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">Posted on</span>
-              
-
-              <time title="Created: 2024-08-17 11:38:28 / Modified: 11:44:30" itemprop="dateCreated datePublished" datetime="2024-08-17T11:38:28+08:00">2024-08-17</time>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h2 id="现象"><a href="#现象" class="headerlink" title="现象"></a>现象</h2><p>在Ubuntu 22.04默认的图形环境中无法打开终端。</p>
-<h2 id="原因"><a href="#原因" class="headerlink" title="原因"></a>原因</h2><p>当前系统使用语言与格式不匹配。如使用语言为English，但使用格式为Chinese。</p>
-<h2 id="解决方案"><a href="#解决方案" class="headerlink" title="解决方案"></a>解决方案</h2><p>在“Setting”中的“Language &amp; Region”将二者修改为一致。如“English (United States)”与“United States”或“中文”与“中国”。</p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
@@ -1469,7 +1525,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">23</span>
+          <span class="site-state-item-count">24</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>

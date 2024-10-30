@@ -1,0 +1,559 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 7.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"example.com","root":"/","scheme":"Mist","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="Future机制CPP Future机制用于获取异步任务的异常和返回结果，尽管也可以通过传入的指针或引用返回结果，但其需要引入外部变量，较为麻烦，且难以捕获异常。 Future机制由promise和future配合实现异步返回，promise用于在异步任务中设置返回结果，future用于获取在原线程中获取异步任务返回结果，两者间通过共享状态（shared state）进行通信。三者关系如下图：">
+<meta property="og:type" content="article">
+<meta property="og:title" content="C++ Future机制">
+<meta property="og:url" content="http://example.com/2024/10/27/1/index.html">
+<meta property="og:site_name" content="Code Bank">
+<meta property="og:description" content="Future机制CPP Future机制用于获取异步任务的异常和返回结果，尽管也可以通过传入的指针或引用返回结果，但其需要引入外部变量，较为麻烦，且难以捕获异常。 Future机制由promise和future配合实现异步返回，promise用于在异步任务中设置返回结果，future用于获取在原线程中获取异步任务返回结果，两者间通过共享状态（shared state）进行通信。三者关系如下图：">
+<meta property="og:locale">
+<meta property="og:image" content="http://example.com/2024/10/27/1/0.png">
+<meta property="article:published_time" content="2024-10-27T14:07:27.000Z">
+<meta property="article:modified_time" content="2024-10-30T15:01:53.003Z">
+<meta property="article:author" content="Loujuch">
+<meta property="article:tag" content="CPP">
+<meta property="article:tag" content="多线程">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/2024/10/27/1/0.png">
+
+<link rel="canonical" href="http://example.com/2024/10/27/1/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-Hans'
+  };
+</script>
+
+  <title>C++ Future机制 | Code Bank</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Code Bank</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>Archives</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2024/10/27/1/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Loujuch">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Code Bank">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          C++ Future机制
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2024-10-27 22:07:27" itemprop="dateCreated datePublished" datetime="2024-10-27T22:07:27+08:00">2024-10-27</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2024-10-30 23:01:53" itemprop="dateModified" datetime="2024-10-30T23:01:53+08:00">2024-10-30</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h2 id="Future机制"><a href="#Future机制" class="headerlink" title="Future机制"></a>Future机制</h2><p>CPP Future机制用于获取异步任务的异常和返回结果，尽管也可以通过传入的指针或引用返回结果，但其需要引入外部变量，较为麻烦，且难以捕获异常。</p>
+<p>Future机制由promise和future配合实现异步返回，promise用于在异步任务中设置返回结果，future用于获取在原线程中获取异步任务返回结果，两者间通过共享状态（shared state）进行通信。三者关系如下图：</p>
+<p><img src="/2024/10/27/1/0.png"></p>
+<h2 id="CPP中的promise和future"><a href="#CPP中的promise和future" class="headerlink" title="CPP中的promise和future"></a>CPP中的promise和future</h2><p>CPP提供了<code>std::promise</code>充当Future机制中的promise，<code>std::future</code>和<code>std::shared_future</code>充当Future机制中的future，两者共同作用解决完成异步数据传输。</p>
+<h3 id="promise"><a href="#promise" class="headerlink" title="promise"></a>promise</h3><p>CPP提供了<code>std::promise</code>充当Future机制中的promise，<code>std::promise</code>只能进行默认构造和移动，无法进行拷贝。</p>
+<p><code>std::promise</code>提供如下接口进行数据传输：</p>
+<table>
+<thead>
+<tr>
+<th>方法</th>
+<th>含义</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>std::future&lt;R&gt; get_future();</td>
+<td>返回一个与promise关联相同共享状态的<code>std::future</code>对象</td>
+</tr>
+<tr>
+<td>void set_value(const R&amp; value);<br>void set_value(R&amp;&amp; value);</td>
+<td>立即设置promise的共享状态的值</td>
+</tr>
+<tr>
+<td>void set_exception( std::exception_ptr p );</td>
+<td>立即设置promise的共享状态捕获的异常</td>
+</tr>
+<tr>
+<td>void set_value_at_thread_exit(const R &amp;value);<br>void set_value_at_thread_exit(R &amp;&amp;value);</td>
+<td>在线程结束后设置promise的共享状态的值</td>
+</tr>
+<tr>
+<td>void set_exception_at_thread_exit(std::exception_ptr p);</td>
+<td>在线程结束后设置promise的共享状态捕获的异常</td>
+</tr>
+</tbody></table>
+<p>在使用<code>std::promise</code>时有以下注意事项：</p>
+<ol>
+<li><p><code>std::promise</code>是一次性的，一旦设置了相应的值，再次调用设值函数将会抛出异常。</p>
+</li>
+<li><p><code>std::promise</code>的任何方法都不会断开与共享状态的连接，因此可以多次调用<code>get_future</code>。</p>
+</li>
+<li><p><code>set_*</code>和<code>set_*_at_thread_exit</code>之间的区别在于，<code>set_*</code>将会使得与该对象内部的共享状态相关联的<code>future</code>将能够立即获得值；<code>set_*_at_thread_exit</code>将会使得与该对象内部的共享状态相关联的<code>future</code>将在异步线程退出后才获得值。</p>
+</li>
+</ol>
+<h3 id="future"><a href="#future" class="headerlink" title="future"></a>future</h3><p>CPP提供了<code>std::future</code>和<code>std::shared_future</code>充当Future机制中的future，两者提供了一些相同的接口用于实现异步线程数据传输：</p>
+<table>
+<thead>
+<tr>
+<th>方法</th>
+<th>含义</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>T get();<br>T&amp; get();</td>
+<td>获取共享状态的值或捕获的异常。<br>若此时共享状态未被设置值或捕获异常则进行阻塞等待</td>
+</tr>
+<tr>
+<td>bool valid() const noexcept;</td>
+<td>当future绑定共享状态时返回true，否则返回false</td>
+</tr>
+<tr>
+<td>void wait() const;</td>
+<td>阻塞等待，直到共享状态被设置值或捕获异常</td>
+</tr>
+<tr>
+<td>template &lt;class Rep, class Period&gt;<br>std::future_status wait_for(const std::chrono::duration&lt;Rep,Period&gt;&amp; timeout_duration) const;</td>
+<td>阻塞等待，直到共享状态被设置值或捕获异常，或者线程已被阻塞了timeout_duration时间</td>
+</tr>
+<tr>
+<td>template &lt;class Clock, class Duration&gt;<br>std::future_status wait_until(const std::chrono::time_point&lt;Clock,Duration&gt;&amp; timeout_time) const;</td>
+<td>阻塞等待，直到共享状态被设置值或捕获异常，或者线程被阻塞直到timeout_time</td>
+</tr>
+</tbody></table>
+<p>尽管<code>std::future</code>和<code>std::shared_future</code>提供了相似的异步线程数据传输接口，但二者具有以下区别：</p>
+<table>
+<thead>
+<tr>
+<th>std::future</th>
+<th>std::shared_future</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>只能进行默认构造或移动，不能进行拷贝</td>
+<td>能进行默认构造、拷贝和移动</td>
+</tr>
+<tr>
+<td>无法进行安全的线程共享</td>
+<td>同一个实例无法安全的进行线程共享<br>拷贝生成的示例能够在多线程环境下安全的对共享状态的值进行赋值</td>
+</tr>
+<tr>
+<td>调用<code>get</code>函数后将与相应的共享状态切断联系，因此只能调用一次</td>
+<td>调用<code>get</code>函数后不与相应的共享状态切断联系，因此能够调用多次</td>
+</tr>
+<tr>
+<td>能够通过<code>std::shared_funtre&lt;T&gt; share() noexcept;</code>转化为<code>std::shared_future</code><br>调用该方法后将与相应的共享状态切断联系</td>
+<td>能够接收<code>std::funtre&lt;T&gt; &amp;&amp;</code>进行构造<br>调用该方法后输入的<code>std::funtre&lt;T&gt; &amp;&amp;</code>将与相应的共享状态切断联系</td>
+</tr>
+</tbody></table>
+<p>对于<code>wait_for</code>和<code>wait_until</code>，可以通过返回值判断其返回时的状态，其返回值可能为：</p>
+<ol>
+<li><p><code>std::future_status::ready</code>：共享状态就绪。</p>
+</li>
+<li><p><code>std::future_status::timeout</code>：等待超时。</p>
+</li>
+<li><p><code>std::future_status::deferred</code>：共享状态关联的是一个<code>deferred</code>的函数，只有在调用<code>get</code>时才能赋值（详见<code>std::async</code>）。</p>
+</li>
+</ol>
+<h3 id="代码示例"><a href="#代码示例" class="headerlink" title="代码示例"></a>代码示例</h3><p>下面给出一个简单的代码示例：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;future&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">test_value</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    std::promise&lt;<span class="type">int</span>&gt; pro;</span><br><span class="line">    std::future&lt;<span class="type">int</span>&gt; fut = pro.<span class="built_in">get_future</span>();</span><br><span class="line">    std::cout &lt;&lt; fut.<span class="built_in">valid</span>() &lt;&lt; std::endl;</span><br><span class="line">    pro.<span class="built_in">set_value</span>(<span class="number">1024</span>);</span><br><span class="line">    std::cout &lt;&lt; fut.<span class="built_in">valid</span>() &lt;&lt; std::endl;</span><br><span class="line">    std::cout &lt;&lt; fut.<span class="built_in">get</span>() &lt;&lt; std::endl;</span><br><span class="line">    std::cout &lt;&lt; fut.<span class="built_in">valid</span>() &lt;&lt; std::endl;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">test_execption</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    std::promise&lt;<span class="type">int</span>&gt; pro;</span><br><span class="line">    std::future&lt;<span class="type">int</span>&gt; fut = pro.<span class="built_in">get_future</span>();</span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">        <span class="keyword">throw</span> std::<span class="built_in">runtime_error</span>(<span class="string">&quot;Example&quot;</span>);</span><br><span class="line">    &#125; <span class="built_in">catch</span> (...) &#123;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            std::cout &lt;&lt; <span class="string">&quot;Catch&quot;</span> &lt;&lt; std::endl;</span><br><span class="line">            pro.<span class="built_in">set_exception</span>(std::<span class="built_in">current_exception</span>());</span><br><span class="line">        &#125; <span class="built_in">catch</span> (...) &#123;</span><br><span class="line">            std::cout &lt;&lt; <span class="string">&quot;Error&quot;</span> &lt;&lt; std::endl;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;    <span class="keyword">try</span> &#123;</span><br><span class="line">        std::cout &lt;&lt; fut.<span class="built_in">get</span>() &lt;&lt; std::endl;</span><br><span class="line">    &#125; <span class="built_in">catch</span> (<span class="type">const</span> std::exception &amp;e) &#123;</span><br><span class="line">        std::cout &lt;&lt; <span class="string">&quot;Throw: &quot;</span> &lt;&lt; e.<span class="built_in">what</span>() &lt;&lt; <span class="string">&#x27;\n&#x27;</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">(<span class="type">int</span> argc, <span class="type">char</span> *argv[])</span> </span>&#123;</span><br><span class="line">    <span class="built_in">test_value</span>();</span><br><span class="line">    <span class="built_in">test_execption</span>();</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>运行后打印：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">1</span><br><span class="line">1</span><br><span class="line">1024</span><br><span class="line">0</span><br><span class="line">Catch</span><br><span class="line">Throw: Example</span><br></pre></td></tr></table></figure>
+
+<h2 id="CPP异步任务"><a href="#CPP异步任务" class="headerlink" title="CPP异步任务"></a>CPP异步任务</h2><p>为了便于创建和使用异步任务而无需手动管理<code>promise</code>和<code>future</code>，CPP提供了<code>std::packaged_task</code>和<code>std::async</code>用于构建异步任务。</p>
+<h3 id="packaged-task"><a href="#packaged-task" class="headerlink" title="packaged_task"></a>packaged_task</h3><p>CPP提供了<code>std::packaged_task</code>类用于方便的将已有函数打包为异步可调用对象，其提供了默认构造函数、基于仿函数的构造函数、移动构造函数和移动赋值函数来设置相应的值，并提供以下方法：</p>
+<table>
+<thead>
+<tr>
+<th>方法</th>
+<th>含义</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>bool valid() const noexcept;</td>
+<td>返回packaged_task内部是否有有效的仿函数</td>
+</tr>
+<tr>
+<td>std::future<R> get_future();</td>
+<td>返回一个与packaged_task关联的future对象<br>可以多次调用返回多个关联相同共享状态的future</td>
+</tr>
+<tr>
+<td>void operator()(ArgTypes… args);</td>
+<td>使用args作为参数调用packaged_task内的仿函数，并立即将调用结果赋值到共享状态中</td>
+</tr>
+<tr>
+<td>void make_ready_at_thread_exit(ArgTypes… args);</td>
+<td>使用args作为参数调用packaged_task内的仿函数，调用结果将在异步线程结束后赋值到共享状态中</td>
+</tr>
+<tr>
+<td>void reset();</td>
+<td>重置内部状态，其所关联的future全部失效，但具有的仿函数不变</td>
+</tr>
+</tbody></table>
+<p>下面是一个简单的使用示例：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;thread&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;future&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function">std::string <span class="title">func</span><span class="params">(<span class="type">int</span> s)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> std::<span class="built_in">to_string</span>(s | INT32_MIN);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">(<span class="type">int</span> argc, <span class="type">char</span> *argv[])</span> </span>&#123;</span><br><span class="line">    <span class="function">std::packaged_task&lt;<span class="title">std::string</span><span class="params">(<span class="type">int</span>)</span>&gt; <span class="title">ptask</span><span class="params">(func)</span></span>;</span><br><span class="line">    std::future&lt;std::string&gt; f = ptask.<span class="built_in">get_future</span>();</span><br><span class="line">    <span class="function">std::thread <span class="title">th</span><span class="params">(std::move(ptask), INT32_MAX)</span></span>;</span><br><span class="line">    std::cout &lt;&lt; f.<span class="built_in">get</span>() &lt;&lt; std::endl;</span><br><span class="line">    th.<span class="built_in">join</span>();</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>运行后将获得如下结果：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">-1</span><br></pre></td></tr></table></figure>
+
+<h3 id="async"><a href="#async" class="headerlink" title="async"></a>async</h3><p>CPP提供了<code>std::async</code>函数方便的创建并运行异步任务，其函数签名如下：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">template</span> &lt;<span class="keyword">class</span> <span class="title class_">F</span>, <span class="keyword">class</span> ... Args&gt;</span><br><span class="line"><span class="function">std::future&lt;...&gt; <span class="title">async</span><span class="params">(F&amp;&amp; f, Args&amp;&amp; ... args)</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">template</span> &lt;<span class="keyword">class</span> <span class="title class_">F</span>, <span class="keyword">class</span> ... Args&gt;</span><br><span class="line"><span class="function">std::future&lt;...&gt; <span class="title">async</span><span class="params">(std::launch policy, F&amp;&amp; f, Args&amp;&amp; ... args)</span></span>;</span><br></pre></td></tr></table></figure>
+
+<p>其中，不带<code>policy</code>参数的版本相当于向带参数版本中传入<code>policy</code>参数<code>std::launch::async | std::launch::deferred</code>。</p>
+<p>该函数能够创建一个异步任务，其有两种执行方式：</p>
+<ol>
+<li><p>异步调用，在另一个线程（新线程或线程池中的线程）中运行异步任务，并设置共享状态传递执行结果。</p>
+</li>
+<li><p>延迟调用，当future调用<code>wait</code>或<code>get</code>时在被阻塞线程运行异步任务并通过设置共享状态传递执行结果，调用<code>wait_for</code>或<code>wait_until</code>时返回<code>std::future_status::deferred</code>。</p>
+</li>
+</ol>
+<p>可以通过<code>policy</code>参数设置开启的异步任务的执行方式：</p>
+<ol>
+<li><p>同时设置<code>std::launch::async</code>和<code>std::launch::deferred</code>：由标准库和当前系统状态进行决定，一般来说，当系统线程数量达到上限或系统线程超发（就绪线程数大于CPU并发线程数）时会采用延迟调用，否则会采用异步调用。</p>
+</li>
+<li><p>仅设置<code>std::launch::async</code>：总是进行异步调用。</p>
+</li>
+<li><p>仅设置<code>std::launch::deferred</code>：总是进行延迟调用。</p>
+</li>
+<li><p>未设置<code>std::launch::async</code>和<code>std::launch::deferred</code>：行为未定义，</p>
+</li>
+</ol>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/CPP/" rel="tag"># CPP</a>
+              <a href="/tags/%E5%A4%9A%E7%BA%BF%E7%A8%8B/" rel="tag"># 多线程</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2024/10/27/0/" rel="prev" title="hexo next主题设置">
+      <i class="fa fa-chevron-left"></i> hexo next主题设置
+    </a></div>
+      <div class="post-nav-item"></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Future%E6%9C%BA%E5%88%B6"><span class="nav-number">1.</span> <span class="nav-text">Future机制</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#CPP%E4%B8%AD%E7%9A%84promise%E5%92%8Cfuture"><span class="nav-number">2.</span> <span class="nav-text">CPP中的promise和future</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#promise"><span class="nav-number">2.1.</span> <span class="nav-text">promise</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#future"><span class="nav-number">2.2.</span> <span class="nav-text">future</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BB%A3%E7%A0%81%E7%A4%BA%E4%BE%8B"><span class="nav-number">2.3.</span> <span class="nav-text">代码示例</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#CPP%E5%BC%82%E6%AD%A5%E4%BB%BB%E5%8A%A1"><span class="nav-number">3.</span> <span class="nav-text">CPP异步任务</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#packaged-task"><span class="nav-number">3.1.</span> <span class="nav-text">packaged_task</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#async"><span class="nav-number">3.2.</span> <span class="nav-text">async</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Loujuch</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">24</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">16</span>
+        <span class="site-state-item-name">tags</span>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2024</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Loujuch</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://mist.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a>
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

@@ -145,6 +145,240 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2024/10/27/1/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Loujuch">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Code Bank">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2024/10/27/1/" class="post-title-link" itemprop="url">C++ Future机制</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2024-10-27 22:07:27" itemprop="dateCreated datePublished" datetime="2024-10-27T22:07:27+08:00">2024-10-27</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2024-10-30 23:01:53" itemprop="dateModified" datetime="2024-10-30T23:01:53+08:00">2024-10-30</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="Future机制"><a href="#Future机制" class="headerlink" title="Future机制"></a>Future机制</h2><p>CPP Future机制用于获取异步任务的异常和返回结果，尽管也可以通过传入的指针或引用返回结果，但其需要引入外部变量，较为麻烦，且难以捕获异常。</p>
+<p>Future机制由promise和future配合实现异步返回，promise用于在异步任务中设置返回结果，future用于获取在原线程中获取异步任务返回结果，两者间通过共享状态（shared state）进行通信。三者关系如下图：</p>
+<p><img src="/2024/10/27/1/0.png"></p>
+<h2 id="CPP中的promise和future"><a href="#CPP中的promise和future" class="headerlink" title="CPP中的promise和future"></a>CPP中的promise和future</h2><p>CPP提供了<code>std::promise</code>充当Future机制中的promise，<code>std::future</code>和<code>std::shared_future</code>充当Future机制中的future，两者共同作用解决完成异步数据传输。</p>
+<h3 id="promise"><a href="#promise" class="headerlink" title="promise"></a>promise</h3><p>CPP提供了<code>std::promise</code>充当Future机制中的promise，<code>std::promise</code>只能进行默认构造和移动，无法进行拷贝。</p>
+<p><code>std::promise</code>提供如下接口进行数据传输：</p>
+<table>
+<thead>
+<tr>
+<th>方法</th>
+<th>含义</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>std::future&lt;R&gt; get_future();</td>
+<td>返回一个与promise关联相同共享状态的<code>std::future</code>对象</td>
+</tr>
+<tr>
+<td>void set_value(const R&amp; value);<br>void set_value(R&amp;&amp; value);</td>
+<td>立即设置promise的共享状态的值</td>
+</tr>
+<tr>
+<td>void set_exception( std::exception_ptr p );</td>
+<td>立即设置promise的共享状态捕获的异常</td>
+</tr>
+<tr>
+<td>void set_value_at_thread_exit(const R &amp;value);<br>void set_value_at_thread_exit(R &amp;&amp;value);</td>
+<td>在线程结束后设置promise的共享状态的值</td>
+</tr>
+<tr>
+<td>void set_exception_at_thread_exit(std::exception_ptr p);</td>
+<td>在线程结束后设置promise的共享状态捕获的异常</td>
+</tr>
+</tbody></table>
+<p>在使用<code>std::promise</code>时有以下注意事项：</p>
+<ol>
+<li><p><code>std::promise</code>是一次性的，一旦设置了相应的值，再次调用设值函数将会抛出异常。</p>
+</li>
+<li><p><code>std::promise</code>的任何方法都不会断开与共享状态的连接，因此可以多次调用<code>get_future</code>。</p>
+</li>
+<li><p><code>set_*</code>和<code>set_*_at_thread_exit</code>之间的区别在于，<code>set_*</code>将会使得与该对象内部的共享状态相关联的<code>future</code>将能够立即获得值；<code>set_*_at_thread_exit</code>将会使得与该对象内部的共享状态相关联的<code>future</code>将在异步线程退出后才获得值。</p>
+</li>
+</ol>
+<h3 id="future"><a href="#future" class="headerlink" title="future"></a>future</h3><p>CPP提供了<code>std::future</code>和<code>std::shared_future</code>充当Future机制中的future，两者提供了一些相同的接口用于实现异步线程数据传输：</p>
+<table>
+<thead>
+<tr>
+<th>方法</th>
+<th>含义</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>T get();<br>T&amp; get();</td>
+<td>获取共享状态的值或捕获的异常。<br>若此时共享状态未被设置值或捕获异常则进行阻塞等待</td>
+</tr>
+<tr>
+<td>bool valid() const noexcept;</td>
+<td>当future绑定共享状态时返回true，否则返回false</td>
+</tr>
+<tr>
+<td>void wait() const;</td>
+<td>阻塞等待，直到共享状态被设置值或捕获异常</td>
+</tr>
+<tr>
+<td>template &lt;class Rep, class Period&gt;<br>std::future_status wait_for(const std::chrono::duration&lt;Rep,Period&gt;&amp; timeout_duration) const;</td>
+<td>阻塞等待，直到共享状态被设置值或捕获异常，或者线程已被阻塞了timeout_duration时间</td>
+</tr>
+<tr>
+<td>template &lt;class Clock, class Duration&gt;<br>std::future_status wait_until(const std::chrono::time_point&lt;Clock,Duration&gt;&amp; timeout_time) const;</td>
+<td>阻塞等待，直到共享状态被设置值或捕获异常，或者线程被阻塞直到timeout_time</td>
+</tr>
+</tbody></table>
+<p>尽管<code>std::future</code>和<code>std::shared_future</code>提供了相似的异步线程数据传输接口，但二者具有以下区别：</p>
+<table>
+<thead>
+<tr>
+<th>std::future</th>
+<th>std::shared_future</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>只能进行默认构造或移动，不能进行拷贝</td>
+<td>能进行默认构造、拷贝和移动</td>
+</tr>
+<tr>
+<td>无法进行安全的线程共享</td>
+<td>同一个实例无法安全的进行线程共享<br>拷贝生成的示例能够在多线程环境下安全的对共享状态的值进行赋值</td>
+</tr>
+<tr>
+<td>调用<code>get</code>函数后将与相应的共享状态切断联系，因此只能调用一次</td>
+<td>调用<code>get</code>函数后不与相应的共享状态切断联系，因此能够调用多次</td>
+</tr>
+<tr>
+<td>能够通过<code>std::shared_funtre&lt;T&gt; share() noexcept;</code>转化为<code>std::shared_future</code><br>调用该方法后将与相应的共享状态切断联系</td>
+<td>能够接收<code>std::funtre&lt;T&gt; &amp;&amp;</code>进行构造<br>调用该方法后输入的<code>std::funtre&lt;T&gt; &amp;&amp;</code>将与相应的共享状态切断联系</td>
+</tr>
+</tbody></table>
+<p>对于<code>wait_for</code>和<code>wait_until</code>，可以通过返回值判断其返回时的状态，其返回值可能为：</p>
+<ol>
+<li><p><code>std::future_status::ready</code>：共享状态就绪。</p>
+</li>
+<li><p><code>std::future_status::timeout</code>：等待超时。</p>
+</li>
+<li><p><code>std::future_status::deferred</code>：共享状态关联的是一个<code>deferred</code>的函数，只有在调用<code>get</code>时才能赋值（详见<code>std::async</code>）。</p>
+</li>
+</ol>
+<h3 id="代码示例"><a href="#代码示例" class="headerlink" title="代码示例"></a>代码示例</h3><p>下面给出一个简单的代码示例：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;future&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">test_value</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    std::promise&lt;<span class="type">int</span>&gt; pro;</span><br><span class="line">    std::future&lt;<span class="type">int</span>&gt; fut = pro.<span class="built_in">get_future</span>();</span><br><span class="line">    std::cout &lt;&lt; fut.<span class="built_in">valid</span>() &lt;&lt; std::endl;</span><br><span class="line">    pro.<span class="built_in">set_value</span>(<span class="number">1024</span>);</span><br><span class="line">    std::cout &lt;&lt; fut.<span class="built_in">valid</span>() &lt;&lt; std::endl;</span><br><span class="line">    std::cout &lt;&lt; fut.<span class="built_in">get</span>() &lt;&lt; std::endl;</span><br><span class="line">    std::cout &lt;&lt; fut.<span class="built_in">valid</span>() &lt;&lt; std::endl;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">test_execption</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    std::promise&lt;<span class="type">int</span>&gt; pro;</span><br><span class="line">    std::future&lt;<span class="type">int</span>&gt; fut = pro.<span class="built_in">get_future</span>();</span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">        <span class="keyword">throw</span> std::<span class="built_in">runtime_error</span>(<span class="string">&quot;Example&quot;</span>);</span><br><span class="line">    &#125; <span class="built_in">catch</span> (...) &#123;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            std::cout &lt;&lt; <span class="string">&quot;Catch&quot;</span> &lt;&lt; std::endl;</span><br><span class="line">            pro.<span class="built_in">set_exception</span>(std::<span class="built_in">current_exception</span>());</span><br><span class="line">        &#125; <span class="built_in">catch</span> (...) &#123;</span><br><span class="line">            std::cout &lt;&lt; <span class="string">&quot;Error&quot;</span> &lt;&lt; std::endl;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;    <span class="keyword">try</span> &#123;</span><br><span class="line">        std::cout &lt;&lt; fut.<span class="built_in">get</span>() &lt;&lt; std::endl;</span><br><span class="line">    &#125; <span class="built_in">catch</span> (<span class="type">const</span> std::exception &amp;e) &#123;</span><br><span class="line">        std::cout &lt;&lt; <span class="string">&quot;Throw: &quot;</span> &lt;&lt; e.<span class="built_in">what</span>() &lt;&lt; <span class="string">&#x27;\n&#x27;</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">(<span class="type">int</span> argc, <span class="type">char</span> *argv[])</span> </span>&#123;</span><br><span class="line">    <span class="built_in">test_value</span>();</span><br><span class="line">    <span class="built_in">test_execption</span>();</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>运行后打印：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">1</span><br><span class="line">1</span><br><span class="line">1024</span><br><span class="line">0</span><br><span class="line">Catch</span><br><span class="line">Throw: Example</span><br></pre></td></tr></table></figure>
+
+<h2 id="CPP异步任务"><a href="#CPP异步任务" class="headerlink" title="CPP异步任务"></a>CPP异步任务</h2><p>为了便于创建和使用异步任务而无需手动管理<code>promise</code>和<code>future</code>，CPP提供了<code>std::packaged_task</code>和<code>std::async</code>用于构建异步任务。</p>
+<h3 id="packaged-task"><a href="#packaged-task" class="headerlink" title="packaged_task"></a>packaged_task</h3><p>CPP提供了<code>std::packaged_task</code>类用于方便的将已有函数打包为异步可调用对象，其提供了默认构造函数、基于仿函数的构造函数、移动构造函数和移动赋值函数来设置相应的值，并提供以下方法：</p>
+<table>
+<thead>
+<tr>
+<th>方法</th>
+<th>含义</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>bool valid() const noexcept;</td>
+<td>返回packaged_task内部是否有有效的仿函数</td>
+</tr>
+<tr>
+<td>std::future<R> get_future();</td>
+<td>返回一个与packaged_task关联的future对象<br>可以多次调用返回多个关联相同共享状态的future</td>
+</tr>
+<tr>
+<td>void operator()(ArgTypes… args);</td>
+<td>使用args作为参数调用packaged_task内的仿函数，并立即将调用结果赋值到共享状态中</td>
+</tr>
+<tr>
+<td>void make_ready_at_thread_exit(ArgTypes… args);</td>
+<td>使用args作为参数调用packaged_task内的仿函数，调用结果将在异步线程结束后赋值到共享状态中</td>
+</tr>
+<tr>
+<td>void reset();</td>
+<td>重置内部状态，其所关联的future全部失效，但具有的仿函数不变</td>
+</tr>
+</tbody></table>
+<p>下面是一个简单的使用示例：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;thread&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;future&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function">std::string <span class="title">func</span><span class="params">(<span class="type">int</span> s)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> std::<span class="built_in">to_string</span>(s | INT32_MIN);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">(<span class="type">int</span> argc, <span class="type">char</span> *argv[])</span> </span>&#123;</span><br><span class="line">    <span class="function">std::packaged_task&lt;<span class="title">std::string</span><span class="params">(<span class="type">int</span>)</span>&gt; <span class="title">ptask</span><span class="params">(func)</span></span>;</span><br><span class="line">    std::future&lt;std::string&gt; f = ptask.<span class="built_in">get_future</span>();</span><br><span class="line">    <span class="function">std::thread <span class="title">th</span><span class="params">(std::move(ptask), INT32_MAX)</span></span>;</span><br><span class="line">    std::cout &lt;&lt; f.<span class="built_in">get</span>() &lt;&lt; std::endl;</span><br><span class="line">    th.<span class="built_in">join</span>();</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>运行后将获得如下结果：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">-1</span><br></pre></td></tr></table></figure>
+
+<h3 id="async"><a href="#async" class="headerlink" title="async"></a>async</h3><p>CPP提供了<code>std::async</code>函数方便的创建并运行异步任务，其函数签名如下：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">template</span> &lt;<span class="keyword">class</span> <span class="title class_">F</span>, <span class="keyword">class</span> ... Args&gt;</span><br><span class="line"><span class="function">std::future&lt;...&gt; <span class="title">async</span><span class="params">(F&amp;&amp; f, Args&amp;&amp; ... args)</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">template</span> &lt;<span class="keyword">class</span> <span class="title class_">F</span>, <span class="keyword">class</span> ... Args&gt;</span><br><span class="line"><span class="function">std::future&lt;...&gt; <span class="title">async</span><span class="params">(std::launch policy, F&amp;&amp; f, Args&amp;&amp; ... args)</span></span>;</span><br></pre></td></tr></table></figure>
+
+<p>其中，不带<code>policy</code>参数的版本相当于向带参数版本中传入<code>policy</code>参数<code>std::launch::async | std::launch::deferred</code>。</p>
+<p>该函数能够创建一个异步任务，其有两种执行方式：</p>
+<ol>
+<li><p>异步调用，在另一个线程（新线程或线程池中的线程）中运行异步任务，并设置共享状态传递执行结果。</p>
+</li>
+<li><p>延迟调用，当future调用<code>wait</code>或<code>get</code>时在被阻塞线程运行异步任务并通过设置共享状态传递执行结果，调用<code>wait_for</code>或<code>wait_until</code>时返回<code>std::future_status::deferred</code>。</p>
+</li>
+</ol>
+<p>可以通过<code>policy</code>参数设置开启的异步任务的执行方式：</p>
+<ol>
+<li><p>同时设置<code>std::launch::async</code>和<code>std::launch::deferred</code>：由标准库和当前系统状态进行决定，一般来说，当系统线程数量达到上限或系统线程超发（就绪线程数大于CPU并发线程数）时会采用延迟调用，否则会采用异步调用。</p>
+</li>
+<li><p>仅设置<code>std::launch::async</code>：总是进行异步调用。</p>
+</li>
+<li><p>仅设置<code>std::launch::deferred</code>：总是进行延迟调用。</p>
+</li>
+<li><p>未设置<code>std::launch::async</code>和<code>std::launch::deferred</code>：行为未定义，</p>
+</li>
+</ol>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
     <link itemprop="mainEntityOfPage" href="http://example.com/2024/10/27/0/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1044,123 +1278,6 @@
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2024/09/07/0/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="Loujuch">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Code Bank">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2024/09/07/0/" class="post-title-link" itemprop="url">Git本地文件管理</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">Posted on</span>
-              
-
-              <time title="Created: 2024-09-07 11:55:36 / Modified: 14:02:31" itemprop="dateCreated datePublished" datetime="2024-09-07T11:55:36+08:00">2024-09-07</time>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h2 id="Git文件存储"><a href="#Git文件存储" class="headerlink" title="Git文件存储"></a>Git文件存储</h2><p>Git将历史文件、快照等信息存储在工作区根目录的<code>.git/objects</code>目录下。<code>objects</code>用于存放镜像和实际文件等信息，其内部文件分为三种类型，分别为：</p>
-<ul>
-<li><p>Blob：用于文件，将文件内容压缩成二进制文件后进行存储。</p>
-</li>
-<li><p>Tree：用于文件夹，存储的内容为文件夹下的文件类型、文件名和文件哈希值等，同样是使用二进制压缩存储。</p>
-</li>
-<li><p>Commit：代表快照，包含该快照所包含的文件和一些控制信息等，使用二进制压缩存储。</p>
-</li>
-</ul>
-<p>同时，Git将这些文件的哈希值作为分组和标识的依据。具体来说，将文件放置在以文件哈希值的前两位命名的文件夹中，并使用文件哈希值除前两位的部分作为文件名。</p>
-<h2 id="Git进行本地管理的过程图解"><a href="#Git进行本地管理的过程图解" class="headerlink" title="Git进行本地管理的过程图解"></a>Git进行本地管理的过程图解</h2><p>图中各元素含义如下：</p>
-<ul>
-<li><p>方形：实际存储数据的文件。</p>
-</li>
-<li><p>菱形：目录，即文件的索引。</p>
-</li>
-<li><p>圆形：快照文件。</p>
-</li>
-<li><p>圆角矩形：头指针或分支指针。</p>
-</li>
-<li><p>实线：被指对象被另一端对象的引用，可以被另一端对象索引查找。</p>
-</li>
-<li><p>虚线：被指对象是另一端对象的压缩。</p>
-</li>
-</ul>
-<p>接下来给出Git进行本地文件管理的过程对应的图解：</p>
-<ol>
-<li>假设目前项目中只有两个文件，并完成了一次提交，这回生成对应的压缩对象、索引文件、快照文件，并设置好索引和指针。其对应的内部状态如下：</li>
-</ol>
-<p><img src="/2024/09/07/0/0.png"></p>
-<ol start="2">
-<li>现在修改其中一个文件，这会丢失文件与压缩对象的对应关系，于是文件变为<code>modified</code>状态。此时内部状态变为：</li>
-</ol>
-<p><img src="/2024/09/07/0/1.png"></p>
-<ol start="3">
-<li>现在使用<code>git add</code>添加修改，此时会对其修改文件创建压缩对象，并修改暂存区索引，于是文件变为<code>staged</code>状态。此时内部状态变为：</li>
-</ol>
-<p><img src="/2024/09/07/0/2.png"></p>
-<ol start="4">
-<li>现在使用<code>git commit</code>提交修改，这会生成此时的暂存区索引的压缩文件，并创建新的镜像对象，并将其指向上一提交镜像和当前暂存区压缩文件，之后相应的移动头指针和分支指针。此时内部状态变为：</li>
-</ol>
-<p><img src="/2024/09/07/0/3.png"></p>
-<h2 id="一些常见问题"><a href="#一些常见问题" class="headerlink" title="一些常见问题"></a>一些常见问题</h2><ol>
-<li>修改文件的局部时，是否会存储整个文件？</li>
-</ol>
-<blockquote>
-<p>是的。当修改一个文件的局部时，将会重新生成对应文件的整个文件的镜像，而不是生成文件修改的镜像。</p>
-<p>同时，只会新增被修改文件的镜像，而未修改文件不会形成相应的镜像。</p>
-<p>因此，Git不适合管理那些经常会进行修改的较大文件，而更加适合对大量的、通常只会做局部修改的较小文件和不经常修改的较大文件进行管理。这符合编程项目的特点——大量较小的编程文本文件，不经常修改的较大的库文件。</p>
-</blockquote>
-<ol start="2">
-<li>当多次<code>git add</code>同一文件时，是否会生成对应的镜像文件？</li>
-</ol>
-<blockquote>
-<p>视该文件hash是否改变而定。</p>
-<p><code>git add</code>会计算待添加文件的hash，并在当前的文件仓库中进行查找，只有当未找到时才会创建对应的文件。之后会设置相应的索引。</p>
-<p>因此若多次添加的文件hash一致时，不会生成对应的镜像文件。甚至如果多个文件的hash相同时也只会生成一个对应的镜像文件。</p>
-<p>当多次添加的文件hash不一致时，一般就会生成对应的镜像文件了。</p>
-</blockquote>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
@@ -1230,7 +1347,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">23</span>
+          <span class="site-state-item-count">24</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
