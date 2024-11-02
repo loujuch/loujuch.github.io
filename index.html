@@ -145,6 +145,314 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2024/11/02/1/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Loujuch">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Code Bank">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2024/11/02/1/" class="post-title-link" itemprop="url">gdb基本调试命令</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+              
+
+              <time title="Created: 2024-11-02 12:48:42 / Modified: 13:24:37" itemprop="dateCreated datePublished" datetime="2024-11-02T12:48:42+08:00">2024-11-02</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="基本介绍"><a href="#基本介绍" class="headerlink" title="基本介绍"></a>基本介绍</h2><p>gdb是Linux下常用的命令行调试器，在Debian下使用如下命令安装：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">sudo</span> apt install gdb -y</span><br></pre></td></tr></table></figure>
+
+<p>可以使用如下三种方式运行gdb程序，对目标二进制文件进行调试：</p>
+<ol>
+<li><p><code>gdb &lt;file_name&gt;</code>：运行目标文件，从头开始调试。</p>
+</li>
+<li><p><code>gdb &lt;file_name&gt; &lt;core_name&gt;</code>：根据core文件对目标文件进行调试。</p>
+</li>
+<li><p><code>gdb &lt;file_name&gt; &lt;pid&gt;</code>：远程调试，调试目标文件的对应正在运行的进程。</p>
+</li>
+</ol>
+<p>在进入调试界面后，可以使用一些调试命令以更好地对程序进行调试，其主要分为以下几类：</p>
+<ol>
+<li><p>流程控制：按照使用者想法运行程序。</p>
+</li>
+<li><p>断点管理：管理断点，使得程序在运行时满足某种条件时能够暂停。</p>
+</li>
+<li><p>信息输出：输出使用者希望输出的信息。</p>
+</li>
+<li><p>环境设置：动态改变程序内部或外部的执行环境。</p>
+</li>
+</ol>
+<h2 id="流程控制"><a href="#流程控制" class="headerlink" title="流程控制"></a>流程控制</h2><table>
+<thead>
+<tr>
+<th>指令</th>
+<th>缩写</th>
+<th>作用</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>run [&lt;arg&gt;]</td>
+<td>r</td>
+<td>运行未运行的程序</td>
+</tr>
+<tr>
+<td>cotinue [&lt;ignore_num&gt;]</td>
+<td>c</td>
+<td>在程序被中断后继续运行</td>
+</tr>
+<tr>
+<td>step [&lt;inst_num&gt;]</td>
+<td>s</td>
+<td>执行inst_num条指令，遇到函数时进入函数（如果该函数有调试信息）</td>
+</tr>
+<tr>
+<td>next [&lt;inst_num&gt;]</td>
+<td>n</td>
+<td>执行inst_num条指令，遇到函数视为一条指令，不会进入函数内部</td>
+</tr>
+<tr>
+<td>finish</td>
+<td>fin</td>
+<td>执行直到当前函数返回，并打印返回值</td>
+</tr>
+<tr>
+<td>until [&lt;target&gt;]</td>
+<td>u</td>
+<td>执行完当前循环，若目标位置被指定则执行到目标位置，除非函数返回</td>
+</tr>
+</tbody></table>
+<h2 id="断点管理"><a href="#断点管理" class="headerlink" title="断点管理"></a>断点管理</h2><h3 id="断点"><a href="#断点" class="headerlink" title="断点"></a>断点</h3><p>断点用于观察控制流的运行位置，当控制流运行到断点时停止程序。</p>
+<table>
+<thead>
+<tr>
+<th>指令</th>
+<th>缩写</th>
+<th>作用</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>break [&lt;pos&gt; [if &lt;cond&gt;]]</td>
+<td>b</td>
+<td>设置断点在pos，如设置了cond，则当条件未达成时不触发断点</td>
+</tr>
+</tbody></table>
+<p>其中<code>pos</code>的设置如下：</p>
+<ol>
+<li><p><code>&lt;file_name&gt;:&lt;line_num&gt;</code>：在进入指定文件对应行号的指令前设置断点。</p>
+</li>
+<li><p><code>&lt;file_name&gt;:&lt;func_name&gt;</code>：在进入指定文件对应函数的指令前设置断点。</p>
+</li>
+<li><p><code>*&lt;inst_addr&gt;</code>：在进入指定地址对应的指令前设置断点。</p>
+</li>
+</ol>
+<h3 id="观察点"><a href="#观察点" class="headerlink" title="观察点"></a>观察点</h3><p>观察点用于观察目标表达式的值是否发生变化。目标表达式的值发生变化时停止程序。</p>
+<table>
+<thead>
+<tr>
+<th>指令</th>
+<th>缩写</th>
+<th>作用</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>watch [&lt;expr&gt; [if &lt;cond&gt;]]</td>
+<td>w</td>
+<td>若目标表达式的值发生变化，则停止程序</td>
+</tr>
+<tr>
+<td>rwatch [&lt;expr&gt; [if &lt;cond&gt;]]</td>
+<td>rw</td>
+<td>若目标表达式被读，则停止程序</td>
+</tr>
+<tr>
+<td>awatch [&lt;expr&gt; [if &lt;cond&gt;]]</td>
+<td>aw</td>
+<td>若目标表达式被读或写，则停止程序</td>
+</tr>
+</tbody></table>
+<h3 id="捕捉点"><a href="#捕捉点" class="headerlink" title="捕捉点"></a>捕捉点</h3><p>捕获点用于捕获当前程序发生的行为，当指定行为发生时停止程序。</p>
+<table>
+<thead>
+<tr>
+<th>指令</th>
+<th>缩写</th>
+<th>作用</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>catch &lt;event&gt;</td>
+<td>cat</td>
+<td>发生event对应事件时停止程序</td>
+</tr>
+<tr>
+<td>tcatch &lt;event&gt;</td>
+<td>tc</td>
+<td>发生event对应事件时停止程序，只会触发一次</td>
+</tr>
+</tbody></table>
+<p>其中event如下：</p>
+<table>
+<thead>
+<tr>
+<th>event</th>
+<th>事件</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>throw</td>
+<td>C++抛出异常时</td>
+</tr>
+<tr>
+<td>catch</td>
+<td>C++捕获异常时</td>
+</tr>
+<tr>
+<td>exec</td>
+<td>调用exec时，只在HP-UX下有用（修改进程运行程序）</td>
+</tr>
+<tr>
+<td>fork</td>
+<td>调用fork时，只在HP-UX下有用（创建进程）</td>
+</tr>
+<tr>
+<td>vfork</td>
+<td>调用vfork时，只在HP-UX下有用（创建进程）</td>
+</tr>
+<tr>
+<td>load</td>
+<td>调用load时，只在HP-UX下有用（加载动态库）</td>
+</tr>
+<tr>
+<td>unload</td>
+<td>调用unload时，只在HP-UX下有用（卸载动态库）</td>
+</tr>
+</tbody></table>
+<h3 id="停止点控制"><a href="#停止点控制" class="headerlink" title="停止点控制"></a>停止点控制</h3><table>
+<thead>
+<tr>
+<th>指令</th>
+<th>缩写</th>
+<th>作用</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>clear [&lt;pos_range&gt;]</td>
+<td>cl</td>
+<td>删除指定位置范围的停止点</td>
+</tr>
+<tr>
+<td>delete [&lt;id_list&gt;]</td>
+<td>del</td>
+<td>根据停止点ID删除对应停止点</td>
+</tr>
+<tr>
+<td>disable [&lt;id_list&gt;]</td>
+<td>dis</td>
+<td>根据停止点ID停用对应停止点</td>
+</tr>
+<tr>
+<td>enable [&lt;id_list&gt;]</td>
+<td>en</td>
+<td>根据停止点ID启用对应停止点</td>
+</tr>
+<tr>
+<td>condition &lt;id&gt; &lt;cond&gt;</td>
+<td>cond</td>
+<td>给对应停止点添加触发条件</td>
+</tr>
+<tr>
+<td>ignore &lt;id&gt; &lt;ign_num&gt;</td>
+<td>ig</td>
+<td>忽略对应停止点指定次数</td>
+</tr>
+</tbody></table>
+<h2 id="信息输出"><a href="#信息输出" class="headerlink" title="信息输出"></a>信息输出</h2><table>
+<thead>
+<tr>
+<th>指令</th>
+<th>缩写</th>
+<th>作用</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>print &lt;expr&gt;</td>
+<td>p</td>
+<td>打印指定变量或表达式的值</td>
+</tr>
+<tr>
+<td>display &lt;expr&gt;</td>
+<td>disp</td>
+<td>追踪目标表达式的值，每次停止时打印追踪的表达式值</td>
+</tr>
+<tr>
+<td>info &lt;sign&gt;</td>
+<td>i</td>
+<td>打印gdb内部信息</td>
+</tr>
+<tr>
+<td>x &lt;addr&gt;</td>
+<td></td>
+<td>打印内存信息</td>
+</tr>
+</tbody></table>
+<h2 id="环境设置"><a href="#环境设置" class="headerlink" title="环境设置"></a>环境设置</h2><table>
+<thead>
+<tr>
+<th>指令</th>
+<th>缩写</th>
+<th>作用</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>set &lt;context&gt;</td>
+<td></td>
+<td>设置环境变量或gdb状态等</td>
+</tr>
+</tbody></table>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
     <link itemprop="mainEntityOfPage" href="http://example.com/2024/11/02/0/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1197,77 +1505,6 @@
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2024/09/21/0/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="Loujuch">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Code Bank">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2024/09/21/0/" class="post-title-link" itemprop="url">Windows 10 WSL2安装Debian</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">Posted on</span>
-              
-
-              <time title="Created: 2024-09-21 20:03:56 / Modified: 20:30:28" itemprop="dateCreated datePublished" datetime="2024-09-21T20:03:56+08:00">2024-09-21</time>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h2 id="启用相关特性"><a href="#启用相关特性" class="headerlink" title="启用相关特性"></a>启用相关特性</h2><p>以管理员运行CMD，输入：</p>
-<figure class="highlight bat"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">dism.exe /online /enable-feature /featurename:VirtualMachinePlatform /all /norestart</span><br><span class="line">Enable-WindowsOptionalFeature -Online -FeatureName VirtualMachinePlatform -NoRestart</span><br></pre></td></tr></table></figure>
-
-<p>之后重启Windows</p>
-<h2 id="安装WSL2-Debian"><a href="#安装WSL2-Debian" class="headerlink" title="安装WSL2 Debian"></a>安装WSL2 Debian</h2><p>以管理员运行CMD，先测试网络是否联通：</p>
-<figure class="highlight bat"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">wsl.exe --list --online</span><br></pre></td></tr></table></figure>
-
-<p>若输出<code>无法解析服务器的名称或地址</code>则说明无法访问<code>raw.githubusercontent.com</code>，解决方案详见我之前写的<code>解决raw.githubusercontent.com无法访问的问题</code>。</p>
-<p>确定能够访问后，运行如下命令：</p>
-<figure class="highlight bat"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">wsl.exe --install --no-distribution</span><br></pre></td></tr></table></figure>
-
-<p>之后重启Windows</p>
-<p>以管理员运行CMD，运行如下命令：</p>
-<figure class="highlight bat"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">wsl.exe --<span class="built_in">set</span>-default-version <span class="number">2</span></span><br><span class="line">wsl.exe --<span class="built_in">set</span>-default Debian</span><br><span class="line">wsl.exe --install --distribution Debian</span><br></pre></td></tr></table></figure>
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
@@ -1337,12 +1574,12 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">25</span>
+          <span class="site-state-item-count">26</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
       <div class="site-state-item site-state-tags">
-        <span class="site-state-item-count">16</span>
+        <span class="site-state-item-count">17</span>
         <span class="site-state-item-name">tags</span>
       </div>
   </nav>
