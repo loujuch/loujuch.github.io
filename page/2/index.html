@@ -145,6 +145,71 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2024/09/21/1/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Loujuch">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Code Bank">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2024/09/21/1/" class="post-title-link" itemprop="url">Windows 10与WSL的目录映射</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+              
+
+              <time title="Created: 2024-09-21 20:30:37 / Modified: 20:43:33" itemprop="dateCreated datePublished" datetime="2024-09-21T20:30:37+08:00">2024-09-21</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="WSL访问Windows文件"><a href="#WSL访问Windows文件" class="headerlink" title="WSL访问Windows文件"></a>WSL访问Windows文件</h2><p>Window的各个盘符会挂载到<code>WSL</code>的<code>/mnt</code>目录下，即C盘在<code>/mnt/c</code>、D盘在<code>/mnt/d</code>，以此类推。</p>
+<h2 id="Windows访问WSL文件"><a href="#Windows访问WSL文件" class="headerlink" title="Windows访问WSL文件"></a>Windows访问WSL文件</h2><ol>
+<li><p>在<code>WSL</code>的命令行中输入<code>explorer.exe .</code>，将使用windows资源管理器打开WSL当前目录。</p>
+</li>
+<li><p>WSL根目录挂在在<code>\\wsl$\&lt;系统版本&gt;</code>下，例如<code>\\wsl$\Debian</code>。</p>
+</li>
+</ol>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
     <link itemprop="mainEntityOfPage" href="http://example.com/2024/09/21/0/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1377,97 +1442,6 @@
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2024/08/24/0/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="Loujuch">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Code Bank">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2024/08/24/0/" class="post-title-link" itemprop="url">Debian 12搭建GStreamer开发环境</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">Posted on</span>
-
-              <time title="Created: 2024-08-24 12:06:45" itemprop="dateCreated datePublished" datetime="2024-08-24T12:06:45+08:00">2024-08-24</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2024-09-21 20:02:17" itemprop="dateModified" datetime="2024-09-21T20:02:17+08:00">2024-09-21</time>
-              </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h2 id="安装GStreamer"><a href="#安装GStreamer" class="headerlink" title="安装GStreamer"></a>安装<code>GStreamer</code></h2><p>使用以下命令进行安装<code>GStreamer</code>：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">sudo</span> apt-get install libgstreamer* gstreamer1.0-* -y</span><br></pre></td></tr></table></figure>
-
-<h2 id="测试编译环境"><a href="#测试编译环境" class="headerlink" title="测试编译环境"></a>测试编译环境</h2><p>使用如下命令查看<code>GStreamer</code>的编译命令。</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">pkg-config --cflags gstreamer-1.0 <span class="comment"># 获得头文件路径</span></span><br><span class="line">pkg-config --libs gstreamer-1.0   <span class="comment"># 获得库文件路径</span></span><br></pre></td></tr></table></figure>
-
-<p>使用如下<code>demo.c</code>进行测试：</p>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;gst/gst.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="type">int</span> <span class="title function_">main</span><span class="params">(<span class="type">int</span> argc, <span class="type">char</span> *argv[])</span> &#123;</span><br><span class="line">	GstElement *pipeline;</span><br><span class="line">	GstBus *bus;</span><br><span class="line">	GstMessage *msg;</span><br><span class="line"></span><br><span class="line">	<span class="comment">/* Initialize GStreamer */</span></span><br><span class="line">	gst_init(&amp;argc, &amp;argv);</span><br><span class="line"></span><br><span class="line">	<span class="comment">/* Build the pipeline, please change the URI to the correct one */</span></span><br><span class="line">	pipeline = gst_parse_launch(<span class="string">&quot;playbin uri=file:///root/video.mp4&quot;</span>, <span class="literal">NULL</span>);</span><br><span class="line"></span><br><span class="line">	<span class="comment">/* Start playing */</span></span><br><span class="line">	gst_element_set_state(pipeline, GST_STATE_PLAYING);</span><br><span class="line"></span><br><span class="line">	<span class="comment">/* Wait until error or EOS */</span></span><br><span class="line">	bus = gst_element_get_bus(pipeline);</span><br><span class="line">	msg = gst_bus_timed_pop_filtered(bus, GST_CLOCK_TIME_NONE,</span><br><span class="line">		GST_MESSAGE_ERROR | GST_MESSAGE_EOS);</span><br><span class="line"></span><br><span class="line">	<span class="comment">/* Free resources */</span></span><br><span class="line">	<span class="keyword">if</span>(msg != <span class="literal">NULL</span>)</span><br><span class="line">		gst_message_unref(msg);</span><br><span class="line">	gst_object_unref(bus);</span><br><span class="line">	gst_element_set_state(pipeline, GST_STATE_NULL);</span><br><span class="line">	gst_object_unref(pipeline);</span><br><span class="line">	<span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>使用如下命令进行编译：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gcc demo.c -o demo `pkg-config --cflags --libs gstreamer-1.0`</span><br></pre></td></tr></table></figure>
-
-<p>使用如下命令运行：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">./demo</span><br></pre></td></tr></table></figure>
-
-<p>出现一个窗口播放视频，证明安装成功：</p>
-<p><img src="/2024/08/24/0/0.jpg"></p>
-<h2 id="安装桌面环境"><a href="#安装桌面环境" class="headerlink" title="安装桌面环境"></a>安装桌面环境</h2><p>由于之前的开发环境中未安装桌面环境，为了能够看到<code>GStreamer</code>程序执行结果，因此需要安装新的桌面环境。</p>
-<p>使用下列命令最小化安装<code>gnome</code>，并设置<code>startx</code>启动：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">sudo</span> apt install xorg gnome-core</span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;exec gnome-session&quot;</span> &gt; ~/.xinitrc</span><br><span class="line">startx</span><br></pre></td></tr></table></figure>
-
-<p>之后可以看到启动后的<code>gnome</code>桌面。</p>
-<h2 id="设置默认进入命令行"><a href="#设置默认进入命令行" class="headerlink" title="设置默认进入命令行"></a>设置默认进入命令行</h2><p>为了提高开机速度和降低性能损耗，希望开机默认进入命令行，只在需要时进入桌面环境。</p>
-<p>修改<code>/etc/default/grub</code>文件，将<code>GRUB_CMDLINE_LINUX</code>的值从<code>&quot;&quot;</code>改为<code>&quot;text&quot;</code>。</p>
-<p>之后执行以下命令：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">sudo</span> update-grub</span><br><span class="line"><span class="built_in">sudo</span> systemctl set-default multi-user.target</span><br></pre></td></tr></table></figure>
-
-<p>重启后会发现直接进入命令行。</p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
@@ -1537,7 +1511,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">26</span>
+          <span class="site-state-item-count">27</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>

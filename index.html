@@ -145,6 +145,381 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2024/11/02/2/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Loujuch">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Code Bank">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2024/11/02/2/" class="post-title-link" itemprop="url">CPP中的线程同步机制</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+              
+
+              <time title="Created: 2024-11-02 15:22:07 / Modified: 22:02:52" itemprop="dateCreated datePublished" datetime="2024-11-02T15:22:07+08:00">2024-11-02</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="锁机制原理"><a href="#锁机制原理" class="headerlink" title="锁机制原理"></a>锁机制原理</h2><p>锁机制源于信号量，其实现与操作系统息息相关。一般而言，线程存在下图所示的5种状态，其中当线程处于阻塞状态时，不会调度到处理机中运行。</p>
+<p><img src="/2024/11/02/2/0.png" alt="线程状态"></p>
+<p>信号量机制则为在需互斥线程间共享一个数据，同时提供<code>P</code>、<code>V</code>两种操作，两种操作的行为如下：</p>
+<ol>
+<li><p><code>P</code>操作：将数据减一，当数据小于零时，将当前线程阻塞。</p>
+</li>
+<li><p><code>V</code>操作：将数据加一，若此时存在线程阻塞在该信号量时，则唤醒其中一个。</p>
+</li>
+</ol>
+<p>当信号量中使用布尔变量作为共享数据时，则仅允许一个线程进入临界区，实现并发互斥。通常将该信号量称为锁。</p>
+<h2 id="CPP中的锁"><a href="#CPP中的锁" class="headerlink" title="CPP中的锁"></a>CPP中的锁</h2><h3 id="分类"><a href="#分类" class="headerlink" title="分类"></a>分类</h3><p>在CPP中，根据不同的标准，大致可以分为如下部分：</p>
+<p><img src="/2024/11/02/2/1.png"></p>
+<p>其中，各标准的含义如下：</p>
+<ol>
+<li><p>可重入：在一个线程获得目标锁后，再次请求同一把锁时不会阻塞。</p>
+</li>
+<li><p>限时性：在线程阻塞等待目标锁时，可以设置超时时间，超时时即使未获得目标锁也会解除阻塞。（不是锁的通常分类，但CPP实现中将其区分出来。）</p>
+</li>
+<li><p>分读写：上锁操作分为读锁和写锁，其中，写锁和互斥锁相同，一旦加上便无法再加上其他写锁和读锁；读锁则可以加上多重，即加上后可以再加上其他读锁，但无法再加上写锁。</p>
+</li>
+</ol>
+<p>根据上述分类标准，CPP中的锁的属性如下：</p>
+<table>
+<thead>
+<tr>
+<th>锁类型</th>
+<th>可重入</th>
+<th>可限时</th>
+<th>分读写</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>mutex</td>
+<td>n</td>
+<td>n</td>
+<td>n</td>
+</tr>
+<tr>
+<td>timed_mutex</td>
+<td>n</td>
+<td>y</td>
+<td>n</td>
+</tr>
+<tr>
+<td>recursive_mutex</td>
+<td>y</td>
+<td>n</td>
+<td>n</td>
+</tr>
+<tr>
+<td>recursive_timed_mutex</td>
+<td>y</td>
+<td>y</td>
+<td>n</td>
+</tr>
+<tr>
+<td>shared_mutex</td>
+<td>n</td>
+<td>n</td>
+<td>y</td>
+</tr>
+<tr>
+<td>shared_timed_mutex</td>
+<td>n</td>
+<td>y</td>
+<td>y</td>
+</tr>
+</tbody></table>
+<h3 id="公共接口"><a href="#公共接口" class="headerlink" title="公共接口"></a>公共接口</h3><p>所有锁都提供了一些相似的接口，例如，所有的锁只能够调用默认构造函数创建，不能够进行拷贝和移动。其他相似接口如下：</p>
+<table>
+<thead>
+<tr>
+<th>接口</th>
+<th>含义</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>void lock();</td>
+<td>获得目标锁，若无法获得则阻塞当前线程。<br>如果使用的锁可重入，则同一线程可多次调用，否则会在第二次调用时发生死锁。</td>
+</tr>
+<tr>
+<td>bool try_lock() noexcept;</td>
+<td>尝试获得锁，若无法立即获得也会立即返回false，否则获得该锁并返回true。</td>
+</tr>
+<tr>
+<td>void unlock();</td>
+<td>释放目标锁。</td>
+</tr>
+</tbody></table>
+<p>上述接口所有的锁都具有，因此在锁的RAII机制中具有重要作用。</p>
+<h3 id="限时接口"><a href="#限时接口" class="headerlink" title="限时接口"></a>限时接口</h3><p>所有可限时的锁都提供了一些相似的接口，这些相似接口如下：</p>
+<table>
+<thead>
+<tr>
+<th>接口</th>
+<th>含义</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>template &lt;class Rep, class Period&gt;<br>bool try_lock_for(const std::chrono::duration&lt;Rep, Period&gt;&amp; timeout_duration);</td>
+<td>尝试获得目标锁，若未能在timeout_duration的时间内获得该锁则放弃申请，返回false；否则获得该锁，返回true。<br>timeout_duration小于等于timeout_duration.zero()时等价于try_lock。</td>
+</tr>
+<tr>
+<td>template &lt;class Clock, class Duration&gt;<br>bool try_lock_until(const std::chrono::time_point&lt;Clock, Duration&gt;&amp; timeout_time)</td>
+<td>尝试获得目标锁，若未能在时间timeout_time前内获得该锁则放弃申请，返回false；否则获得该锁，返回true。<br>timeout_time早于当前时间时等价于try_lock。</td>
+</tr>
+</tbody></table>
+<h3 id="读写接口"><a href="#读写接口" class="headerlink" title="读写接口"></a>读写接口</h3><p>所有分读写的锁使用lock接口作为写锁接口，都提供了一些相似的读锁接口，这些相似接口如下：</p>
+<table>
+<thead>
+<tr>
+<th>接口</th>
+<th>含义</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>void lock_shared();</td>
+<td>获得目标读锁，若无法获得则阻塞当前线程。</td>
+</tr>
+<tr>
+<td>bool try_lock_shared() noexcept;</td>
+<td>尝试获得目标读锁，若无法立即获得也会立即返回false，否则获得该锁并返回true。</td>
+</tr>
+<tr>
+<td>void unlock_shared();</td>
+<td>释放目标锁。</td>
+</tr>
+</tbody></table>
+<h3 id="读写限时接口"><a href="#读写限时接口" class="headerlink" title="读写限时接口"></a>读写限时接口</h3><p>所有分读写且可限时同时也提供了一些相似的可限时读锁接口，这些相似接口如下：</p>
+<table>
+<thead>
+<tr>
+<th>接口</th>
+<th>含义</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>template &lt;class Rep, class Period&gt;<br>bool try_lock_shared_for(const std::chrono::duration&lt;Rep, Period&gt;&amp; timeout_duration);</td>
+<td>尝试获得目标锁，若未能在timeout_duration的时间内获得该锁则放弃申请，返回false；否则获得该锁，返回true。<br>timeout_duration小于等于timeout_duration.zero()时等价于try_lock_shared。</td>
+</tr>
+<tr>
+<td>template &lt;class Clock, class Duration&gt;<br>bool try_lock_shared_until(const std::chrono::time_point&lt;Clock, Duration&gt;&amp; timeout_time)</td>
+<td>尝试获得目标锁，若未能在时间timeout_time前内获得该锁则放弃申请，返回false；否则获得该锁，返回true。<br>timeout_time早于当前时间时等价于try_lock_shared。</td>
+</tr>
+</tbody></table>
+<h2 id="CPP在锁上的RAII机制"><a href="#CPP在锁上的RAII机制" class="headerlink" title="CPP在锁上的RAII机制"></a>CPP在锁上的RAII机制</h2><p>CPP提供了四个类用于实现基于RAII的锁机制，这些类均能够在构造函数中锁上传入的锁，在析构函数中释放对应的锁，有效的解决了因代码改动新加分支等原因导致的锁未释放问题。</p>
+<p>同时，还允许通过传入参数进行锁定策略的修改，相应的锁定策略如下：</p>
+<table>
+<thead>
+<tr>
+<th>策略参数</th>
+<th>策略</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>&lt;默认&gt;</td>
+<td>调用传入参数的上锁方法，会发生阻塞。</td>
+</tr>
+<tr>
+<td>std::defer_lock</td>
+<td>假设当前未获得锁，之后会手动申请。</td>
+</tr>
+<tr>
+<td>std::try_to_lock</td>
+<td>尝试获取锁，但有可能失败，这不会阻塞。</td>
+</tr>
+<tr>
+<td>std::adopt_lock</td>
+<td>假设当前已经获取了锁。</td>
+</tr>
+<tr>
+<td>std::chrono::duration</td>
+<td>调用传入参数的lock_for方法，会发生阻塞。</td>
+</tr>
+<tr>
+<td>std::chrono::time_point</td>
+<td>调用传入参数的lock_until方法，会发生阻塞。</td>
+</tr>
+</tbody></table>
+<p>实现RAII机制的类的类型和特点如下：</p>
+<table>
+<thead>
+<tr>
+<th>类型</th>
+<th>特点</th>
+<th>支持策略</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>lock_guard</td>
+<td>不可移动，不可拷贝</td>
+<td>adopt_lock</td>
+</tr>
+<tr>
+<td>scoped_lock</td>
+<td>不可移动，不可拷贝。<br>能够一次申请多把锁。</td>
+<td>adopt_lock</td>
+</tr>
+<tr>
+<td>unique_lock</td>
+<td>可移动，不可拷贝</td>
+<td>defer_lock、try_to_lock、adopt_lock、duration、time_point</td>
+</tr>
+<tr>
+<td>shared_lock</td>
+<td>可移动，不可拷贝。<br>申请的是读锁。</td>
+<td>defer_lock、try_to_lock、adopt_lock、duration、time_point</td>
+</tr>
+</tbody></table>
+<p>同时，<code>unique_lock</code>和<code>shared_lock</code>还提供了如下接口：</p>
+<table>
+<thead>
+<tr>
+<th>接口</th>
+<th>含义</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>void lock();</td>
+<td>获得目标锁，若无法获得则阻塞当前线程。<br>如果使用的锁可重入，则同一线程可多次调用，否则会在第二次调用时发生死锁。</td>
+</tr>
+<tr>
+<td>bool try_lock() noexcept;</td>
+<td>尝试获得锁，若无法立即获得也会立即返回false，否则获得该锁并返回true。</td>
+</tr>
+<tr>
+<td>template &lt;class Rep, class Period&gt;<br>bool try_lock_for(const std::chrono::duration&lt;Rep, Period&gt;&amp; timeout_duration);</td>
+<td>尝试获得目标锁，若未能在timeout_duration的时间内获得该锁则放弃申请，返回false；否则获得该锁，返回true。<br>timeout_duration小于等于timeout_duration.zero()时等价于try_lock。</td>
+</tr>
+<tr>
+<td>template &lt;class Clock, class Duration&gt;<br>bool try_lock_until(const std::chrono::time_point&lt;Clock, Duration&gt;&amp; timeout_time)</td>
+<td>尝试获得目标锁，若未能在时间timeout_time前内获得该锁则放弃申请，返回false；否则获得该锁，返回true。<br>timeout_time早于当前时间时等价于try_lock。</td>
+</tr>
+<tr>
+<td>void unlock();</td>
+<td>释放目标锁。</td>
+</tr>
+<tr>
+<td>mutex_type* release() noexcept;</td>
+<td>未释放目标锁的放弃对目标锁的控制权。</td>
+</tr>
+<tr>
+<td>bool owns_lock() const noexcept;</td>
+<td>返回其是否持有已锁定的锁。</td>
+</tr>
+<tr>
+<td>explicit operator bool() const noexcept;</td>
+<td>隐式类型转换函数，相当于调用owns_lock。</td>
+</tr>
+</tbody></table>
+<h2 id="CPP提供的通用锁定方法"><a href="#CPP提供的通用锁定方法" class="headerlink" title="CPP提供的通用锁定方法"></a>CPP提供的通用锁定方法</h2><p>CPP提供以下能够获取锁的方法：</p>
+<table>
+<thead>
+<tr>
+<th>接口</th>
+<th>含义</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>template &lt;class Lockable1, class Lockable2, class… LockableN&gt;<br>void lock(Lockable1&amp; lock1, Lockable2&amp; lock2, LockableN&amp;… lockn);</td>
+<td>使用死锁避免算法尝试获得多把锁。</td>
+</tr>
+<tr>
+<td>template &lt;class Lockable1, class Lockable2, class… LockableN&gt;<br>int try_lock(Lockable1&amp; lock1, Lockable2&amp; lock2, LockableN&amp;… lockn);</td>
+<td>从头开始锁定传入的锁，如果存在失败的，则立即返回失败锁在传入参数的以0为底的下标；若都获取成功，返回-1。</td>
+</tr>
+</tbody></table>
+<h2 id="CPP条件变量"><a href="#CPP条件变量" class="headerlink" title="CPP条件变量"></a>CPP条件变量</h2><p>条件变量将会是CPP线程同步的重要机制，其原理和信号量类似，是通过线程的阻塞和唤醒实现的。</p>
+<p>CPP中提供了<code>condition_variable</code>和<code>condition_variable_any</code>作为条件变量，两者完全一致，唯一的区别是<code>condition_variable</code>wait时只能使用<code>std::unique&lt;std::mutex&gt;</code>作为参数而<code>condition_variable_any</code>wait时能够使用任意锁作为参数。</p>
+<p>两者提供了相似的接口，具体如下：</p>
+<table>
+<thead>
+<tr>
+<th>接口</th>
+<th>含义</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>void notify_one() noexcept;</td>
+<td>唤醒正在等待该条件变量的一个线程。</td>
+</tr>
+<tr>
+<td>void notify_all() noexcept;</td>
+<td>唤醒正在等待该条件变量的所有线程，即使被唤醒线程因为锁竞争等原因再次阻塞也不会再次等待条件变量信号。</td>
+</tr>
+<tr>
+<td>void wait(Lock&amp; lock);</td>
+<td>等待条件变量唤醒信号，要求lock已经由当前线程持有。</td>
+</tr>
+<tr>
+<td>void wait(Lock&amp; lock, Predicate pred);</td>
+<td>相当于while(!pred()) { wait(lock); }。</td>
+</tr>
+<tr>
+<td>std::cv_status wait_until(Lock&amp; lock, const std::chrono::time_point&lt;Clock, Duration&gt;&amp; abs_time);</td>
+<td>等待条件变量唤醒信号或到达指定时间，要求lock已经由当前线程持有。</td>
+</tr>
+<tr>
+<td>bool wait_until(Lock&amp; lock, const std::chrono::time_point&lt;Clock, Duration&gt;&amp; abs_time， Predicate pred);</td>
+<td>相当于while(!pred) { if(wait_until(lock, abs_time) &#x3D;&#x3D; std::cv_status::timeout) { return pred(); } } return true;。</td>
+</tr>
+<tr>
+<td>std::cv_status wait_for(Lock&amp; lock, const std::chrono::duration&lt;Rep, Period&gt;&amp; rel_time);</td>
+<td>相当于wait_until(lock, std::chrono::steady_clock::now() + rel_time)。</td>
+</tr>
+<tr>
+<td>bool wait_for(Lock&amp; lock, const std::chrono::duration&lt;Rep, Period&gt;&amp; rel_time， Predicate pred);</td>
+<td>相当于wait_until(lock, std::chrono::steady_clock::now() + rel_time, std::move(pred));。</td>
+</tr>
+</tbody></table>
+<p>其中，<code>std::cv_status</code>包含以下类型：</p>
+<ol>
+<li><p>std::cv_status::no_timeout：未超时</p>
+</li>
+<li><p>std::cv_status::timeout：超时</p>
+</li>
+</ol>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
     <link itemprop="mainEntityOfPage" href="http://example.com/2024/11/02/1/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -170,7 +545,7 @@
               <span class="post-meta-item-text">Posted on</span>
               
 
-              <time title="Created: 2024-11-02 12:48:42 / Modified: 13:24:37" itemprop="dateCreated datePublished" datetime="2024-11-02T12:48:42+08:00">2024-11-02</time>
+              <time title="Created: 2024-11-02 12:48:42 / Modified: 13:56:51" itemprop="dateCreated datePublished" datetime="2024-11-02T12:48:42+08:00">2024-11-02</time>
             </span>
 
           
@@ -1440,71 +1815,6 @@
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2024/09/21/1/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="Loujuch">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Code Bank">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2024/09/21/1/" class="post-title-link" itemprop="url">Windows 10与WSL的目录映射</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">Posted on</span>
-              
-
-              <time title="Created: 2024-09-21 20:30:37 / Modified: 20:43:33" itemprop="dateCreated datePublished" datetime="2024-09-21T20:30:37+08:00">2024-09-21</time>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h2 id="WSL访问Windows文件"><a href="#WSL访问Windows文件" class="headerlink" title="WSL访问Windows文件"></a>WSL访问Windows文件</h2><p>Window的各个盘符会挂载到<code>WSL</code>的<code>/mnt</code>目录下，即C盘在<code>/mnt/c</code>、D盘在<code>/mnt/d</code>，以此类推。</p>
-<h2 id="Windows访问WSL文件"><a href="#Windows访问WSL文件" class="headerlink" title="Windows访问WSL文件"></a>Windows访问WSL文件</h2><ol>
-<li><p>在<code>WSL</code>的命令行中输入<code>explorer.exe .</code>，将使用windows资源管理器打开WSL当前目录。</p>
-</li>
-<li><p>WSL根目录挂在在<code>\\wsl$\&lt;系统版本&gt;</code>下，例如<code>\\wsl$\Debian</code>。</p>
-</li>
-</ol>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
@@ -1574,7 +1884,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">26</span>
+          <span class="site-state-item-count">27</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
