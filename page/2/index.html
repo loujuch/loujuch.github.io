@@ -145,6 +145,203 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2024/09/22/0/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Loujuch">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Code Bank">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2024/09/22/0/" class="post-title-link" itemprop="url">OpenGL渲染管线简介</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+              
+
+              <time title="Created: 2024-09-22 09:46:06 / Modified: 11:14:32" itemprop="dateCreated datePublished" datetime="2024-09-22T09:46:06+08:00">2024-09-22</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="OpenGL渲染管线"><a href="#OpenGL渲染管线" class="headerlink" title="OpenGL渲染管线"></a>OpenGL渲染管线</h2><p>渲染管线表示的是一次完整的图形图像渲染过程。OpenGL使用的渲染管线是可编程渲染管线，能够对图形进行复杂操作。</p>
+<p>其基本流程如下：</p>
+<p><img src="/2024/09/22/0/5.png"></p>
+<ol>
+<li><p>顶点数组：输入的基础数据，只包含顶点信息。</p>
+</li>
+<li><p>顶点着色器：可编程部分，其操作对象为输入的顶点数据，通常用于调整坐标空间。</p>
+</li>
+<li><p>图元装配：按照装配规则和顶点顺序进行图元组装，OpenGL仅支持点、线和三角形平面。</p>
+</li>
+<li><p>几何着色器：可选的可编程部分，其操作对象为输入的图元数据，其可以动态的生成顶点和新的形状等。</p>
+</li>
+<li><p>光栅化：将输入的图元信息裁剪映射到窗口的像素上，并对图元上未处在顶点上的数据进行插值处理获得输入值。</p>
+</li>
+<li><p>片段着色器：可编程部分，其操作对象为光栅化输出的片段，通常用于着色。</p>
+</li>
+<li><p>片段测试：对输入的像素点进行测试，包括深度测试等，获得最后需要显示在屏幕上的像素。</p>
+</li>
+<li><p>帧缓冲：完成渲染的图片将会放置在帧缓冲区等待使用。</p>
+</li>
+</ol>
+<h2 id="顶点数组"><a href="#顶点数组" class="headerlink" title="顶点数组"></a>顶点数组</h2><p>原始的顶点数据，通常包含该顶点的位置、颜色、法线向量、纹理映射等信息。</p>
+<h2 id="顶点着色器"><a href="#顶点着色器" class="headerlink" title="顶点着色器"></a>顶点着色器</h2><p>顶点着色器从接收顶点数组信息，并对在各个顶点上进行处理。通常这些处理包括坐标空间转换等，同时还可以将部分数据传入后续着色器。</p>
+<h2 id="图元装配"><a href="#图元装配" class="headerlink" title="图元装配"></a>图元装配</h2><p>在图元装配阶段，将目前已有的顶点按照一定的规则装配为图元，OpenGL支持的图元有三角形、直线或者点精灵等。</p>
+<p>OpenGL支持的图元装配规则如下：</p>
+<p><img src="/2024/09/22/0/0.png"></p>
+<h2 id="几何着色器"><a href="#几何着色器" class="headerlink" title="几何着色器"></a>几何着色器</h2><p>几何着色器是一个可选的着色器，可以选择是否对其进行实现。</p>
+<p>几何着色器的操作单位为图元，其可以获得该图元所有相连顶点的输出信息，并修改顶点信息甚至创建新的顶点，从而修改图形的形状。</p>
+<h2 id="光栅化"><a href="#光栅化" class="headerlink" title="光栅化"></a>光栅化</h2><p>在OpenGL中，光栅化能够将图元投射到二维屏幕上，从而生成一个一个的待填充像素。在这一过程中，对于非顶点的像素片段，其输入值由其关联顶点通过插值计算得到。</p>
+<p>光栅化实质上是离散化，其将逻辑上连续的图形分割成为一个个离散的像素：</p>
+<p><img src="/2024/09/22/0/3.png"></p>
+<h2 id="片段着色器"><a href="#片段着色器" class="headerlink" title="片段着色器"></a>片段着色器</h2><p>片段着色器作用在每一个片段上，对于每一个片段，通过对所在图元的顶点输出进行插值获得相应的输入。这一部分一般用于赋予片段颜色、添加纹理或者处理光线等。</p>
+<h2 id="片段测试"><a href="#片段测试" class="headerlink" title="片段测试"></a>片段测试</h2><p>片段测试部分主要判断对应的片段是否需要进行显示或如何显示，其主要过程如下：</p>
+<p><img src="/2024/09/22/0/4.png"></p>
+<ol>
+<li><p>像素所有权测试：清除在当前视窗中但无法看到的像素。这种情况常见于窗口遮挡。</p>
+</li>
+<li><p>裁剪测试：裁剪测试用于限制绘制区域，只有在指定区域的像素才有机会被绘制。</p>
+</li>
+<li><p>多重采样片段操作：组合多个不同多边形产生的片段的颜色来决定最终的像素颜色，可以减少多边形边缘的走样现象。</p>
+</li>
+<li><p>模板测试：模板测试可以根据设置的模板对输入的图像进行过滤。当输入像素对应模板的值为0时被过滤；值为1时通过测试。</p>
+</li>
+<li><p>深度测试：用于测试像素深度，当深度测试关闭时，新的颜色将直接覆盖旧的颜色；深度测试开启后，只有当新像素的深度小于旧像素时，才会进行覆盖。</p>
+</li>
+<li><p>颜色混合：主要用于表现半透明效果，半透明时无法简单的用新颜色覆盖旧颜色，而是需要进行颜色混合。</p>
+</li>
+</ol>
+<h2 id="帧缓冲"><a href="#帧缓冲" class="headerlink" title="帧缓冲"></a>帧缓冲</h2><p>帧缓冲是一种数据缓冲区，其缓冲单元数量与一帧图像中的帧数量相同。常用的帧缓冲包含颜色缓冲、深度缓冲、模板缓冲等。</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2024/09/21/2/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Loujuch">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Code Bank">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2024/09/21/2/" class="post-title-link" itemprop="url">Debian安装Hexo环境并托管Github</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+              
+
+              <time title="Created: 2024-09-21 20:44:09 / Modified: 23:50:06" itemprop="dateCreated datePublished" datetime="2024-09-21T20:44:09+08:00">2024-09-21</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="设置GitHub免密登录"><a href="#设置GitHub免密登录" class="headerlink" title="设置GitHub免密登录"></a>设置GitHub免密登录</h2><ol>
+<li><p>安装<code>Git</code>：</p>
+<p> <code>sudo apt install git -y</code></p>
+</li>
+<li><p>配置<code>Git</code>：</p>
+<p> <code>git config --global user.name &lt;你的名称&gt;</code><br> <code>git config --global user.email &lt;你的邮箱&gt;</code></p>
+</li>
+<li><p><code>Git</code>生成密钥，输入以下命令，之后连续按3次回车：</p>
+<p> <code>ssh-keygen -t rsa -C &lt;你的邮箱&gt;</code></p>
+</li>
+<li><p>打印生成的公钥，将输出复制下来：</p>
+<p> <code>cat ~/.ssh/id_rsa.pub</code></p>
+</li>
+<li><p>将复制后的公钥添加到GitHub中：点击页面右上角头像——Setting——SSH And GPG keys——New SSH Keys，填写后添加即可。</p>
+</li>
+<li><p>运行如下命令，输入<code>yes</code>添加服务器，未报错则完成免密设置。</p>
+<p> <code>ssh -T git@github.com</code></p>
+</li>
+</ol>
+<h2 id="安装Hexo"><a href="#安装Hexo" class="headerlink" title="安装Hexo"></a>安装Hexo</h2><p>运行如下命令，运行前请确保能够访问<code>raw.githubusercontent.com</code>，详见我之前写的<code>解决raw.githubusercontent.com无法访问的问题</code>。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">sudo</span> apt install curl -y</span><br><span class="line">curl https://raw.githubusercontent.com/creationix/nvm/master/install.sh | bash</span><br><span class="line"><span class="built_in">export</span> NVM_NPM_ORG_MIRROR=https://npmmirror.com/mirrors/npm/</span><br><span class="line"><span class="built_in">export</span> NVM_NODEJS_ORG_MIRROR=https://npmmirror.com/mirrors/node/</span><br><span class="line">nvm install stable</span><br><span class="line">npm config <span class="built_in">set</span> registry https://registry.npmmirror.com</span><br><span class="line">npm install hexo-cli -g</span><br></pre></td></tr></table></figure>
+
+<h2 id="设置GitHub托管"><a href="#设置GitHub托管" class="headerlink" title="设置GitHub托管"></a>设置GitHub托管</h2><ol>
+<li><p>创建新的博客目录</p>
+<p> <code>hexo init .</code></p>
+</li>
+<li><p>在GitHub新建仓库，并复制下该仓库的Git URL。</p>
+</li>
+<li><p>修改博客根目录下的<code>_config.yml</code>：</p>
+<p> 将其中的<code>deploy</code>部分修改改为如下格式：</p>
+ <figure class="highlight yml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">deploy:</span></span><br><span class="line">    <span class="attr">type:</span> <span class="string">git</span></span><br><span class="line">    <span class="attr">repo:</span> <span class="string">&lt;目标仓库Git</span> <span class="string">URL&gt;</span></span><br><span class="line">    <span class="attr">branch:</span> <span class="string">main</span></span><br></pre></td></tr></table></figure></li>
+</ol>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
     <link itemprop="mainEntityOfPage" href="http://example.com/2024/09/21/1/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1103,345 +1300,6 @@
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2024/08/30/1/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="Loujuch">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Code Bank">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2024/08/30/1/" class="post-title-link" itemprop="url">CSAPP Data Lab</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">Posted on</span>
-
-              <time title="Created: 2024-08-30 22:35:30" itemprop="dateCreated datePublished" datetime="2024-08-30T22:35:30+08:00">2024-08-30</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2024-08-31 18:11:56" itemprop="dateModified" datetime="2024-08-31T18:11:56+08:00">2024-08-31</time>
-              </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h2 id="bitXor"><a href="#bitXor" class="headerlink" title="bitXor"></a>bitXor</h2><h3 id="题目"><a href="#题目" class="headerlink" title="题目"></a>题目</h3><p>描述：仅使用<code>~</code>和<code>&amp;</code>实现<code>^</code>操作。</p>
-<p>允许使用的操作符：<code>~</code> <code>&amp;</code></p>
-<p>允许使用的操作符最大数量：14</p>
-<h3 id="实现"><a href="#实现" class="headerlink" title="实现"></a>实现</h3><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">int</span> <span class="title">bitXor</span><span class="params">(<span class="type">int</span> x, <span class="type">int</span> y)</span> </span>&#123;</span><br><span class="line">	<span class="keyword">return</span> (~((~x) &amp; (~y))) &amp; (~(x &amp; y));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h3 id="解析"><a href="#解析" class="headerlink" title="解析"></a>解析</h3><p>有：</p>
-<ol>
-<li><p><code>x ^ y = (x | y) &amp; (~(x &amp; y))</code></p>
-</li>
-<li><p><code>x | y = ~((~x) &amp; (~y))</code></p>
-</li>
-</ol>
-<p>故：</p>
-<p><code>x ^ y = (~((~x) &amp; (~y))) &amp; (~(x &amp; y))</code></p>
-<h2 id="tmin"><a href="#tmin" class="headerlink" title="tmin"></a>tmin</h2><h3 id="题目-1"><a href="#题目-1" class="headerlink" title="题目"></a>题目</h3><p>描述：返回二进制补码整数的最小值。</p>
-<p>允许使用的操作符：<code>！</code> <code>~</code> <code>&amp;</code> <code>^</code> <code>|</code> <code>+</code> <code>&lt;&lt;</code> <code>&gt;&gt;</code></p>
-<p>允许使用的操作符最大数量：4</p>
-<h3 id="实现-1"><a href="#实现-1" class="headerlink" title="实现"></a>实现</h3><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">int</span> <span class="title">tmin</span><span class="params">(<span class="type">void</span>)</span> </span>&#123;</span><br><span class="line">	<span class="keyword">return</span> (<span class="number">1</span> &lt;&lt; <span class="number">31</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h3 id="解析-1"><a href="#解析-1" class="headerlink" title="解析"></a>解析</h3><p><code>INT_MIN</code>为<code>0b10[31]</code>，故将<code>1</code>左移31位即可</p>
-<h2 id="isTmax"><a href="#isTmax" class="headerlink" title="isTmax"></a>isTmax</h2><h3 id="题目-2"><a href="#题目-2" class="headerlink" title="题目"></a>题目</h3><p>描述：判断输入参数是否是二进制补码整数所能表示的最大值，是则返回1，否则返回0。</p>
-<p>允许使用的操作符：<code>！</code> <code>~</code> <code>&amp;</code> <code>^</code> <code>|</code> <code>+</code></p>
-<p>允许使用的操作符最大数量：10</p>
-<h3 id="实现-2"><a href="#实现-2" class="headerlink" title="实现"></a>实现</h3><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">int</span> <span class="title">isTmax</span><span class="params">(<span class="type">int</span> x)</span> </span>&#123;</span><br><span class="line">	<span class="keyword">return</span> !(((x + <span class="number">1</span>) ^ (~x)) | !(~x));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h3 id="解析-2"><a href="#解析-2" class="headerlink" title="解析"></a>解析</h3><p><code>INT_MAX</code>为<code>0b01[31]</code>，可知<code>~INT_MAX = INT_MAX + 1</code>。下面证明除了<code>INT_MAX</code>和<code>0b1[32]</code>外无其他数使得<code>~x = x + 1</code>：</p>
-<blockquote>
-<p>对于任何<code>a</code>，除了<code>0b1[32]</code>外，均有<code>a = A01[n]</code>。此时<code>~a = ~A10[n]</code>，<code>a + 1 = A10[n]</code>，若希望<code>~a = a + 1</code>，要求<code>A = ~A</code>，这只有当A为空的情况下成立。</p>
-<p>同时，<code>~0b1[32] = 0b0[32]</code>，<code>0b1[32] + 1 = 0b0[32]</code>，同样成立。</p>
-</blockquote>
-<p>因此，本题实质上进行如下判断：</p>
-<ol>
-<li><p><code>x + 1 == ~x</code>，当<code>(x + 1) ^ ~x</code>为零时成立</p>
-</li>
-<li><p><code>x != 0b0[32]</code>，当<code>~x</code>不为零时成立。</p>
-</li>
-</ol>
-<h2 id="allOddBits"><a href="#allOddBits" class="headerlink" title="allOddBits"></a>allOddBits</h2><h3 id="题目-3"><a href="#题目-3" class="headerlink" title="题目"></a>题目</h3><p>描述：判断输入参数的所有奇数位上的数值是否为1，下标从0开始。是则返回1，否则返回0。</p>
-<p>允许使用的操作符：<code>！</code> <code>~</code> <code>&amp;</code> <code>^</code> <code>|</code> <code>+</code> <code>&lt;&lt;</code> <code>&gt;&gt;</code></p>
-<p>允许使用的操作符最大数量：12</p>
-<h3 id="实现-3"><a href="#实现-3" class="headerlink" title="实现"></a>实现</h3><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">int</span> <span class="title">allOddBits</span><span class="params">(<span class="type">int</span> x)</span> </span>&#123;</span><br><span class="line">	x = x &gt;&gt; <span class="number">1</span>;</span><br><span class="line">	x = x &amp; (x &gt;&gt; <span class="number">2</span>);</span><br><span class="line">	x = x &amp; (x &gt;&gt; <span class="number">4</span>);</span><br><span class="line">	x = x &amp; (x &gt;&gt; <span class="number">8</span>);</span><br><span class="line">	x = x &amp; (x &gt;&gt; <span class="number">16</span>);</span><br><span class="line">	<span class="keyword">return</span> x &amp; <span class="number">1</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h3 id="解析-3"><a href="#解析-3" class="headerlink" title="解析"></a>解析</h3><p>其实本题最简单的思路是构造<code>mask = 0xAAAAAAAA</code>，判断<code>x &amp; mask</code>是否等于<code>mask</code>即可。</p>
-<p>目前采用的思路是遍历。利用<code>&amp;</code>操作符的<code>x &amp; (y &amp; z) = x &amp; y &amp; z</code>的性质逐层计算，最终获得结果。原理示意图如下图：</p>
-<p><img src="/2024/08/30/1/0.bmp"></p>
-<h2 id="negate"><a href="#negate" class="headerlink" title="negate"></a>negate</h2><h3 id="题目-4"><a href="#题目-4" class="headerlink" title="题目"></a>题目</h3><p>描述：返回输入参数的相反数。</p>
-<p>允许使用的操作符：<code>！</code> <code>~</code> <code>&amp;</code> <code>^</code> <code>|</code> <code>+</code> <code>&lt;&lt;</code> <code>&gt;&gt;</code></p>
-<p>允许使用的操作符最大数量：5</p>
-<h3 id="实现-4"><a href="#实现-4" class="headerlink" title="实现"></a>实现</h3><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">int</span> <span class="title">negate</span><span class="params">(<span class="type">int</span> x)</span> </span>&#123;</span><br><span class="line">	<span class="keyword">return</span> (~x) + <span class="number">1</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h3 id="解析-4"><a href="#解析-4" class="headerlink" title="解析"></a>解析</h3><p><code>x + (-x) = 0b0[32] = 0b1[32] + 0b1</code></p>
-<p>所以有：</p>
-<p><code>(-x) = 0b1[32] + 0b1 - x = (~x) + 0b1</code></p>
-<h2 id="isAsciiDigit"><a href="#isAsciiDigit" class="headerlink" title="isAsciiDigit"></a>isAsciiDigit</h2><h3 id="题目-5"><a href="#题目-5" class="headerlink" title="题目"></a>题目</h3><p>描述：返回输入参数的值是否在[0x30, 0x39]区间内，是则返回1，否则返回0。</p>
-<p>允许使用的操作符：<code>！</code> <code>~</code> <code>&amp;</code> <code>^</code> <code>|</code> <code>+</code> <code>&lt;&lt;</code> <code>&gt;&gt;</code></p>
-<p>允许使用的操作符最大数量：15</p>
-<h3 id="实现-5"><a href="#实现-5" class="headerlink" title="实现"></a>实现</h3><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">int</span> <span class="title">isAsciiDigit</span><span class="params">(<span class="type">int</span> x)</span> </span>&#123;</span><br><span class="line">	<span class="keyword">return</span> !((x &amp; (~<span class="number">0x3f</span>)) | ((x &amp; <span class="number">0x30</span>) ^ <span class="number">0x30</span>) |</span><br><span class="line">		((!!(x &amp; <span class="number">0x8</span>)) &amp; (!!((x &amp; <span class="number">0xe</span>) ^ <span class="number">0x8</span>))));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h3 id="解析-5"><a href="#解析-5" class="headerlink" title="解析"></a>解析</h3><p>经分析，有如下条件：</p>
-<ol>
-<li><p><code>x &lt;= 0x3f</code>，故有<code>x &amp; (~0x3f)</code>为0</p>
-</li>
-<li><p><code>x &gt;= 0x30</code>，故有<code>(x &amp; 0x30) ^ 0x30</code>为0</p>
-</li>
-<li><p><code>x &lt;= 0x39</code>，根据其对应二进制特征，可分为以下两类：</p>
-<ul>
-<li><p><code>0x30 &lt;= x &lt;= 0x37</code>，其特征为后4个比特为<code>0b0xxx</code>，故有<code>x &amp; 0x8</code>为0</p>
-</li>
-<li><p><code>0x38 &lt;= x &lt;= 0x39</code>，其特征为后4个比特为<code>0b100x</code>，故有<code>(x &amp; 0xe) ^ 0x8</code>为0</p>
-</li>
-</ul>
-<p> 上述两项只要有一项为0即可，故采用<code>&amp;</code>进行连接。为了保证二者均不为0时结果也不为0，使用<code>!!</code>对剩下的位数进行对齐。</p>
-</li>
-</ol>
-<h2 id="conditional"><a href="#conditional" class="headerlink" title="conditional"></a>conditional</h2><h3 id="题目-6"><a href="#题目-6" class="headerlink" title="题目"></a>题目</h3><p>描述：要求函数行为与<code>x ? y : z</code>一致。</p>
-<p>允许使用的操作符：<code>！</code> <code>~</code> <code>&amp;</code> <code>^</code> <code>|</code> <code>+</code> <code>&lt;&lt;</code> <code>&gt;&gt;</code></p>
-<p>允许使用的操作符最大数量：16</p>
-<h3 id="实现-6"><a href="#实现-6" class="headerlink" title="实现"></a>实现</h3><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">int</span> <span class="title">conditional</span><span class="params">(<span class="type">int</span> x, <span class="type">int</span> y, <span class="type">int</span> z)</span> </span>&#123;</span><br><span class="line">	x = !x;</span><br><span class="line">	x = x | (x &lt;&lt; <span class="number">1</span>);</span><br><span class="line">	x = x | (x &lt;&lt; <span class="number">2</span>);</span><br><span class="line">	x = x | (x &lt;&lt; <span class="number">4</span>);</span><br><span class="line">	x = x | (x &lt;&lt; <span class="number">8</span>);</span><br><span class="line">	x = x | (x &lt;&lt; <span class="number">16</span>);</span><br><span class="line">	<span class="keyword">return</span> ((~x) &amp; y) | (x &amp; z);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h3 id="解析-6"><a href="#解析-6" class="headerlink" title="解析"></a>解析</h3><p>做出如下<code>mask</code>，当<code>x = 0</code>时，<code>mask = 0b1[32]</code>；当<code>x != 0</code>时，<code>mask = 0b0[32]</code>。之后对输入进行<code>&amp;</code>操作即可。</p>
-<h2 id="isLessOrEqual"><a href="#isLessOrEqual" class="headerlink" title="isLessOrEqual"></a>isLessOrEqual</h2><h3 id="题目-7"><a href="#题目-7" class="headerlink" title="题目"></a>题目</h3><p>描述：判断是否有<code>x &lt;= y</code>，是则返回1，否则返回0。</p>
-<p>允许使用的操作符：<code>！</code> <code>~</code> <code>&amp;</code> <code>^</code> <code>|</code> <code>+</code> <code>&lt;&lt;</code> <code>&gt;&gt;</code></p>
-<p>允许使用的操作符最大数量：24</p>
-<h3 id="实现-7"><a href="#实现-7" class="headerlink" title="实现"></a>实现</h3><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">int</span> <span class="title">isLessOrEqual</span><span class="params">(<span class="type">int</span> x, <span class="type">int</span> y)</span> </span>&#123;</span><br><span class="line">	<span class="keyword">return</span> !((((~x) + <span class="number">1</span> + y) &amp; (<span class="number">1</span> &lt;&lt; <span class="number">31</span>)));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h3 id="解析-7"><a href="#解析-7" class="headerlink" title="解析"></a>解析</h3><p>进行如下判断：<code>(-x) + y &gt;= 0</code>。又有<code>(-x) = ~x + 0b1</code>。故进行计算后判断符号位即可。</p>
-<h2 id="logicalNeg"><a href="#logicalNeg" class="headerlink" title="logicalNeg"></a>logicalNeg</h2><h3 id="题目-8"><a href="#题目-8" class="headerlink" title="题目"></a>题目</h3><p>描述：行为应与<code>!x</code>相同。</p>
-<p>允许使用的操作符：<code>~</code> <code>&amp;</code> <code>^</code> <code>|</code> <code>+</code> <code>&lt;&lt;</code> <code>&gt;&gt;</code></p>
-<p>允许使用的操作符最大数量：12</p>
-<h3 id="实现-8"><a href="#实现-8" class="headerlink" title="实现"></a>实现</h3><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">int</span> <span class="title">logicalNeg</span><span class="params">(<span class="type">int</span> x)</span> </span>&#123;</span><br><span class="line">	x = x | (x &gt;&gt; <span class="number">1</span>);</span><br><span class="line">	x = x | (x &gt;&gt; <span class="number">2</span>);</span><br><span class="line">	x = x | (x &gt;&gt; <span class="number">4</span>);</span><br><span class="line">	x = x | (x &gt;&gt; <span class="number">8</span>);</span><br><span class="line">	x = x | (x &gt;&gt; <span class="number">16</span>);</span><br><span class="line">	<span class="keyword">return</span> (~x) &amp; <span class="number">1</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h3 id="解析-8"><a href="#解析-8" class="headerlink" title="解析"></a>解析</h3><p>制作如下<code>mask</code>：<code>x = 0</code>时，<code>mask = 0b0[32]</code>，<code>x != 0</code>时，<code>mask = 0b1[32]</code>。最后按位取反并取最后一位即可。</p>
-<h2 id="howManyBits"><a href="#howManyBits" class="headerlink" title="howManyBits"></a>howManyBits</h2><h3 id="题目-9"><a href="#题目-9" class="headerlink" title="题目"></a>题目</h3><p>描述：返回表示<code>x</code>需要的最少位数。</p>
-<p>允许使用的操作符：<code>!</code> <code>~</code> <code>&amp;</code> <code>^</code> <code>|</code> <code>+</code> <code>&lt;&lt;</code> <code>&gt;&gt;</code></p>
-<p>允许使用的操作符最大数量：90</p>
-<h3 id="实现-9"><a href="#实现-9" class="headerlink" title="实现"></a>实现</h3><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">int</span> <span class="title">howManyBits</span><span class="params">(<span class="type">int</span> x)</span> </span>&#123;</span><br><span class="line">	<span class="type">int</span> mark2;</span><br><span class="line">	<span class="type">int</span> mark4;</span><br><span class="line">	<span class="type">int</span> mark8;</span><br><span class="line">	<span class="type">int</span> mark16;</span><br><span class="line">	<span class="type">int</span> mark32;</span><br><span class="line"></span><br><span class="line">	mark2 = <span class="number">0x55</span>;</span><br><span class="line">	mark2 |= mark2 &lt;&lt; <span class="number">8</span>;</span><br><span class="line">	mark2 |= mark2 &lt;&lt; <span class="number">16</span>;</span><br><span class="line"></span><br><span class="line">	mark4 = <span class="number">0x33</span>;</span><br><span class="line">	mark4 |= mark4 &lt;&lt; <span class="number">8</span>;</span><br><span class="line">	mark4 |= mark4 &lt;&lt; <span class="number">16</span>;</span><br><span class="line"></span><br><span class="line">	mark8 = <span class="number">0xf</span>;</span><br><span class="line">	mark8 |= mark8 &lt;&lt; <span class="number">8</span>;</span><br><span class="line">	mark8 |= mark8 &lt;&lt; <span class="number">16</span>;</span><br><span class="line"></span><br><span class="line">	mark16 = <span class="number">0xff</span>;</span><br><span class="line">	mark16 |= mark16 &lt;&lt; <span class="number">16</span>;</span><br><span class="line"></span><br><span class="line">	mark32 = <span class="number">0xff</span>;</span><br><span class="line">	mark32 |= mark32 &lt;&lt; <span class="number">8</span>;</span><br><span class="line"></span><br><span class="line">	<span class="comment">// 将负数取反，正数不变</span></span><br><span class="line">	x = x ^ (x &gt;&gt; <span class="number">31</span>);</span><br><span class="line"></span><br><span class="line">	<span class="comment">// 将x转化为0b0[n]1[32-n]的形式</span></span><br><span class="line">	x = x | (x &gt;&gt; <span class="number">1</span>);</span><br><span class="line">	x = x | (x &gt;&gt; <span class="number">2</span>);</span><br><span class="line">	x = x | (x &gt;&gt; <span class="number">4</span>);</span><br><span class="line">	x = x | (x &gt;&gt; <span class="number">8</span>);</span><br><span class="line">	x = x | (x &gt;&gt; <span class="number">16</span>);</span><br><span class="line"></span><br><span class="line">	<span class="comment">// 对1的个数进行求和</span></span><br><span class="line">	x = (x &amp; mark2) + ((x &gt;&gt; <span class="number">1</span>) &amp; mark2);</span><br><span class="line">	x = (x &amp; mark4) + ((x &gt;&gt; <span class="number">2</span>) &amp; mark4);</span><br><span class="line">	x = (x &amp; mark8) + ((x &gt;&gt; <span class="number">4</span>) &amp; mark8);</span><br><span class="line">	x = (x &amp; mark16) + ((x &gt;&gt; <span class="number">8</span>) &amp; mark16);</span><br><span class="line">	x = (x &amp; mark32) + ((x &gt;&gt; <span class="number">16</span>) &amp; mark32);</span><br><span class="line"></span><br><span class="line">	<span class="comment">// 加上符号位</span></span><br><span class="line">	<span class="keyword">return</span> x + <span class="number">1</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h3 id="解析-9"><a href="#解析-9" class="headerlink" title="解析"></a>解析</h3><p>本次实验中最难的题，根据题意，其实际上是在找去除多余符号位后的整数补码表示位数。</p>
-<p>首先，为了简化情况，观察到<code>howManyBits(x) = howManyBits(~x)</code>，于是选择将负数取反。这一步中涉及一些位运算技巧：</p>
-<pre><code>1. 对0的`^`相当于取反，对1的`^`则保持原值。
-
-2. `int`的右移为算数右移，右移31位的结果相当于获得一个由符号位填充的`mask`。
-</code></pre>
-<p>之后，为了便于计算，将x转化为<code>0b0[n]1[32-n]</code>的形式（之前的负数要取反也是为了统一该步的操作）。</p>
-<p>接下来，使用<code>mask</code>和移位操作，统计x中1的个数，其过程示意图如下图：</p>
-<p><img src="/2024/08/30/1/1.bmp"></p>
-<p>将得到的x加上一位符号位获得最终结果。</p>
-<h2 id="floatScale2"><a href="#floatScale2" class="headerlink" title="floatScale2"></a>floatScale2</h2><h3 id="题目-10"><a href="#题目-10" class="headerlink" title="题目"></a>题目</h3><p>描述：返回<code>2 * x</code>的二进制表示，对于<code>INF</code>和<code>NaN</code>原样返回。</p>
-<p>允许使用的操作符：任意<code>int/unsigned</code>的算数运算符、<code>||</code>、<code>&amp;&amp;</code>运算符和<code>if</code>、<code>while</code>关键字。</p>
-<p>允许使用的操作符最大数量：30</p>
-<h3 id="实现-10"><a href="#实现-10" class="headerlink" title="实现"></a>实现</h3><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">unsigned</span> <span class="title">floatScale2</span><span class="params">(<span class="type">unsigned</span> uf)</span> </span>&#123;</span><br><span class="line">	<span class="type">unsigned</span> s = uf &gt;&gt; <span class="number">31</span>;</span><br><span class="line">	<span class="type">unsigned</span> exp = (uf &gt;&gt; <span class="number">23</span>) &amp; <span class="number">0xff</span>;</span><br><span class="line">	<span class="type">unsigned</span> frac = uf &amp; <span class="number">0x7fffff</span>;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span>(exp == <span class="number">0xff</span>) &#123;</span><br><span class="line">		<span class="keyword">return</span> uf;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span>(exp == <span class="number">0</span>) &#123;</span><br><span class="line">		frac &lt;&lt;= <span class="number">1</span>;</span><br><span class="line">	&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">		exp += <span class="number">1</span>;</span><br><span class="line"></span><br><span class="line">		<span class="keyword">if</span>(exp == <span class="number">0xff</span>) &#123;</span><br><span class="line">			frac = <span class="number">0</span>;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> (s &lt;&lt; <span class="number">31</span>) | (exp &lt;&lt; <span class="number">23</span>) | frac;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h3 id="解析-10"><a href="#解析-10" class="headerlink" title="解析"></a>解析</h3><p>根据浮点数的结构，将其拆分成<code>s</code>、<code>exp</code>和<code>frac</code>。</p>
-<ol>
-<li><p>对于<code>NaN</code>和<code>INF</code>，直接返回原数据。</p>
-</li>
-<li><p>对于非规格化数，将<code>frac</code>右移一位即可。注意，此时非规格化数可能会转化成规格化数，但转化后的结果为<code>exp = 1</code>和<code>frac &amp; ~0x800000</code>，在组装成为浮点数后的结果与直接进行组装相同，故不需要进行特殊处理。</p>
-</li>
-<li><p>对于规格化数，需要将<code>exp</code>加1。但在操作后有可能导致溢出，故需要将<code>frac</code>置0，将结果设为<code>INF</code>而不是<code>NaN</code>。</p>
-</li>
-</ol>
-<h2 id="floatFloat2Int"><a href="#floatFloat2Int" class="headerlink" title="floatFloat2Int"></a>floatFloat2Int</h2><h3 id="题目-11"><a href="#题目-11" class="headerlink" title="题目"></a>题目</h3><p>描述：返回<code>(int)x</code>的返回值，对于<code>INF</code>和<code>NaN</code>和溢出值返回<code>0x80000000</code>。</p>
-<p>允许使用的操作符：任意<code>int/unsigned</code>的算数运算符、<code>||</code>、<code>&amp;&amp;</code>运算符和<code>if</code>、<code>while</code>关键字。</p>
-<p>允许使用的操作符最大数量：30</p>
-<h3 id="实现-11"><a href="#实现-11" class="headerlink" title="实现"></a>实现</h3><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">int</span> <span class="title">floatFloat2Int</span><span class="params">(<span class="type">unsigned</span> uf)</span> </span>&#123;</span><br><span class="line">	<span class="type">unsigned</span> s = uf &gt;&gt; <span class="number">31</span>;</span><br><span class="line">	<span class="type">unsigned</span> exp = (uf &gt;&gt; <span class="number">23</span>) &amp; <span class="number">0xff</span>;</span><br><span class="line">	<span class="type">unsigned</span> frac = uf &amp; <span class="number">0x7fffff</span>;</span><br><span class="line"></span><br><span class="line">	frac |= <span class="number">0x800000</span>;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span>(exp &lt;= <span class="number">0x96</span>) &#123;</span><br><span class="line">		<span class="keyword">if</span>(exp &lt; <span class="number">0x7f</span>) &#123;</span><br><span class="line">			<span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">		frac &gt;&gt;= <span class="number">0x96</span> - exp;</span><br><span class="line">	&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">		<span class="keyword">if</span>(exp &gt;= <span class="number">0x9e</span>) &#123;</span><br><span class="line">			<span class="keyword">return</span> <span class="number">0x80000000</span>;</span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">		frac &lt;&lt;= exp - <span class="number">0x96</span>;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> s ? (~frac) + <span class="number">1</span> : frac;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h3 id="解析-11"><a href="#解析-11" class="headerlink" title="解析"></a>解析</h3><p>根据浮点数的结构，将其拆分成<code>s</code>、<code>exp</code>和<code>frac</code>。</p>
-<ol>
-<li><p>对于<code>INF</code>和<code>NaN</code>，直接返回<code>0x80000000</code>。</p>
-</li>
-<li><p>对于非规格化数，直接返回<code>0</code>。</p>
-</li>
-<li><p>对于规格化数，需要现根据<code>exp</code>判断其是否溢出或为0。注意，由于我们将目前的计算视为正数，故原则上需要特别<code>INT_MIN</code>，但应为本次溢出返回值即为<code>INT_MIN</code>，因此可以两者进行合并处理，只要发生正数溢出便返回<code>INT_MIN</code>。</p>
-</li>
-<li><p>根据符号位将其转化成为补码。</p>
-</li>
-</ol>
-<blockquote>
-<p>代码中各个数值的出现的原因：</p>
-<ol>
-<li><p>0x7f：即加上偏置值后<code>exp</code>实际为0时的<code>exp</code>值。若<code>exp</code>小于该值，则该浮点数不存在整数部分。</p>
-</li>
-<li><p>0x96：因为在取<code>frac</code>的时候是整数形式，因此实际上暗中给其加上了一层偏置，大小为<code>frac</code>小数部分位数<code>23</code>。故有<code>0x7f + 0x17 = 0x96</code>。若<code>exp</code>小于该值，则<code>frac</code>需要右移，否则需要左移。</p>
-</li>
-<li><p>0x9e：对于规格化整数，在其<code>frac</code>中的整数部分的1到达符号位时发生溢出，此时右移位数为31。固有<code>0x7f + 0x1f = 0x9e</code>。若<code>exp</code>小于该值，则规格化数不会溢出，否则发生溢出。</p>
-</li>
-</ol>
-</blockquote>
-<h2 id="floatFloat2Int-1"><a href="#floatFloat2Int-1" class="headerlink" title="floatFloat2Int"></a>floatFloat2Int</h2><h3 id="题目-12"><a href="#题目-12" class="headerlink" title="题目"></a>题目</h3><p>描述：返回<code>2.0 ^ x</code>的二进制表示，如果结果过大则返回<code>+INF</code></p>
-<p>允许使用的操作符：任意<code>int/unsigned</code>的算数运算符、<code>||</code>、<code>&amp;&amp;</code>运算符和<code>if</code>、<code>while</code>关键字。</p>
-<p>允许使用的操作符最大数量：30</p>
-<h3 id="实现-12"><a href="#实现-12" class="headerlink" title="实现"></a>实现</h3><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">unsigned</span> <span class="title">floatPower2</span><span class="params">(<span class="type">int</span> x)</span> </span>&#123;</span><br><span class="line">	<span class="keyword">if</span>(x &gt;= <span class="number">128</span>) &#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="number">0x7f800000</span>;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span>(x &gt; <span class="number">-127</span>) &#123;</span><br><span class="line">		<span class="keyword">return</span> (<span class="number">0x7f</span> + x) &lt;&lt; <span class="number">23</span>;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span>(x &lt; <span class="number">-150</span>) &#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> <span class="number">0x800000</span> &gt;&gt; (-x - <span class="number">126</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h3 id="解析-12"><a href="#解析-12" class="headerlink" title="解析"></a>解析</h3><ol>
-<li><p>当<code>x</code>大于等于128时，超过浮点数最大值，发生溢出，返回<code>+INF</code>。</p>
-</li>
-<li><p>当<code>x</code>大于-127小于128时，是规格化数，只需要处理<code>exp</code>部分。</p>
-</li>
-<li><p>当<code>x</code>小于-150时（-150 &#x3D; -127 + -23），超出浮点数精度，返回0。</p>
-</li>
-<li><p>否则，为非规格化数，只需要处理<code>frac</code>部分。</p>
-</li>
-</ol>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2024/08/24/1/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="Loujuch">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Code Bank">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2024/08/24/1/" class="post-title-link" itemprop="url">GStreamer学习笔记(1)</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">Posted on</span>
-
-              <time title="Created: 2024-08-24 16:39:10" itemprop="dateCreated datePublished" datetime="2024-08-24T16:39:10+08:00">2024-08-24</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2024-09-05 22:45:05" itemprop="dateModified" datetime="2024-09-05T22:45:05+08:00">2024-09-05</time>
-              </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h2 id="Demo"><a href="#Demo" class="headerlink" title="Demo"></a>Demo</h2><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;gst/gst.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">(<span class="type">int</span> argc, <span class="type">char</span> *argv[])</span> </span>&#123;</span><br><span class="line">	GstElement *pipeline;</span><br><span class="line">	GstBus *bus;</span><br><span class="line">	GstMessage *msg;</span><br><span class="line"></span><br><span class="line">	<span class="comment">/* Initialize GStreamer */</span></span><br><span class="line">	<span class="built_in">gst_init</span>(&amp;argc, &amp;argv);</span><br><span class="line"></span><br><span class="line">	<span class="comment">/* Build the pipeline */</span></span><br><span class="line">	pipeline = <span class="built_in">gst_parse_launch</span>(<span class="string">&quot;playbin uri=file:///root/video.mp4&quot;</span>, <span class="literal">NULL</span>);</span><br><span class="line"></span><br><span class="line">	<span class="comment">/* Start playing */</span></span><br><span class="line">	<span class="built_in">gst_element_set_state</span>(pipeline, GST_STATE_PLAYING);</span><br><span class="line"></span><br><span class="line">	<span class="comment">/* Wait until error or EOS */</span></span><br><span class="line">	bus = <span class="built_in">gst_element_get_bus</span>(pipeline);</span><br><span class="line">	msg = <span class="built_in">gst_bus_timed_pop_filtered</span>(bus, GST_CLOCK_TIME_NONE,</span><br><span class="line">		GST_MESSAGE_ERROR | GST_MESSAGE_EOS);</span><br><span class="line"></span><br><span class="line">	<span class="comment">/* Free resources */</span></span><br><span class="line">	<span class="keyword">if</span>(msg != <span class="literal">NULL</span>)</span><br><span class="line">		<span class="built_in">gst_message_unref</span>(msg);</span><br><span class="line">	<span class="built_in">gst_object_unref</span>(bus);</span><br><span class="line">	<span class="built_in">gst_element_set_state</span>(pipeline, GST_STATE_NULL);</span><br><span class="line">	<span class="built_in">gst_object_unref</span>(pipeline);</span><br><span class="line">	<span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>效果如下图：</p>
-<p><img src="/2024/08/24/1/0.jpg"></p>
-<h2 id="关键代码解析"><a href="#关键代码解析" class="headerlink" title="关键代码解析"></a>关键代码解析</h2><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gst_init(&amp;argc, &amp;argv);</span><br></pre></td></tr></table></figure>
-
-<p><a target="_blank" rel="noopener" href="https://gstreamer.freedesktop.org/documentation/gstreamer/gst.html?gi-language=c#gst_init">gst_init</a>用于初始化，必须在其他GStreamer接口之前被调用，不需要其处理命令行参数时可将参数赋值为NULL。</p>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">GstElement *pipeline = gst_parse_launch(<span class="string">&quot;playbin uri=file:///root/video.mp4&quot;</span>, <span class="literal">NULL</span>);</span><br></pre></td></tr></table></figure>
-
-<p>创建了一个Pipeline，该Pipeline是Playbin类型的。</p>
-<p>GStreamer是一个基于管道机制的多媒体库，一个典型的GStreamer程序包含了一个或多个Pipeline，每个Pipeline通过其拥有的一系列Element完成对多媒体数据的处理。同时，虽然是由C语言实现的，但GStreamer实现了自己的面向对象机制，因此其各类型间具有继承关系。</p>
-<p>本句中涉及了两个类型，<a target="_blank" rel="noopener" href="https://gstreamer.freedesktop.org/documentation/gstreamer/gstpipeline.html?gi-language=c">GstPipeline</a>和<a target="_blank" rel="noopener" href="https://gstreamer.freedesktop.org/documentation/additional/design/playbin.html?gi-language=c">playbin</a>。</p>
-<p>其中，<a target="_blank" rel="noopener" href="https://gstreamer.freedesktop.org/documentation/gstreamer/gstpipeline.html?gi-language=c">GstPipeline</a>是一个在GStreamer当中十分重要的类型，其继承关系如下所示。</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">GObject</span><br><span class="line">    ╰── GInitiallyUnowned</span><br><span class="line">        ╰── GstObject</span><br><span class="line">            ╰── GstElement</span><br><span class="line">                ╰── GstBin</span><br><span class="line">                    ╰──	GstPipeline</span><br></pre></td></tr></table></figure>
-
-<p><a target="_blank" rel="noopener" href="https://gstreamer.freedesktop.org/documentation/gstreamer/gstelement.html?gi-language=c">GstElement</a>是一个抽象基类，定义了Element、Pipeline等的接口，在GStreamer中该接类被广泛的用作基类。</p>
-<p><a target="_blank" rel="noopener" href="https://gstreamer.freedesktop.org/documentation/gstreamer/gstbin.html?gi-language=c">GstBin</a>是一个能够容纳和管理其他<a target="_blank" rel="noopener" href="https://gstreamer.freedesktop.org/documentation/gstreamer/gstelement.html?gi-language=c">GstElement</a>的类型，其能够将用户的操作分发到其管理的多个<a target="_blank" rel="noopener" href="https://gstreamer.freedesktop.org/documentation/gstreamer/gstelement.html?gi-language=c">GstElement</a>中，降低了使用复杂性。同时，<a target="_blank" rel="noopener" href="https://gstreamer.freedesktop.org/documentation/gstreamer/gstbin.html?gi-language=c">GstBin</a>还提供了对<a target="_blank" rel="noopener" href="https://gstreamer.freedesktop.org/documentation/gstreamer/gstmessage.html">GstMessage</a>的拦截功能。</p>
-<p><a target="_blank" rel="noopener" href="https://gstreamer.freedesktop.org/documentation/gstreamer/gstpipeline.html?gi-language=c">GstPipeline</a>通常被用作顶层的容器，其进一步的拓展了<a target="_blank" rel="noopener" href="https://gstreamer.freedesktop.org/documentation/gstreamer/gstbin.html?gi-language=c">GstBin</a>的功能，对内提供了用于多媒体数据同步的全局时钟<a target="_blank" rel="noopener" href="https://gstreamer.freedesktop.org/documentation/gstreamer/gstclock.html?gi-language=c">GstClock</a>，对外提供了统一的消息接口<a target="_blank" rel="noopener" href="https://gstreamer.freedesktop.org/documentation/gstreamer/gstbus.html?gi-language=c">GstBus</a>。</p>
-<p>而<a target="_blank" rel="noopener" href="https://gstreamer.freedesktop.org/documentation/additional/design/playbin.html?gi-language=c">playbin</a>则是扩展了<a target="_blank" rel="noopener" href="https://gstreamer.freedesktop.org/documentation/gstreamer/gstpipeline.html?gi-language=c">GstPipeline</a>的功能，其能够通过有效的Uri获取数据并将其渲染到屏幕上。因为其功能的完整性和高度的集成化，本文不对其进行展开叙述。</p>
-<p><a target="_blank" rel="noopener" href="https://gstreamer.freedesktop.org/documentation/gstreamer/gstparse.html?gi-language=c#gst_parse_launch">gst_parse_launch</a>则通过解析传入字符串来创建指定的<a target="_blank" rel="noopener" href="https://gstreamer.freedesktop.org/documentation/gstreamer/gstpipeline.html?gi-language=c">GstPipeline</a>。</p>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gst_element_set_state(pipeline, GST_STATE_PLAYING);</span><br></pre></td></tr></table></figure>
-
-<p><a target="_blank" rel="noopener" href="https://gstreamer.freedesktop.org/documentation/gstreamer/gstelement.html?gi-language=c#gst_element_set_state">gst_element_set_state</a>用于设置<a target="_blank" rel="noopener" href="https://gstreamer.freedesktop.org/documentation/gstreamer/gstelement.html?gi-language=c">GstElement</a>的状态，该句将pipeline设为了播放状态，使得视频开始能够播放。</p>
-<p>正如上文所说的，<a target="_blank" rel="noopener" href="https://gstreamer.freedesktop.org/documentation/gstreamer/gstbin.html?gi-language=c">GstBin</a>能对其管理的<a target="_blank" rel="noopener" href="https://gstreamer.freedesktop.org/documentation/gstreamer/gstelement.html?gi-language=c">GstElement</a>进行统一操作。实际上在该句之后pipeline中包含的所有<a target="_blank" rel="noopener" href="https://gstreamer.freedesktop.org/documentation/gstreamer/gstelement.html?gi-language=c">GstElement</a>都转变为了播放状态，这才使得多媒体数据顺利播放。</p>
-<p>每一个<a target="_blank" rel="noopener" href="https://gstreamer.freedesktop.org/documentation/gstreamer/gstelement.html?gi-language=c">GstElement</a>都具有内部状态，通常使用的是以下几个：</p>
-<pre><code>1. GST_STATE_NULL：默认状态，该状态下[GstElement](https://gstreamer.freedesktop.org/documentation/gstreamer/gstelement.html?gi-language=c)不会具有任何资源。转入该状态后会释放持有的资源。
-
-2. GST_STATE_READY：在该状态下[GstElement](https://gstreamer.freedesktop.org/documentation/gstreamer/gstelement.html?gi-language=c)将获得全部需要的资源，包括打开的设备、缓冲区等，但流还是会处于关闭状态并被置零。如果在流打开过的情况下转入该状态，将会重置流的配置和位置。
-
-3. GST_STATE_PAUSED：在该状态下[GstElement](https://gstreamer.freedesktop.org/documentation/gstreamer/gstelement.html?gi-language=c)不仅具有GST_STATE_READY分配的全部资源，还会将流打开，使得能够对流进修改。但不会具有运行时钟，流不会随着时钟而发生变化。
-
-4. GST_STATE_PLAYING：在该状态下[GstElement](https://gstreamer.freedesktop.org/documentation/gstreamer/gstelement.html?gi-language=c)的情况与GST_STATE_PAUSED基本相同。但是会具有运行时钟，流会自然地随时钟信号进行处理。
-</code></pre>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">GstBus *bus = gst_element_get_bus(pipeline);</span><br><span class="line">GstMessage *msg = gst_bus_timed_pop_filtered(bus, GST_CLOCK_TIME_NONE,</span><br><span class="line">	GST_MESSAGE_ERROR | GST_MESSAGE_EOS);</span><br></pre></td></tr></table></figure>
-
-<p>这两句分别用于获取消息总线和等待播放程序运行完毕。</p>
-<p><a target="_blank" rel="noopener" href="https://gstreamer.freedesktop.org/documentation/gstreamer/gstelement.html?gi-language=c#gst_element_get_bus">gst_element_get_bus</a>返回传入的<a target="_blank" rel="noopener" href="https://gstreamer.freedesktop.org/documentation/gstreamer/gstelement.html?gi-language=c">GstElement</a>对应的<a target="_blank" rel="noopener" href="https://gstreamer.freedesktop.org/documentation/gstreamer/gstbus.html?gi-language=c">GstBus</a>。</p>
-<p><a target="_blank" rel="noopener" href="https://gstreamer.freedesktop.org/documentation/gstreamer/gstbus.html?gi-language=c">GstBus</a>是一个能够传递<a target="_blank" rel="noopener" href="https://gstreamer.freedesktop.org/documentation/gstreamer/gstmessage.html">GstMessage</a>的类型。<a target="_blank" rel="noopener" href="https://gstreamer.freedesktop.org/documentation/gstreamer/gstbus.html?gi-language=c">GstBus</a>主要用于解决多线程通信的问题。在播放时，GStreamer内部可能会创建多个线程进行处理，这使得GStreamer需要一个统一的消息传递机制来降低应用程序的复杂度。</p>
-<p><a target="_blank" rel="noopener" href="https://gstreamer.freedesktop.org/documentation/gstreamer/gstbus.html?gi-language=c#gst_bus_timed_pop_filtered">gst_bus_timed_pop_filtered</a>则用于监听传入的<a target="_blank" rel="noopener" href="https://gstreamer.freedesktop.org/documentation/gstreamer/gstbus.html?gi-language=c">GstBus</a>，等待目标消息的返回。根据该句的传入参数，程序将会无限等待，直到有发生错误或播放完毕的消息传回。</p>
-<p><a target="_blank" rel="noopener" href="https://gstreamer.freedesktop.org/documentation/gstreamer/gstmessage.html?gi-language=c">GstMessage</a>是GStreamer封装的消息类型。一个常用的读取程序如下：</p>
-<pre><code><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span>(msg != <span class="literal">NULL</span>) &#123;</span><br><span class="line">	GError *err;</span><br><span class="line">	gchar *debug_info;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">switch</span> (GST_MESSAGE_TYPE (msg)) &#123;</span><br><span class="line">	<span class="keyword">case</span> GST_MESSAGE_ERROR:</span><br><span class="line">		gst_message_parse_error (msg, &amp;err, &amp;debug_info);</span><br><span class="line">		g_printerr (<span class="string">&quot;Error received from element %s: %s\n&quot;</span>,</span><br><span class="line">		GST_OBJECT_NAME (msg-&gt;src), err-&gt;message);</span><br><span class="line">		g_printerr (<span class="string">&quot;Debugging information: %s\n&quot;</span>,</span><br><span class="line">		debug_info ? debug_info : <span class="string">&quot;none&quot;</span>);</span><br><span class="line">		g_clear_error (&amp;err);</span><br><span class="line">		g_free (debug_info);</span><br><span class="line">		<span class="keyword">break</span>;</span><br><span class="line">	<span class="keyword">case</span> GST_MESSAGE_EOS:</span><br><span class="line">		g_print (<span class="string">&quot;End-Of-Stream reached.\n&quot;</span>);</span><br><span class="line">		<span class="keyword">break</span>;</span><br><span class="line">	<span class="keyword">default</span>:</span><br><span class="line">		<span class="comment">/* We should not reach here because we only asked for ERRORs and EOS */</span></span><br><span class="line">		g_printerr (<span class="string">&quot;Unexpected message received.\n&quot;</span>);</span><br><span class="line">		<span class="keyword">break</span>;</span><br><span class="line">	&#125;</span><br><span class="line">	gst_message_unref (msg);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-</code></pre>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span>(msg != <span class="literal">NULL</span>)</span><br><span class="line">	gst_message_unref(msg);</span><br><span class="line">gst_object_unref(bus);</span><br><span class="line">gst_element_set_state(pipeline, GST_STATE_NULL);</span><br><span class="line">gst_object_unref(pipeline);</span><br></pre></td></tr></table></figure>
-
-<p>本段进行了资源释放。由于C语言没有析构函数和垃圾回收等资源管理机制，因此仍然需要进行手动管理。</p>
-<p>GStreamer使用引用计数的方式来管理资源。通过在每个类型中放置一个引用数，并在引用数归零是才进行资源释放的方式，能够避免资源的过早释放，因此在使用GStreamer提供的API时，需要着重关注其对引用计数的影响。</p>
-<p><a target="_blank" rel="noopener" href="https://gstreamer.freedesktop.org/documentation/gstreamer/gstobject.html?gi-language=c#gst_object_unref">gst_object_unref</a>能够将输入的变量的引用计数减一，归零时自动释放。</p>
-<p>与之对应的<a target="_blank" rel="noopener" href="https://gstreamer.freedesktop.org/documentation/gstreamer/gstobject.html?gi-language=c#gst_object_ref">gst_object_ref</a>能够将输入的变量的引用计数加一。</p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
@@ -1511,12 +1369,12 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">27</span>
+          <span class="site-state-item-count">29</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
       <div class="site-state-item site-state-tags">
-        <span class="site-state-item-count">17</span>
+        <span class="site-state-item-count">19</span>
         <span class="site-state-item-name">tags</span>
       </div>
   </nav>
