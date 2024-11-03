@@ -145,6 +145,87 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2024/11/03/4/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Loujuch">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Code Bank">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2024/11/03/4/" class="post-title-link" itemprop="url">Win10搭建GStreamer开发环境</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+              
+
+              <time title="Created: 2024-11-03 21:58:05 / Modified: 22:14:19" itemprop="dateCreated datePublished" datetime="2024-11-03T21:58:05+08:00">2024-11-03</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="下载GStreamer"><a href="#下载GStreamer" class="headerlink" title="下载GStreamer"></a>下载GStreamer</h2><p>使用Chocolatey安装GStreamer，使用管理员权限运行powershell，运行如下命令：</p>
+<figure class="highlight ps1"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">choco install <span class="literal">-yes</span> gstreamer gstreamer<span class="literal">-devel</span> gstreamer<span class="literal">-mingw</span> gstreamer<span class="literal">-mingw-devel</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="下载安装VS2022"><a href="#下载安装VS2022" class="headerlink" title="下载安装VS2022"></a>下载安装VS2022</h2><p>访问<a target="_blank" rel="noopener" href="https://visualstudio.microsoft.com/zh-hans/vs/">微软官网</a>，下载安装器进行安装。</p>
+<h2 id="配置依赖"><a href="#配置依赖" class="headerlink" title="配置依赖"></a>配置依赖</h2><p>创建空项目，右键点击右侧解决方案下的项目名，在弹出的菜单中选择属性：</p>
+<p><img src="/2024/11/03/4/0.png"></p>
+<p><img src="/2024/11/03/4/1.png"></p>
+<p>在属性页的<code>C/C++ - 常规 - 附加包含目录</code>中添加如下内容：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">C:\gstreamer\1.0\mingw_x86_64\include\gstreamer-1.0;C:\gstreamer\1.0\mingw_x86_64\include\glib-2.0;C:\gstreamer\1.0\mingw_x86_64\include\libxml2;C:\gstreamer\1.0\mingw_x86_64\lib\glib-2.0\include;C:\gstreamer\1.0\msvc_x86_64\include\GL;C:\gstreamer\1.0\mingw_x86_64\include;</span><br></pre></td></tr></table></figure>
+
+<p><img src="/2024/11/03/4/2.png"></p>
+<p>在属性页的<code>连接器 - 常规 - 附加库目录</code>中添加如下内容：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">C:\gstreamer\1.0\msvc_x86_64\lib;C:\gstreamer\1.0\mingw_x86_64\lib;</span><br></pre></td></tr></table></figure>
+
+<p><img src="/2024/11/03/4/3.png"></p>
+<p>在属性页的<code>连接器 - 输出 - 附加依赖项</code>中添加如下内容：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">;gobject-2.0.lib;glib-2.0.lib;gstreamer-1.0.lib;</span><br></pre></td></tr></table></figure>
+
+<p><img src="/2024/11/03/4/4.png"></p>
+<h2 id="编写验证程序"><a href="#编写验证程序" class="headerlink" title="编写验证程序"></a>编写验证程序</h2><p>根据GStreamer教程Demo，编写如下程序验证环境搭建情况。注意，在Windows环境下需要添加<code>main_loop</code>，否则无法打开视频播放窗口。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;gst/gst.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">(<span class="type">int</span> argc, <span class="type">char</span>* argv[])</span> </span>&#123;</span><br><span class="line">	<span class="built_in">gst_init</span>(&amp;argc, &amp;argv);</span><br><span class="line"></span><br><span class="line">	GstElement* pipeline = <span class="built_in">gst_parse_launch</span>(<span class="string">&quot;playbin uri=https://gstreamer.freedesktop.org/data/media/sintel_trailer-480p.webm&quot;</span>, <span class="literal">NULL</span>);</span><br><span class="line">	GMainLoop* main_loop = <span class="built_in">g_main_loop_new</span>(<span class="literal">NULL</span>, FALSE);</span><br><span class="line"></span><br><span class="line">	<span class="built_in">gst_element_set_state</span>(pipeline, GST_STATE_PLAYING);</span><br><span class="line">	<span class="built_in">g_main_loop_run</span>(main_loop);</span><br><span class="line"></span><br><span class="line">	<span class="built_in">gst_element_set_state</span>(pipeline, GST_STATE_NULL);</span><br><span class="line"></span><br><span class="line">	<span class="built_in">gst_object_unref</span>(pipeline);</span><br><span class="line">	<span class="built_in">g_main_loop_unref</span>(main_loop);</span><br><span class="line">	<span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>运行后成功播放目标视频，证明环境搭建完毕。</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
     <link itemprop="mainEntityOfPage" href="http://example.com/2024/11/03/3/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -170,7 +251,7 @@
               <span class="post-meta-item-text">Posted on</span>
               
 
-              <time title="Created: 2024-11-03 17:57:46 / Modified: 21:55:07" itemprop="dateCreated datePublished" datetime="2024-11-03T17:57:46+08:00">2024-11-03</time>
+              <time title="Created: 2024-11-03 17:57:46 / Modified: 21:57:43" itemprop="dateCreated datePublished" datetime="2024-11-03T17:57:46+08:00">2024-11-03</time>
             </span>
 
           
@@ -262,17 +343,27 @@
 <p>&gt;&#x3D; CAMERA_DEVICE_API_VERSION_3_2: Once a buffer is returned by process_capture_result as part of the camera3_stream_buffer_t array, and the fence specified by release_fence has been signaled (this is a no-op for -1 fences), the ownership of that buffer is considered to be transferred back to the framework. After that, the HAL must no longer retain that particular buffer, and the framework may clean up the memory for it immediately.</p>
 </blockquote>
 <p>对于同一帧，<code>process_capture_result</code>可能会被多次调用，每一次都携带一个新的不相交的元数据碎片和&#x2F;或设置图形缓冲区。框架层将合并这些分块的元数据到一个结构中。</p>
+<blockquote>
 <p>process_capture_result may be called multiple times for a single frame, each time with a new disjoint piece of metadata and&#x2F;or set of gralloc buffers. The framework will accumulate these partial metadata results into one result.</p>
+</blockquote>
 <p>特别的，只要上述规则适用于图形缓冲区（不论输入或输出），同时为第N帧和第N+1帧调用<code>process_capture_result</code>是合法的。</p>
+<blockquote>
 <p>In particular, it is legal for a process_capture_result to be called simultaneously for both a frame N and a frame N+1 as long as the above rule holds for gralloc buffers (both input and output).</p>
+</blockquote>
 </li>
 <li><p>一段时间后，框架层可能停止提交新的请求，并等待现有的捕获完成（所有的缓冲区完成填充且所有的请求返回），然后再次调用<code>configure_streams()</code>。这将为一组新的输入&#x2F;输出流重置相机硬件和流水线。某些之前的流可以被复用，如果这些流的缓冲区已经被注册到HAL中了则不需要再次注册。如果至少有一个完成注册的输出流被保留，则框架层从步骤7开始（否则从步骤5开始）。</p>
+<blockquote>
 <p>After some time, the framework may stop submitting new requests, wait for the existing captures to complete (all buffers filled, all results returned), and then call configure_streams() again. This resets the camera hardware and pipeline for a new set of input&#x2F;output streams. Some streams may be reused from the previous configuration; if these streams’ buffers had already been registered with the HAL, they will not be registered again. The framework then continues from step 7, if at least one registered output stream remains (otherwise, step 5 is required first).</p>
+</blockquote>
 <p>或者框架层可能调用<code>camera3_device_t-&gt;common-&gt;close()</code>终止相机会话。这可能在没有其他任何来自框架层的请求活动的任何时候被调用，但该调用将会被阻塞直到所有正在处理的捕获完成（所有结果返回且所有缓冲区被填充）。在<code>close</code>调用返回后，不允许从HAL调用<code>camera3_callback_ops_t</code>函数。一旦<code>close()</code>的调用开始运行，框架层不能调用任何其他HAL设备函数。</p>
+<blockquote>
 <p>Alternatively, the framework may call camera3_device_t-&gt;common-&gt;close() to end the camera session. This may be called at any time when no other calls from the framework are active, although the call may block until all in-flight captures have completed (all results returned, all buffers filled). After the close call returns, no more calls to the camera3_callback_ops_t functions are allowed from the HAL. Once the close() call is underway, the framework may not call any other HAL device functions.</p>
+</blockquote>
 </li>
 <li><p>当有错误或其他异步事件发生时，HAL必须调用<code>camera3_callback_ops_t-&gt;notify()</code>传递恰当的错误&#x2F;事件信息。在从一个设备范围的致命的错误通知返回后，HAL应该表现的像对其完成<code>close()</code>调用一样。同时，在调用<code>notify()</code>前HAL必须放弃或完成所有未解决的捕获，因此一旦调用<code>notify()</code>发送致命错误信息，框架层将不会从设备中接收到进一步的回调。此外，在发送错误信息的<code>notify()</code>方法返回后，<code>close()</code>应该返回<code>-ENODEV</code>或<code>NULL</code>。</p>
+<blockquote>
 <p>In case of an error or other asynchronous event, the HAL must call camera3_callback_ops_t-&gt;notify() with the appropriate error&#x2F;event message. After returning from a fatal device-wide error notification, the HAL should act as if close() had been called on it. However, the HAL must either cancel or complete all outstanding captures before calling notify(), so that once notify() is called with a fatal error, the framework will not receive further callbacks from the device. Methods besides close() should return -ENODEV or NULL after the notify() method returns from a fatal error message.</p>
+</blockquote>
 </li>
 </ol>
 
@@ -1621,72 +1712,6 @@
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2024/10/21/0/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="Loujuch">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Code Bank">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2024/10/21/0/" class="post-title-link" itemprop="url">Win10下获取文件对应的MD5值</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">Posted on</span>
-              
-
-              <time title="Created: 2024-10-21 22:28:48 / Modified: 22:33:40" itemprop="dateCreated datePublished" datetime="2024-10-21T22:28:48+08:00">2024-10-21</time>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h2 id="Windows-系统自带工具-certutil"><a href="#Windows-系统自带工具-certutil" class="headerlink" title="Windows 系统自带工具 certutil"></a>Windows 系统自带工具 certutil</h2><p>在Cmd终端或PowerShell中使用certutil，命令如下：</p>
-<figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">certutil -hashfile &lt;file_name&gt; MD5</span><br></pre></td></tr></table></figure>
-
-<p>输出结果为<code>&lt;file_name&gt;</code>的MD5值。</p>
-<h2 id="使用-Git-Bash-命令窗口中的-md5sum-exe"><a href="#使用-Git-Bash-命令窗口中的-md5sum-exe" class="headerlink" title="使用 Git Bash 命令窗口中的 md5sum.exe"></a>使用 Git Bash 命令窗口中的 md5sum.exe</h2><p>如果安装了Git，鼠标右键点击时可以在菜单中选择进入<code>Git Bash</code>，其包含<code>md5sum.exe</code>计算文件MD5值：</p>
-<figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">md5sum.exe &lt;file_name&gt;</span><br></pre></td></tr></table></figure>
-
-<p>输出结果为<code>&lt;file_name&gt;</code>的MD5值。</p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
@@ -1756,7 +1781,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">31</span>
+          <span class="site-state-item-count">32</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
