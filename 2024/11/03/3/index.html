@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 7.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"example.com","root":"/","scheme":"Mist","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="框架层调用camera_module_t-&gt;common.open()，之后HAL返回一个hardware_device_t结构。  Framework calls camera_module_t-&gt;common.open(), which returns a hardware_device_t structure.   框架层检查hardware_device_t-&gt;vers">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Android Camera device HAL 3.6文档翻译——S2：启动和操作顺序">
+<meta property="og:url" content="http://example.com/2024/11/03/3/index.html">
+<meta property="og:site_name" content="Code Bank">
+<meta property="og:description" content="框架层调用camera_module_t-&gt;common.open()，之后HAL返回一个hardware_device_t结构。  Framework calls camera_module_t-&gt;common.open(), which returns a hardware_device_t structure.   框架层检查hardware_device_t-&gt;vers">
+<meta property="og:locale">
+<meta property="article:published_time" content="2024-11-03T09:57:46.000Z">
+<meta property="article:modified_time" content="2024-11-03T13:55:07.148Z">
+<meta property="article:author" content="Loujuch">
+<meta property="article:tag" content="Camera device HAL">
+<meta property="article:tag" content="翻译">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://example.com/2024/11/03/3/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-Hans'
+  };
+</script>
+
+  <title>Android Camera device HAL 3.6文档翻译——S2：启动和操作顺序 | Code Bank</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Code Bank</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>Archives</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2024/11/03/3/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Loujuch">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Code Bank">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Android Camera device HAL 3.6文档翻译——S2：启动和操作顺序
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+              
+
+              <time title="Created: 2024-11-03 17:57:46 / Modified: 21:55:07" itemprop="dateCreated datePublished" datetime="2024-11-03T17:57:46+08:00">2024-11-03</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <ol>
+<li><p>框架层调用<code>camera_module_t-&gt;common.open()</code>，之后HAL返回一个<code>hardware_device_t</code>结构。</p>
+<blockquote>
+<p><em>Framework calls camera_module_t-&gt;common.open(), which returns a hardware_device_t structure.</em></p>
+</blockquote>
+</li>
+<li><p>框架层检查<code>hardware_device_t-&gt;version</code>，并根据相机硬件设备的版本创建相应的处理程序。如果版本为<code>CAMERA_DEVICE_API_VERSION_3_0</code>，设备实例将会被转化为<code>camera3_device_t</code>。</p>
+<blockquote>
+<p><em>Framework inspects the hardware_device_t-&gt;version field, and instantiates the appropriate handler for that version of the camera hardware device. In case the version is CAMERA_DEVICE_API_VERSION_3_0, the device is cast to a camera3_device_t.</em></p>
+</blockquote>
+</li>
+<li><p>框架层调用<code>camera3_device_t-&gt;ops-&gt;initialize()</code>并将框架层回调函数指针传入。该函数只会在<code>open()</code>函数被调用后和在ops结构的任何其他函数被调用前的时间间隔中被调用一次。</p>
+<blockquote>
+<p><em>Framework calls camera3_device_t-&gt;ops-&gt;initialize() with the framework callback function pointers. This will only be called this one time after open(), before any other functions in the ops structure are called.</em></p>
+</blockquote>
+</li>
+<li><p>框架层调用<code>camera3_device_t-&gt;ops-&gt;configure_streams()</code>，将一个输入&#x2F;输出流列表传递到HAL设备中。</p>
+<blockquote>
+<p><em>The framework calls camera3_device_t-&gt;ops-&gt;configure_streams() with a list of input&#x2F;output streams to the HAL device.</em></p>
+</blockquote>
+</li>
+<li><p>根据设备版本进行不同的处理</p>
+<p> 版本低于或等于<code>CAMERA_DEVICE_API_VERSION_3_1</code>时，框架层分配图形缓冲区并为configure_streams中的至少一个输出流调用<code>camera3_device_t-&gt;ops-&gt;register_stream_buffers()</code>。相同的流只会被注册一次。</p>
+<blockquote>
+<p><em>&lt;&#x3D; CAMERA_DEVICE_API_VERSION_3_1: The framework allocates gralloc buffers and calls camera3_device_t-&gt;ops-&gt;register_stream_buffers() for at least one of the output streams listed in configure_streams. The same stream is registered only once.</em></p>
+</blockquote>
+<p> 版本低于或等于<code>CAMERA_DEVICE_API_VERSION_3_2</code>时，<code>camera3_device_t-&gt;ops-&gt;register_stream_buffers()</code>不会被调用，其必须为<code>NULL</code>。</p>
+<blockquote>
+<p><em>CAMERA_DEVICE_API_VERSION_3_2:camera3_device_t-&gt;ops-&gt;register_stream_buffers() is not called and must be NULL.</em></p>
+</blockquote>
+</li>
+<li><p>框架层调用<code>camera3_device_t-&gt;ops-&gt;construct_default_request_settings()</code>请求一些使用用例的默认设置。这可能发生在步骤3之后的任何时间。</p>
+<blockquote>
+<p>The framework requests default settings for some number of use cases with calls to camera3_device_t-&gt;ops-&gt;construct_default_request_settings(). This may occur any time after step 3.</p>
+</blockquote>
+</li>
+<li><p>框架层构造并向HAL发送第一个捕获请求。该请求携带着基于默认设置集合中的某一个默认设置的设置项，并且关联着不少于一个之前框架层完成注册的输出流。请求被<code>camera3_device_t-&gt;ops-&gt;process_capture_request()</code>方法传送到HAL。HAL将会阻塞该方法的返回，直到下一个请求将被发送。</p>
+<blockquote>
+<p><em>The framework constructs and sends the first capture request to the HAL, with settings based on one of the sets of default settings, and with at least one output stream, which has been registered earlier by the framework. This is sent to the HAL with camera3_device_t-&gt;ops-&gt;process_capture_request(). The HAL must block the return of this call until it is ready for the next request to be sent.</em></p>
+</blockquote>
+<p> 版本为<code>CAMERA_DEVICE_API_VERSION_3_2</code>或更高时，在<code>camera3_capture_request_t</code>中的<code>camera3_stream_buffer_t</code>数组中的<code>buffer_handle_t</code>可能是新的，HAL从未在任何新的请求中见过。</p>
+<blockquote>
+<p><em>&gt;&#x3D; CAMERA_DEVICE_API_VERSION_3_2: The buffer_handle_t provided in the camera3_stream_buffer_t array in the camera3_capture_request_t may be new and never-before-seen by the HAL on any given new request.</em></p>
+</blockquote>
+</li>
+<li><p>框架层不断地提交请求，并调用<code>construct_default_request_settings</code>以获得其他使用用例的默认设置缓冲区。</p>
+<blockquote>
+<p><em>The framework continues to submit requests, and call construct_default_request_settings to get default settings buffers for other use cases.</em></p>
+</blockquote>
+<p> 当版本为<code>CAMERA_DEVICE_API_VERSION_3_1</code>或更低时，框架层可能会为那些还未注册的流调用register_stream_buffers()方法。</p>
+<blockquote>
+<p><em>&lt;&#x3D; CAMERA_DEVICE_API_VERSION_3_1: The framework may call register_stream_buffers() at this time for not-yet-registered streams.</em></p>
+</blockquote>
+</li>
+<li><p>当捕获请求开始处理（传感器开始为捕获图像进行曝光）或当再处理请求开始被处理时，HAL将调用<code>camera3_callback_ops_t-&gt;notify()</code>，该次调用将以<code>SHUTTER</code>事件作为参数，这包括帧序号和曝光开始时间戳。对于再处理请求，时间戳必须是输入图像的曝光开始时间，在<code>process_capture_request()</code>调用时，可以从<code>camera3_capture_request_t.settings</code>的<code>android.sensor.timestamp</code>获得该时间。</p>
+<blockquote>
+<p><em>When the capture of a request begins (sensor starts exposing for thecapture) or processing a reprocess request begins, the HAL calls camera3_callback_ops_t-&gt;notify() with the SHUTTER event, including the frame number and the timestamp for start of exposure. For a reprocess request, the timestamp must be the start of exposure of the input image which can be looked up with android.sensor.timestamp from camera3_capture_request_t.settings when process_capture_request() is called.</em></p>
+</blockquote>
+<p> 当版本低于或等于<code>CAMERA_DEVICE_API_VERSION_3_1</code>时，这个通知必须在<code>process_capture_result()</code>第一次为处理该帧的调用前完成。</p>
+<blockquote>
+<p><em>&lt;&#x3D; CAMERA_DEVICE_API_VERSION_3_1: This notify call must be made before the first call to process_capture_result() for that frame number.</em></p>
+</blockquote>
+<p> 当版本高于或等于<code>CAMERA_DEVICE_API_VERSION_3_2</code>时，携带<code>SHUTTER</code>事件的<code>camera3_callback_ops_t-&gt;notify()</code>应该被尽可能早的完成，因为在接收到一个有效的曝光开始时间戳（对于再处理请求则是输入图像的开始曝光时间戳）前框架层不能将（该帧的）图形缓冲区传递到应用层。</p>
+<blockquote>
+<p><em>&gt;&#x3D; CAMERA_DEVICE_API_VERSION_3_2: The camera3_callback_ops_t-&gt;notify() call with the SHUTTER event should be made as early as possible since the framework will be unable to deliver gralloc buffers to the application layer (for that frame) until it has a valid timestamp for the start of exposure (or the input image’s start of exposure for a reprocess request).</em></p>
+</blockquote>
+<p> 部分元数据和图形缓冲区可能在<code>SHUTTER</code>时间发生前或后的任何时间返回。</p>
+<blockquote>
+<p><em>Both partial metadata results and the gralloc buffers may be sent to the framework at any time before or after the SHUTTER event.</em></p>
+</blockquote>
+</li>
+<li><p>部分流水线阻塞等待一段时间后，HAL将调用<code>camera3_callback_ops_t-&gt;process_capture_result()</code>将完成的捕获结果返回框架层。结果的返回顺序将和请求提交的顺序一致。多个请求可以被同时处理，这取决于相机HAL设备的流水线深度。</p>
+<p>After some pipeline delay, the HAL begins to return completed captures to the framework with camera3_callback_ops_t-&gt;process_capture_result(). These are returned in the same order as the requests were submitted. Multiple requests can be in flight at once, depending on the pipeline depth of the camera HAL device.</p>
+<p>当版本高于或等于<code>CAMERA_DEVICE_API_VERSION_3_2</code>时，一旦<code>process_capture_result</code>将缓冲区作为<code>camera3_stream_buffer_t</code>数组的一部分返回且<code>release_fence</code>指定的栅栏发出信号（对于-1栅栏而言是无操作），该缓冲区的所有权将被视为转移给框架层。之后，HAL将不会保留该缓冲区，框架层能够立即清理其占用的内存。</p>
+<blockquote>
+<p>&gt;&#x3D; CAMERA_DEVICE_API_VERSION_3_2: Once a buffer is returned by process_capture_result as part of the camera3_stream_buffer_t array, and the fence specified by release_fence has been signaled (this is a no-op for -1 fences), the ownership of that buffer is considered to be transferred back to the framework. After that, the HAL must no longer retain that particular buffer, and the framework may clean up the memory for it immediately.</p>
+</blockquote>
+<p>对于同一帧，<code>process_capture_result</code>可能会被多次调用，每一次都携带一个新的不相交的元数据碎片和&#x2F;或设置图形缓冲区。框架层将合并这些分块的元数据到一个结构中。</p>
+<p>process_capture_result may be called multiple times for a single frame, each time with a new disjoint piece of metadata and&#x2F;or set of gralloc buffers. The framework will accumulate these partial metadata results into one result.</p>
+<p>特别的，只要上述规则适用于图形缓冲区（不论输入或输出），同时为第N帧和第N+1帧调用<code>process_capture_result</code>是合法的。</p>
+<p>In particular, it is legal for a process_capture_result to be called simultaneously for both a frame N and a frame N+1 as long as the above rule holds for gralloc buffers (both input and output).</p>
+</li>
+<li><p>一段时间后，框架层可能停止提交新的请求，并等待现有的捕获完成（所有的缓冲区完成填充且所有的请求返回），然后再次调用<code>configure_streams()</code>。这将为一组新的输入&#x2F;输出流重置相机硬件和流水线。某些之前的流可以被复用，如果这些流的缓冲区已经被注册到HAL中了则不需要再次注册。如果至少有一个完成注册的输出流被保留，则框架层从步骤7开始（否则从步骤5开始）。</p>
+<p>After some time, the framework may stop submitting new requests, wait for the existing captures to complete (all buffers filled, all results returned), and then call configure_streams() again. This resets the camera hardware and pipeline for a new set of input&#x2F;output streams. Some streams may be reused from the previous configuration; if these streams’ buffers had already been registered with the HAL, they will not be registered again. The framework then continues from step 7, if at least one registered output stream remains (otherwise, step 5 is required first).</p>
+<p>或者框架层可能调用<code>camera3_device_t-&gt;common-&gt;close()</code>终止相机会话。这可能在没有其他任何来自框架层的请求活动的任何时候被调用，但该调用将会被阻塞直到所有正在处理的捕获完成（所有结果返回且所有缓冲区被填充）。在<code>close</code>调用返回后，不允许从HAL调用<code>camera3_callback_ops_t</code>函数。一旦<code>close()</code>的调用开始运行，框架层不能调用任何其他HAL设备函数。</p>
+<p>Alternatively, the framework may call camera3_device_t-&gt;common-&gt;close() to end the camera session. This may be called at any time when no other calls from the framework are active, although the call may block until all in-flight captures have completed (all results returned, all buffers filled). After the close call returns, no more calls to the camera3_callback_ops_t functions are allowed from the HAL. Once the close() call is underway, the framework may not call any other HAL device functions.</p>
+</li>
+<li><p>当有错误或其他异步事件发生时，HAL必须调用<code>camera3_callback_ops_t-&gt;notify()</code>传递恰当的错误&#x2F;事件信息。在从一个设备范围的致命的错误通知返回后，HAL应该表现的像对其完成<code>close()</code>调用一样。同时，在调用<code>notify()</code>前HAL必须放弃或完成所有未解决的捕获，因此一旦调用<code>notify()</code>发送致命错误信息，框架层将不会从设备中接收到进一步的回调。此外，在发送错误信息的<code>notify()</code>方法返回后，<code>close()</code>应该返回<code>-ENODEV</code>或<code>NULL</code>。</p>
+<p>In case of an error or other asynchronous event, the HAL must call camera3_callback_ops_t-&gt;notify() with the appropriate error&#x2F;event message. After returning from a fatal device-wide error notification, the HAL should act as if close() had been called on it. However, the HAL must either cancel or complete all outstanding captures before calling notify(), so that once notify() is called with a fatal error, the framework will not receive further callbacks from the device. Methods besides close() should return -ENODEV or NULL after the notify() method returns from a fatal error message.</p>
+</li>
+</ol>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Camera-device-HAL/" rel="tag"># Camera device HAL</a>
+              <a href="/tags/%E7%BF%BB%E8%AF%91/" rel="tag"># 翻译</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2024/11/03/2/" rel="prev" title="Android Camera device HAL 3.6文档翻译">
+      <i class="fa fa-chevron-left"></i> Android Camera device HAL 3.6文档翻译
+    </a></div>
+      <div class="post-nav-item"></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Loujuch</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">31</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">21</span>
+        <span class="site-state-item-name">tags</span>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2024</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Loujuch</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://mist.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a>
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

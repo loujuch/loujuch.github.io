@@ -145,6 +145,407 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2024/09/04/0/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Loujuch">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Code Bank">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2024/09/04/0/" class="post-title-link" itemprop="url">解决raw.githubusercontent.com无法访问的问题</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2024-09-04 23:35:02" itemprop="dateCreated datePublished" datetime="2024-09-04T23:35:02+08:00">2024-09-04</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2024-09-05 22:45:09" itemprop="dateModified" datetime="2024-09-05T22:45:09+08:00">2024-09-05</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>国内无法访问<code>raw.githubusercontent.com</code>的原因基本是DNS污染，因此修改<code>hosts</code>可以解决该问题，例如使用<code>IPAddress.com</code>等网站查到真实IP后自行修改。同时，GitHub上也存在项目<a target="_blank" rel="noopener" href="https://github.com/521xueweihan/GitHub520">GitHub520</a>对其进行实时更新（强烈推荐该项目）。</p>
+<p><code>hosts</code>的位置：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"># Windows</span><br><span class="line">C:\Windows\System32\drivers\etc\hosts</span><br><span class="line"></span><br><span class="line"># Linux</span><br><span class="line">/etc/hosts</span><br></pre></td></tr></table></figure>
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2024/09/01/0/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Loujuch">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Code Bank">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2024/09/01/0/" class="post-title-link" itemprop="url">CSAPP Bomb Lab</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2024-09-01 21:57:19" itemprop="dateCreated datePublished" datetime="2024-09-01T21:57:19+08:00">2024-09-01</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2024-09-04 23:32:39" itemprop="dateModified" datetime="2024-09-04T23:32:39+08:00">2024-09-04</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="phase-1"><a href="#phase-1" class="headerlink" title="phase_1"></a>phase_1</h2><p>采用<code>disas phase_1</code>生成对应汇编代码：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">0x0000000000400ee0 &lt;+0&gt;:     sub    $0x8,%rsp</span><br><span class="line">0x0000000000400ee4 &lt;+4&gt;:     mov    $0x402400,%esi</span><br><span class="line">0x0000000000400ee9 &lt;+9&gt;:     call   0x401338 &lt;strings_not_equal&gt;</span><br><span class="line">0x0000000000400eee &lt;+14&gt;:    test   %eax,%eax</span><br><span class="line">0x0000000000400ef0 &lt;+16&gt;:    je     0x400ef7 &lt;phase_1+23&gt;</span><br><span class="line">0x0000000000400ef2 &lt;+18&gt;:    call   0x40143a &lt;explode_bomb&gt;</span><br><span class="line">0x0000000000400ef7 &lt;+23&gt;:    add    $0x8,%rsp</span><br><span class="line">0x0000000000400efb &lt;+27&gt;:    ret</span><br></pre></td></tr></table></figure>
+
+<p>&lt;phase_1+9&gt;处可以看出该句执行的是字符串比较，如果输入字符与<code>0x402400</code>处的不一致就发生爆炸。</p>
+<p>使用<code>print (char*)0x402400</code>打印目标字符串，结果为<code>Border relations with Canada have never been better.</code>。</p>
+<p>故phase_1的答案为：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Border relations with Canada have never been better.</span><br></pre></td></tr></table></figure>
+
+<h2 id="phase-2"><a href="#phase-2" class="headerlink" title="phase_2"></a>phase_2</h2><p>采用<code>disas phase_2</code>生成对应汇编代码：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">0x0000000000400efc &lt;+0&gt;:     push   %rbp</span><br><span class="line">0x0000000000400efd &lt;+1&gt;:     push   %rbx</span><br><span class="line">0x0000000000400efe &lt;+2&gt;:     sub    $0x28,%rsp</span><br><span class="line">0x0000000000400f02 &lt;+6&gt;:     mov    %rsp,%rsi</span><br><span class="line">0x0000000000400f05 &lt;+9&gt;:     call   0x40145c &lt;read_six_numbers&gt;</span><br><span class="line">0x0000000000400f0a &lt;+14&gt;:    cmpl   $0x1,(%rsp)</span><br><span class="line">0x0000000000400f0e &lt;+18&gt;:    je     0x400f30 &lt;phase_2+52&gt;</span><br><span class="line">0x0000000000400f10 &lt;+20&gt;:    call   0x40143a &lt;explode_bomb&gt;</span><br><span class="line">0x0000000000400f15 &lt;+25&gt;:    jmp    0x400f30 &lt;phase_2+52&gt;</span><br><span class="line">0x0000000000400f17 &lt;+27&gt;:    mov    -0x4(%rbx),%eax</span><br><span class="line">0x0000000000400f1a &lt;+30&gt;:    add    %eax,%eax</span><br><span class="line">0x0000000000400f1c &lt;+32&gt;:    cmp    %eax,(%rbx)</span><br><span class="line">0x0000000000400f1e &lt;+34&gt;:    je     0x400f25 &lt;phase_2+41&gt;</span><br><span class="line">0x0000000000400f20 &lt;+36&gt;:    call   0x40143a &lt;explode_bomb&gt;</span><br><span class="line">0x0000000000400f25 &lt;+41&gt;:    add    $0x4,%rbx</span><br><span class="line">0x0000000000400f29 &lt;+45&gt;:    cmp    %rbp,%rbx</span><br><span class="line">0x0000000000400f2c &lt;+48&gt;:    jne    0x400f17 &lt;phase_2+27&gt;</span><br><span class="line">0x0000000000400f2e &lt;+50&gt;:    jmp    0x400f3c &lt;phase_2+64&gt;</span><br><span class="line">0x0000000000400f30 &lt;+52&gt;:    lea    0x4(%rsp),%rbx</span><br><span class="line">0x0000000000400f35 &lt;+57&gt;:    lea    0x18(%rsp),%rbp</span><br><span class="line">0x0000000000400f3a &lt;+62&gt;:    jmp    0x400f17 &lt;phase_2+27&gt;</span><br><span class="line">0x0000000000400f3c &lt;+64&gt;:    add    $0x28,%rsp</span><br><span class="line">0x0000000000400f40 &lt;+68&gt;:    pop    %rbx</span><br><span class="line">0x0000000000400f41 &lt;+69&gt;:    pop    %rbp</span><br><span class="line">0x0000000000400f42 &lt;+70&gt;:    ret</span><br></pre></td></tr></table></figure>
+
+<p>&lt;phase_2+9&gt;处表明，该函数需要输入的是6个数值，&lt;phase_2+48&gt;处表明，该函数存在一个循环，循环节如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">0x0000000000400f17 &lt;+27&gt;:    mov    -0x4(%rbx),%eax</span><br><span class="line">0x0000000000400f1a &lt;+30&gt;:    add    %eax,%eax</span><br><span class="line">0x0000000000400f1c &lt;+32&gt;:    cmp    %eax,(%rbx)</span><br><span class="line">0x0000000000400f1e &lt;+34&gt;:    je     0x400f25 &lt;phase_2+41&gt;</span><br><span class="line">0x0000000000400f20 &lt;+36&gt;:    call   0x40143a &lt;explode_bomb&gt;</span><br><span class="line">0x0000000000400f25 &lt;+41&gt;:    add    $0x4,%rbx</span><br><span class="line">0x0000000000400f29 &lt;+45&gt;:    cmp    %rbp,%rbx</span><br><span class="line">0x0000000000400f2c &lt;+48&gt;:    jne    0x400f17 &lt;phase_2+27&gt;</span><br></pre></td></tr></table></figure>
+
+<p>显然为一个数组结构，当<code>a[i] + a[i] != a[i + 1]</code>时被引爆。</p>
+<p>同时，由&lt;phase_2+14&gt;处可以推出，<code>a[0] = 1</code>。</p>
+<p>故phase_2的答案为：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">1 2 4 8 16 32</span><br></pre></td></tr></table></figure>
+
+<h2 id="phase-3"><a href="#phase-3" class="headerlink" title="phase_3"></a>phase_3</h2><p>采用<code>disas phase_3</code>生成对应汇编代码：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line">0x0000000000400f43 &lt;+0&gt;:     sub    $0x18,%rsp</span><br><span class="line">0x0000000000400f47 &lt;+4&gt;:     lea    0xc(%rsp),%rcx</span><br><span class="line">0x0000000000400f4c &lt;+9&gt;:     lea    0x8(%rsp),%rdx</span><br><span class="line">0x0000000000400f51 &lt;+14&gt;:    mov    $0x4025cf,%esi</span><br><span class="line">0x0000000000400f56 &lt;+19&gt;:    mov    $0x0,%eax</span><br><span class="line">0x0000000000400f5b &lt;+24&gt;:    call   0x400bf0 &lt;__isoc99_sscanf@plt&gt;</span><br><span class="line">0x0000000000400f60 &lt;+29&gt;:    cmp    $0x1,%eax</span><br><span class="line">0x0000000000400f63 &lt;+32&gt;:    jg     0x400f6a &lt;phase_3+39&gt;</span><br><span class="line">0x0000000000400f65 &lt;+34&gt;:    call   0x40143a &lt;explode_bomb&gt;</span><br><span class="line">0x0000000000400f6a &lt;+39&gt;:    cmpl   $0x7,0x8(%rsp)</span><br><span class="line">0x0000000000400f6f &lt;+44&gt;:    ja     0x400fad &lt;phase_3+106&gt;</span><br><span class="line">0x0000000000400f71 &lt;+46&gt;:    mov    0x8(%rsp),%eax</span><br><span class="line">0x0000000000400f75 &lt;+50&gt;:    jmp    *0x402470(,%rax,8)</span><br><span class="line">0x0000000000400f7c &lt;+57&gt;:    mov    $0xcf,%eax</span><br><span class="line">0x0000000000400f81 &lt;+62&gt;:    jmp    0x400fbe &lt;phase_3+123&gt;</span><br><span class="line">0x0000000000400f83 &lt;+64&gt;:    mov    $0x2c3,%eax</span><br><span class="line">0x0000000000400f88 &lt;+69&gt;:    jmp    0x400fbe &lt;phase_3+123&gt;</span><br><span class="line">0x0000000000400f8a &lt;+71&gt;:    mov    $0x100,%eax</span><br><span class="line">0x0000000000400f8f &lt;+76&gt;:    jmp    0x400fbe &lt;phase_3+123&gt;</span><br><span class="line">0x0000000000400f91 &lt;+78&gt;:    mov    $0x185,%eax</span><br><span class="line">0x0000000000400f96 &lt;+83&gt;:    jmp    0x400fbe &lt;phase_3+123&gt;</span><br><span class="line">0x0000000000400f98 &lt;+85&gt;:    mov    $0xce,%eax</span><br><span class="line">0x0000000000400f9d &lt;+90&gt;:    jmp    0x400fbe &lt;phase_3+123&gt;</span><br><span class="line">0x0000000000400f9f &lt;+92&gt;:    mov    $0x2aa,%eax</span><br><span class="line">0x0000000000400fa4 &lt;+97&gt;:    jmp    0x400fbe &lt;phase_3+123&gt;</span><br><span class="line">0x0000000000400fa6 &lt;+99&gt;:    mov    $0x147,%eax</span><br><span class="line">0x0000000000400fab &lt;+104&gt;:   jmp    0x400fbe &lt;phase_3+123&gt;</span><br><span class="line">0x0000000000400fad &lt;+106&gt;:   call   0x40143a &lt;explode_bomb&gt;</span><br><span class="line">0x0000000000400fb2 &lt;+111&gt;:   mov    $0x0,%eax</span><br><span class="line">0x0000000000400fb7 &lt;+116&gt;:   jmp    0x400fbe &lt;phase_3+123&gt;</span><br><span class="line">0x0000000000400fb9 &lt;+118&gt;:   mov    $0x137,%eax</span><br><span class="line">0x0000000000400fbe &lt;+123&gt;:   cmp    0xc(%rsp),%eax</span><br><span class="line">0x0000000000400fc2 &lt;+127&gt;:   je     0x400fc9 &lt;phase_3+134&gt;</span><br><span class="line">0x0000000000400fc4 &lt;+129&gt;:   call   0x40143a &lt;explode_bomb&gt;</span><br><span class="line">0x0000000000400fc9 &lt;+134&gt;:   add    $0x18,%rsp</span><br><span class="line">0x0000000000400fcd &lt;+138&gt;:   ret</span><br></pre></td></tr></table></figure>
+
+<p>开始时解析输入字符串：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">0x0000000000400f47 &lt;+4&gt;:     lea    0xc(%rsp),%rcx</span><br><span class="line">0x0000000000400f4c &lt;+9&gt;:     lea    0x8(%rsp),%rdx</span><br><span class="line">0x0000000000400f51 &lt;+14&gt;:    mov    $0x4025cf,%esi</span><br><span class="line">0x0000000000400f56 &lt;+19&gt;:    mov    $0x0,%eax</span><br><span class="line">0x0000000000400f5b &lt;+24&gt;:    call   0x400bf0 &lt;__isoc99_sscanf@plt&gt;</span><br></pre></td></tr></table></figure>
+
+<p><code>print (char*)0x4025cf</code>获得<code>&quot;%d %d&quot;</code>，即输入两个整数。</p>
+<p>由&lt;phase_3+39&gt;可知，输入的第一个数一定在被视为无符号整数时小于等于7。</p>
+<p>在&lt;phase_3+50&gt;处可知，根据输入的第一个参数进行跳转表查询后进行跳转。使用<code>x/8xg 0x402470</code>获取跳转表：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">0x402470:       0x0000000000400f7c      0x0000000000400fb9</span><br><span class="line">0x402480:       0x0000000000400f83      0x0000000000400f8a</span><br><span class="line">0x402490:       0x0000000000400f91      0x0000000000400f98</span><br><span class="line">0x4024a0:       0x0000000000400f9f      0x0000000000400fa6</span><br></pre></td></tr></table></figure>
+
+<p>跳转表中全部值均对应下述分支。</p>
+<p>在&lt;phase_3+127&gt;处可知，第二个参数应该和第一个数跳转后的赋值相同。</p>
+<p>故答案有多个，依次为（一行一个答案）：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">0 207</span><br><span class="line">1 311</span><br><span class="line">2 707</span><br><span class="line">3 256</span><br><span class="line">4 389</span><br><span class="line">5 206</span><br><span class="line">6 682</span><br><span class="line">7 327</span><br></pre></td></tr></table></figure>
+
+<h2 id="phase-4"><a href="#phase-4" class="headerlink" title="phase_4"></a>phase_4</h2><p>采用<code>disas phase_4</code>生成对应汇编代码：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">0x000000000040100c &lt;+0&gt;:     sub    $0x18,%rsp</span><br><span class="line">0x0000000000401010 &lt;+4&gt;:     lea    0xc(%rsp),%rcx</span><br><span class="line">0x0000000000401015 &lt;+9&gt;:     lea    0x8(%rsp),%rdx</span><br><span class="line">0x000000000040101a &lt;+14&gt;:    mov    $0x4025cf,%esi</span><br><span class="line">0x000000000040101f &lt;+19&gt;:    mov    $0x0,%eax</span><br><span class="line">0x0000000000401024 &lt;+24&gt;:    call   0x400bf0 &lt;__isoc99_sscanf@plt&gt;</span><br><span class="line">0x0000000000401029 &lt;+29&gt;:    cmp    $0x2,%eax</span><br><span class="line">0x000000000040102c &lt;+32&gt;:    jne    0x401035 &lt;phase_4+41&gt;</span><br><span class="line">0x000000000040102e &lt;+34&gt;:    cmpl   $0xe,0x8(%rsp)</span><br><span class="line">0x0000000000401033 &lt;+39&gt;:    jbe    0x40103a &lt;phase_4+46&gt;</span><br><span class="line">0x0000000000401035 &lt;+41&gt;:    call   0x40143a &lt;explode_bomb&gt;</span><br><span class="line">0x000000000040103a &lt;+46&gt;:    mov    $0xe,%edx</span><br><span class="line">0x000000000040103f &lt;+51&gt;:    mov    $0x0,%esi</span><br><span class="line">0x0000000000401044 &lt;+56&gt;:    mov    0x8(%rsp),%edi</span><br><span class="line">0x0000000000401048 &lt;+60&gt;:    call   0x400fce &lt;func4&gt;</span><br><span class="line">0x000000000040104d &lt;+65&gt;:    test   %eax,%eax</span><br><span class="line">0x000000000040104f &lt;+67&gt;:    jne    0x401058 &lt;phase_4+76&gt;</span><br><span class="line">0x0000000000401051 &lt;+69&gt;:    cmpl   $0x0,0xc(%rsp)</span><br><span class="line">0x0000000000401056 &lt;+74&gt;:    je     0x40105d &lt;phase_4+81&gt;</span><br><span class="line">0x0000000000401058 &lt;+76&gt;:    call   0x40143a &lt;explode_bomb&gt;</span><br><span class="line">0x000000000040105d &lt;+81&gt;:    add    $0x18,%rsp</span><br><span class="line">0x0000000000401061 &lt;+85&gt;:    ret</span><br></pre></td></tr></table></figure>
+
+<p>如上文，<code>0x4025cf</code>处为<code>&quot;%d %d&quot;</code>，即解析两个整数。</p>
+<p>&lt;phase_4+34&gt;处表明，第一个参数应当小于等于15。</p>
+<p>&lt;phase_4+60&gt;调用了函数<code>func4</code>。其中func4第一个参数与phase_4第一个参数相同，第二、三个参数分别为0和14。</p>
+<p>&lt;phase_4+65&gt;处表明，<code>func4</code>的返回值应当为0。</p>
+<p>&lt;phase_4+65&gt;处表明，执行<code>func4</code>后第二个参数应当为0。</p>
+<p>使用<code>disas func4</code>对<code>func4</code>反编译：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">0x0000000000400fce &lt;+0&gt;:     sub    $0x8,%rsp</span><br><span class="line">0x0000000000400fd2 &lt;+4&gt;:     mov    %edx,%eax</span><br><span class="line">0x0000000000400fd4 &lt;+6&gt;:     sub    %esi,%eax</span><br><span class="line">0x0000000000400fd6 &lt;+8&gt;:     mov    %eax,%ecx</span><br><span class="line">0x0000000000400fd8 &lt;+10&gt;:    shr    $0x1f,%ecx</span><br><span class="line">0x0000000000400fdb &lt;+13&gt;:    add    %ecx,%eax</span><br><span class="line">0x0000000000400fdd &lt;+15&gt;:    sar    %eax</span><br><span class="line">0x0000000000400fdf &lt;+17&gt;:    lea    (%rax,%rsi,1),%ecx</span><br><span class="line">0x0000000000400fe2 &lt;+20&gt;:    cmp    %edi,%ecx</span><br><span class="line">0x0000000000400fe4 &lt;+22&gt;:    jle    0x400ff2 &lt;func4+36&gt;</span><br><span class="line">0x0000000000400fe6 &lt;+24&gt;:    lea    -0x1(%rcx),%edx</span><br><span class="line">0x0000000000400fe9 &lt;+27&gt;:    call   0x400fce &lt;func4&gt;</span><br><span class="line">0x0000000000400fee &lt;+32&gt;:    add    %eax,%eax</span><br><span class="line">0x0000000000400ff0 &lt;+34&gt;:    jmp    0x401007 &lt;func4+57&gt;</span><br><span class="line">0x0000000000400ff2 &lt;+36&gt;:    mov    $0x0,%eax</span><br><span class="line">0x0000000000400ff7 &lt;+41&gt;:    cmp    %edi,%ecx</span><br><span class="line">0x0000000000400ff9 &lt;+43&gt;:    jge    0x401007 &lt;func4+57&gt;</span><br><span class="line">0x0000000000400ffb &lt;+45&gt;:    lea    0x1(%rcx),%esi</span><br><span class="line">0x0000000000400ffe &lt;+48&gt;:    call   0x400fce &lt;func4&gt;</span><br><span class="line">0x0000000000401003 &lt;+53&gt;:    lea    0x1(%rax,%rax,1),%eax</span><br><span class="line">0x0000000000401007 &lt;+57&gt;:    add    $0x8,%rsp</span><br><span class="line">0x000000000040100b &lt;+61&gt;:    ret</span><br></pre></td></tr></table></figure>
+
+<p>可以看出<code>func4</code>是一个递归程序，翻译成C语言代码如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> <span class="title function_">func4</span><span class="params">(<span class="type">int</span> edi, <span class="type">int</span> esi, <span class="type">int</span> edx)</span> &#123;</span><br><span class="line">	<span class="type">int</span> eax = edx - esi;</span><br><span class="line">	eax = (eax + (eax &lt; <span class="number">0</span>)) / <span class="number">2</span>;</span><br><span class="line">	<span class="type">int</span> ecx = eax + esi;</span><br><span class="line">	<span class="keyword">if</span>(ecx &lt;= edi) &#123;</span><br><span class="line">		eax = <span class="number">0</span>;</span><br><span class="line">		<span class="keyword">if</span>(ecx &gt;= edi) &#123;</span><br><span class="line">			<span class="comment">// 1</span></span><br><span class="line">			<span class="keyword">return</span> eax;</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="comment">// 2</span></span><br><span class="line">		esi = ecx + <span class="number">1</span>;</span><br><span class="line">		eax = func4(edi, esi, edx);</span><br><span class="line">		<span class="keyword">return</span> <span class="number">2</span> * eax + <span class="number">1</span>;</span><br><span class="line">	&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">		<span class="comment">// 3</span></span><br><span class="line">		edx = ecx - <span class="number">1</span>;</span><br><span class="line">		eax = func4(edi, esi, edx);</span><br><span class="line">		<span class="keyword">return</span> <span class="number">2</span> * eax;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>于是问题变为使<code>func4(x, 0, 14)</code>为0的x值。</p>
+<p>观察可得，只有当递归末端从<code>1</code>或<code>3</code>出口出，其他递归层均从<code>3</code>出口出时才为0。</p>
+<p>同时，函数参数有如下变化：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"># 2出口进入时</span><br><span class="line">edi = edi, esi = ecx + 1, edx = edx</span><br><span class="line"># 3出口进入时</span><br><span class="line">edi = edi, esi = esi, edx = ecx - 1</span><br><span class="line"></span><br><span class="line">ecx = esi + (edx &gt; esi ? (edx - esi) / 2 : (edx - esi + 1) / 2)</span><br></pre></td></tr></table></figure>
+
+<p>因为输入的<code>esi = 0</code>，<code>edx = 14</code>，每次要求均从<code>1</code>或<code>3</code>出口出，所以有：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">1: ecx = 7, 此时可以有edi = ecx &lt;= 15，故可以直接另x = 15，直接返回。</span><br></pre></td></tr></table></figure>
+
+<p>故答案是：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">7 0</span><br></pre></td></tr></table></figure>
+
+<h2 id="phase-5"><a href="#phase-5" class="headerlink" title="phase_5"></a>phase_5</h2><p>采用<code>disas phase_5</code>获得对应汇编代码：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line">0x0000000000401062 &lt;+0&gt;:     push   %rbx</span><br><span class="line">0x0000000000401063 &lt;+1&gt;:     sub    $0x20,%rsp</span><br><span class="line">0x0000000000401067 &lt;+5&gt;:     mov    %rdi,%rbx</span><br><span class="line">0x000000000040106a &lt;+8&gt;:     mov    %fs:0x28,%rax</span><br><span class="line">0x0000000000401073 &lt;+17&gt;:    mov    %rax,0x18(%rsp)</span><br><span class="line">0x0000000000401078 &lt;+22&gt;:    xor    %eax,%eax</span><br><span class="line">0x000000000040107a &lt;+24&gt;:    call   0x40131b &lt;string_length&gt;</span><br><span class="line">0x000000000040107f &lt;+29&gt;:    cmp    $0x6,%eax</span><br><span class="line">0x0000000000401082 &lt;+32&gt;:    je     0x4010d2 &lt;phase_5+112&gt;</span><br><span class="line">0x0000000000401084 &lt;+34&gt;:    call   0x40143a &lt;explode_bomb&gt;</span><br><span class="line">0x0000000000401089 &lt;+39&gt;:    jmp    0x4010d2 &lt;phase_5+112&gt;</span><br><span class="line">0x000000000040108b &lt;+41&gt;:    movzbl (%rbx,%rax,1),%ecx</span><br><span class="line">0x000000000040108f &lt;+45&gt;:    mov    %cl,(%rsp)</span><br><span class="line">0x0000000000401092 &lt;+48&gt;:    mov    (%rsp),%rdx</span><br><span class="line">0x0000000000401096 &lt;+52&gt;:    and    $0xf,%edx</span><br><span class="line">0x0000000000401099 &lt;+55&gt;:    movzbl 0x4024b0(%rdx),%edx</span><br><span class="line">0x00000000004010a0 &lt;+62&gt;:    mov    %dl,0x10(%rsp,%rax,1)</span><br><span class="line">0x00000000004010a4 &lt;+66&gt;:    add    $0x1,%rax</span><br><span class="line">0x00000000004010a8 &lt;+70&gt;:    cmp    $0x6,%rax</span><br><span class="line">0x00000000004010ac &lt;+74&gt;:    jne    0x40108b &lt;phase_5+41&gt;</span><br><span class="line">0x00000000004010ae &lt;+76&gt;:    movb   $0x0,0x16(%rsp)</span><br><span class="line">0x00000000004010b3 &lt;+81&gt;:    mov    $0x40245e,%esi</span><br><span class="line">0x00000000004010b8 &lt;+86&gt;:    lea    0x10(%rsp),%rdi</span><br><span class="line">0x00000000004010bd &lt;+91&gt;:    call   0x401338 &lt;strings_not_equal&gt;</span><br><span class="line">0x00000000004010c2 &lt;+96&gt;:    test   %eax,%eax</span><br><span class="line">0x00000000004010c4 &lt;+98&gt;:    je     0x4010d9 &lt;phase_5+119&gt;</span><br><span class="line">0x00000000004010c6 &lt;+100&gt;:   call   0x40143a &lt;explode_bomb&gt;</span><br><span class="line">0x00000000004010cb &lt;+105&gt;:   nopl   0x0(%rax,%rax,1)</span><br><span class="line">0x00000000004010d0 &lt;+110&gt;:   jmp    0x4010d9 &lt;phase_5+119&gt;</span><br><span class="line">0x00000000004010d2 &lt;+112&gt;:   mov    $0x0,%eax</span><br><span class="line">0x00000000004010d7 &lt;+117&gt;:   jmp    0x40108b &lt;phase_5+41&gt;</span><br><span class="line">0x00000000004010d9 &lt;+119&gt;:   mov    0x18(%rsp),%rax</span><br><span class="line">0x00000000004010de &lt;+124&gt;:   xor    %fs:0x28,%rax</span><br><span class="line">0x00000000004010e7 &lt;+133&gt;:   je     0x4010ee &lt;phase_5+140&gt;</span><br><span class="line">0x00000000004010e9 &lt;+135&gt;:   call   0x400b30 &lt;__stack_chk_fail@plt&gt;</span><br><span class="line">0x00000000004010ee &lt;+140&gt;:   add    $0x20,%rsp</span><br><span class="line">0x00000000004010f2 &lt;+144&gt;:   pop    %rbx</span><br><span class="line">0x00000000004010f3 &lt;+145&gt;:   ret</span><br></pre></td></tr></table></figure>
+
+<p>由&lt;phase_5+24&gt;可知输入的是字符串，根据&lt;phase_5+29&gt;可知长度为6。</p>
+<p>很显然，存在一个循环，循环节为：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">0x000000000040108b &lt;+41&gt;:    movzbl (%rbx,%rax,1),%ecx</span><br><span class="line">0x000000000040108f &lt;+45&gt;:    mov    %cl,(%rsp)</span><br><span class="line">0x0000000000401092 &lt;+48&gt;:    mov    (%rsp),%rdx</span><br><span class="line">0x0000000000401096 &lt;+52&gt;:    and    $0xf,%edx</span><br><span class="line">0x0000000000401099 &lt;+55&gt;:    movzbl 0x4024b0(%rdx),%edx</span><br><span class="line">0x00000000004010a0 &lt;+62&gt;:    mov    %dl,0x10(%rsp,%rax,1)</span><br><span class="line">0x00000000004010a4 &lt;+66&gt;:    add    $0x1,%rax</span><br><span class="line">0x00000000004010a8 &lt;+70&gt;:    cmp    $0x6,%rax</span><br><span class="line">0x00000000004010ac &lt;+74&gt;:    jne    0x40108b &lt;phase_5+41&gt;</span><br></pre></td></tr></table></figure>
+
+<p>该循环将位于<code>0x4024b0</code>的字符串按照一定规则搬运到<code>0x10(%rsp)</code>处，其中每一个规则为映射后的字符串是<code>0x4024b0</code>的字符串取对应下标的输入字符串对应的整数的后4位的结果。</p>
+<p>&lt;phase_5+91&gt;表明获得的字符串应当与位于<code>0x40245e</code>的字符串相同。</p>
+<p>使用<code>p (char*)0x4024b0</code>打印<code>0x4024b0</code>字符串，取前16位的结果如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">0x4024b0 &lt;array&gt; &quot;maduiersnfotvbyl&quot;</span><br></pre></td></tr></table></figure>
+
+<p>使用<code>p (char*)0x40245e</code>打印<code>0x40245e</code>字符串，结果如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">0x40245e &quot;flyers&quot;</span><br></pre></td></tr></table></figure>
+
+<p>即输入的字符串对应的后4位的值应为：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">0x9 0xf 0xe 0x5 0x6 0x7</span><br></pre></td></tr></table></figure>
+
+<p>为了便于输入，将其映射到<code>a-o</code>即可，故答案为：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ionefg</span><br></pre></td></tr></table></figure>
+
+<h2 id="phase-6"><a href="#phase-6" class="headerlink" title="phase_6"></a>phase_6</h2><p>采用<code>disas phase_6</code>获得对应汇编代码：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br></pre></td><td class="code"><pre><span class="line">0x00000000004010f4 &lt;+0&gt;:     push   %r14</span><br><span class="line">0x00000000004010f6 &lt;+2&gt;:     push   %r13</span><br><span class="line">0x00000000004010f8 &lt;+4&gt;:     push   %r12</span><br><span class="line">0x00000000004010fa &lt;+6&gt;:     push   %rbp</span><br><span class="line">0x00000000004010fb &lt;+7&gt;:     push   %rbx</span><br><span class="line">0x00000000004010fc &lt;+8&gt;:     sub    $0x50,%rsp</span><br><span class="line">0x0000000000401100 &lt;+12&gt;:    mov    %rsp,%r13</span><br><span class="line">0x0000000000401103 &lt;+15&gt;:    mov    %rsp,%rsi</span><br><span class="line">0x0000000000401106 &lt;+18&gt;:    call   0x40145c &lt;read_six_numbers&gt;</span><br><span class="line">0x000000000040110b &lt;+23&gt;:    mov    %rsp,%r14</span><br><span class="line">0x000000000040110e &lt;+26&gt;:    mov    $0x0,%r12d</span><br><span class="line">0x0000000000401114 &lt;+32&gt;:    mov    %r13,%rbp</span><br><span class="line">0x0000000000401117 &lt;+35&gt;:    mov    0x0(%r13),%eax</span><br><span class="line">0x000000000040111b &lt;+39&gt;:    sub    $0x1,%eax</span><br><span class="line">0x000000000040111e &lt;+42&gt;:    cmp    $0x5,%eax</span><br><span class="line">0x0000000000401121 &lt;+45&gt;:    jbe    0x401128 &lt;phase_6+52&gt;</span><br><span class="line">0x0000000000401123 &lt;+47&gt;:    call   0x40143a &lt;explode_bomb&gt;</span><br><span class="line">0x0000000000401128 &lt;+52&gt;:    add    $0x1,%r12d</span><br><span class="line">0x000000000040112c &lt;+56&gt;:    cmp    $0x6,%r12d</span><br><span class="line">0x0000000000401130 &lt;+60&gt;:    je     0x401153 &lt;phase_6+95&gt;</span><br><span class="line">0x0000000000401132 &lt;+62&gt;:    mov    %r12d,%ebx</span><br><span class="line">0x0000000000401135 &lt;+65&gt;:    movslq %ebx,%rax</span><br><span class="line">0x0000000000401138 &lt;+68&gt;:    mov    (%rsp,%rax,4),%eax</span><br><span class="line">0x000000000040113b &lt;+71&gt;:    cmp    %eax,0x0(%rbp)</span><br><span class="line">0x000000000040113e &lt;+74&gt;:    jne    0x401145 &lt;phase_6+81&gt;</span><br><span class="line">0x0000000000401140 &lt;+76&gt;:    call   0x40143a &lt;explode_bomb&gt;</span><br><span class="line">0x0000000000401145 &lt;+81&gt;:    add    $0x1,%ebx</span><br><span class="line">0x0000000000401148 &lt;+84&gt;:    cmp    $0x5,%ebx</span><br><span class="line">0x000000000040114b &lt;+87&gt;:    jle    0x401135 &lt;phase_6+65&gt;</span><br><span class="line">0x000000000040114d &lt;+89&gt;:    add    $0x4,%r13</span><br><span class="line">0x0000000000401151 &lt;+93&gt;:    jmp    0x401114 &lt;phase_6+32&gt;</span><br><span class="line">0x0000000000401153 &lt;+95&gt;:    lea    0x18(%rsp),%rsi</span><br><span class="line">0x0000000000401158 &lt;+100&gt;:   mov    %r14,%rax</span><br><span class="line">0x000000000040115b &lt;+103&gt;:   mov    $0x7,%ecx</span><br><span class="line">0x0000000000401160 &lt;+108&gt;:   mov    %ecx,%edx</span><br><span class="line">0x0000000000401162 &lt;+110&gt;:   sub    (%rax),%edx</span><br><span class="line">0x0000000000401164 &lt;+112&gt;:   mov    %edx,(%rax)</span><br><span class="line">0x0000000000401166 &lt;+114&gt;:   add    $0x4,%rax</span><br><span class="line">0x000000000040116a &lt;+118&gt;:   cmp    %rsi,%rax</span><br><span class="line">0x000000000040116d &lt;+121&gt;:   jne    0x401160 &lt;phase_6+108&gt;</span><br><span class="line">0x000000000040116f &lt;+123&gt;:   mov    $0x0,%esi</span><br><span class="line">0x0000000000401174 &lt;+128&gt;:   jmp    0x401197 &lt;phase_6+163&gt;</span><br><span class="line">0x0000000000401176 &lt;+130&gt;:   mov    0x8(%rdx),%rdx</span><br><span class="line">0x000000000040117a &lt;+134&gt;:   add    $0x1,%eax</span><br><span class="line">0x000000000040117d &lt;+137&gt;:   cmp    %ecx,%eax</span><br><span class="line">0x000000000040117f &lt;+139&gt;:   jne    0x401176 &lt;phase_6+130&gt;</span><br><span class="line">0x0000000000401181 &lt;+141&gt;:   jmp    0x401188 &lt;phase_6+148&gt;</span><br><span class="line">0x0000000000401183 &lt;+143&gt;:   mov    $0x6032d0,%edx</span><br><span class="line">0x0000000000401188 &lt;+148&gt;:   mov    %rdx,0x20(%rsp,%rsi,2)</span><br><span class="line">0x000000000040118d &lt;+153&gt;:   add    $0x4,%rsi</span><br><span class="line">0x0000000000401191 &lt;+157&gt;:   cmp    $0x18,%rsi</span><br><span class="line">0x0000000000401195 &lt;+161&gt;:   je     0x4011ab &lt;phase_6+183&gt;</span><br><span class="line">0x0000000000401197 &lt;+163&gt;:   mov    (%rsp,%rsi,1),%ecx</span><br><span class="line">0x000000000040119a &lt;+166&gt;:   cmp    $0x1,%ecx</span><br><span class="line">0x000000000040119d &lt;+169&gt;:   jle    0x401183 &lt;phase_6+143&gt;</span><br><span class="line">0x000000000040119f &lt;+171&gt;:   mov    $0x1,%eax</span><br><span class="line">0x00000000004011a4 &lt;+176&gt;:   mov    $0x6032d0,%edx</span><br><span class="line">0x00000000004011a9 &lt;+181&gt;:   jmp    0x401176 &lt;phase_6+130&gt;</span><br><span class="line">0x00000000004011ab &lt;+183&gt;:   mov    0x20(%rsp),%rbx</span><br><span class="line">0x00000000004011b0 &lt;+188&gt;:   lea    0x28(%rsp),%rax</span><br><span class="line">0x00000000004011b5 &lt;+193&gt;:   lea    0x50(%rsp),%rsi</span><br><span class="line">0x00000000004011ba &lt;+198&gt;:   mov    %rbx,%rcx</span><br><span class="line">0x00000000004011bd &lt;+201&gt;:   mov    (%rax),%rdx</span><br><span class="line">0x00000000004011c0 &lt;+204&gt;:   mov    %rdx,0x8(%rcx)</span><br><span class="line">0x00000000004011c4 &lt;+208&gt;:   add    $0x8,%rax</span><br><span class="line">0x00000000004011c8 &lt;+212&gt;:   cmp    %rsi,%rax</span><br><span class="line">0x00000000004011cb &lt;+215&gt;:   je     0x4011d2 &lt;phase_6+222&gt;</span><br><span class="line">0x00000000004011cd &lt;+217&gt;:   mov    %rdx,%rcx</span><br><span class="line">0x00000000004011d0 &lt;+220&gt;:   jmp    0x4011bd &lt;phase_6+201&gt;</span><br><span class="line">0x00000000004011d2 &lt;+222&gt;:   movq   $0x0,0x8(%rdx)</span><br><span class="line">0x00000000004011da &lt;+230&gt;:   mov    $0x5,%ebp</span><br><span class="line">0x00000000004011df &lt;+235&gt;:   mov    0x8(%rbx),%rax</span><br><span class="line">0x00000000004011e3 &lt;+239&gt;:   mov    (%rax),%eax</span><br><span class="line">0x00000000004011e5 &lt;+241&gt;:   cmp    %eax,(%rbx)</span><br><span class="line">0x00000000004011e7 &lt;+243&gt;:   jge    0x4011ee &lt;phase_6+250&gt;</span><br><span class="line">0x00000000004011e9 &lt;+245&gt;:   call   0x40143a &lt;explode_bomb&gt;</span><br><span class="line">0x00000000004011ee &lt;+250&gt;:   mov    0x8(%rbx),%rbx</span><br><span class="line">0x00000000004011f2 &lt;+254&gt;:   sub    $0x1,%ebp</span><br><span class="line">0x00000000004011f5 &lt;+257&gt;:   jne    0x4011df &lt;phase_6+235&gt;</span><br><span class="line">0x00000000004011f7 &lt;+259&gt;:   add    $0x50,%rsp</span><br><span class="line">0x00000000004011fb &lt;+263&gt;:   pop    %rbx</span><br><span class="line">0x00000000004011fc &lt;+264&gt;:   pop    %rbp</span><br><span class="line">0x00000000004011fd &lt;+265&gt;:   pop    %r12</span><br><span class="line">0x00000000004011ff &lt;+267&gt;:   pop    %r13</span><br><span class="line">0x0000000000401201 &lt;+269&gt;:   pop    %r14</span><br><span class="line">0x0000000000401203 &lt;+271&gt;:   ret</span><br></pre></td></tr></table></figure>
+
+<p>&lt;phase_6+18&gt;表明，输入的是6个数值，解析后的数值放入栈中。</p>
+<p>接下来进入一段循环中：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">0x000000000040110b &lt;+23&gt;:    mov    %rsp,%r14</span><br><span class="line">0x000000000040110e &lt;+26&gt;:    mov    $0x0,%r12d</span><br><span class="line">0x0000000000401114 &lt;+32&gt;:    mov    %r13,%rbp</span><br><span class="line">0x0000000000401117 &lt;+35&gt;:    mov    0x0(%r13),%eax</span><br><span class="line">0x000000000040111b &lt;+39&gt;:    sub    $0x1,%eax</span><br><span class="line">0x000000000040111e &lt;+42&gt;:    cmp    $0x5,%eax</span><br><span class="line">0x0000000000401121 &lt;+45&gt;:    jbe    0x401128 &lt;phase_6+52&gt;</span><br><span class="line">0x0000000000401123 &lt;+47&gt;:    call   0x40143a &lt;explode_bomb&gt;</span><br><span class="line">0x0000000000401128 &lt;+52&gt;:    add    $0x1,%r12d</span><br><span class="line">0x000000000040112c &lt;+56&gt;:    cmp    $0x6,%r12d</span><br><span class="line">0x0000000000401130 &lt;+60&gt;:    je     0x401153 &lt;phase_6+95&gt;</span><br><span class="line">0x0000000000401132 &lt;+62&gt;:    mov    %r12d,%ebx</span><br><span class="line">0x0000000000401135 &lt;+65&gt;:    movslq %ebx,%rax</span><br><span class="line">0x0000000000401138 &lt;+68&gt;:    mov    (%rsp,%rax,4),%eax</span><br><span class="line">0x000000000040113b &lt;+71&gt;:    cmp    %eax,0x0(%rbp)</span><br><span class="line">0x000000000040113e &lt;+74&gt;:    jne    0x401145 &lt;phase_6+81&gt;</span><br><span class="line">0x0000000000401140 &lt;+76&gt;:    call   0x40143a &lt;explode_bomb&gt;</span><br><span class="line">0x0000000000401145 &lt;+81&gt;:    add    $0x1,%ebx</span><br><span class="line">0x0000000000401148 &lt;+84&gt;:    cmp    $0x5,%ebx</span><br><span class="line">0x000000000040114b &lt;+87&gt;:    jle    0x401135 &lt;phase_6+65&gt;</span><br><span class="line">0x000000000040114d &lt;+89&gt;:    add    $0x4,%r13</span><br><span class="line">0x0000000000401151 &lt;+93&gt;:    jmp    0x401114 &lt;phase_6+32&gt;</span><br></pre></td></tr></table></figure>
+
+<p>该循环依次遍历数组中的每个元素，并对其进行判断，要求每个元素两两均不相等且均在1-6之间。</p>
+<p>接下来进入另一个循环：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">0x0000000000401153 &lt;+95&gt;:    lea    0x18(%rsp),%rsi</span><br><span class="line">0x0000000000401158 &lt;+100&gt;:   mov    %r14,%rax</span><br><span class="line">0x000000000040115b &lt;+103&gt;:   mov    $0x7,%ecx</span><br><span class="line">0x0000000000401160 &lt;+108&gt;:   mov    %ecx,%edx</span><br><span class="line">0x0000000000401162 &lt;+110&gt;:   sub    (%rax),%edx</span><br><span class="line">0x0000000000401164 &lt;+112&gt;:   mov    %edx,(%rax)</span><br><span class="line">0x0000000000401166 &lt;+114&gt;:   add    $0x4,%rax</span><br><span class="line">0x000000000040116a &lt;+118&gt;:   cmp    %rsi,%rax</span><br><span class="line">0x000000000040116d &lt;+121&gt;:   jne    0x401160 &lt;phase_6+108&gt;</span><br></pre></td></tr></table></figure>
+
+<p>该循环依次遍历数组中的每个元素，并使用7减去其之后的值替代原值。</p>
+<p>接下来又进入新循环：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">0x000000000040116f &lt;+123&gt;:   mov    $0x0,%esi</span><br><span class="line">0x0000000000401174 &lt;+128&gt;:   jmp    0x401197 &lt;phase_6+163&gt;</span><br><span class="line">0x0000000000401176 &lt;+130&gt;:   mov    0x8(%rdx),%rdx</span><br><span class="line">0x000000000040117a &lt;+134&gt;:   add    $0x1,%eax</span><br><span class="line">0x000000000040117d &lt;+137&gt;:   cmp    %ecx,%eax</span><br><span class="line">0x000000000040117f &lt;+139&gt;:   jne    0x401176 &lt;phase_6+130&gt;</span><br><span class="line">0x0000000000401181 &lt;+141&gt;:   jmp    0x401188 &lt;phase_6+148&gt;</span><br><span class="line">0x0000000000401183 &lt;+143&gt;:   mov    $0x6032d0,%edx</span><br><span class="line">0x0000000000401188 &lt;+148&gt;:   mov    %rdx,0x20(%rsp,%rsi,2)</span><br><span class="line">0x000000000040118d &lt;+153&gt;:   add    $0x4,%rsi</span><br><span class="line">0x0000000000401191 &lt;+157&gt;:   cmp    $0x18,%rsi</span><br><span class="line">0x0000000000401195 &lt;+161&gt;:   je     0x4011ab &lt;phase_6+183&gt;</span><br><span class="line">0x0000000000401197 &lt;+163&gt;:   mov    (%rsp,%rsi,1),%ecx</span><br><span class="line">0x000000000040119a &lt;+166&gt;:   cmp    $0x1,%ecx</span><br><span class="line">0x000000000040119d &lt;+169&gt;:   jle    0x401183 &lt;phase_6+143&gt;</span><br><span class="line">0x000000000040119f &lt;+171&gt;:   mov    $0x1,%eax</span><br><span class="line">0x00000000004011a4 &lt;+176&gt;:   mov    $0x6032d0,%edx</span><br><span class="line">0x00000000004011a9 &lt;+181&gt;:   jmp    0x401176 &lt;phase_6+130&gt;</span><br></pre></td></tr></table></figure>
+
+<p>其中存在一组小循环：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">0x0000000000401176 &lt;+130&gt;:   mov    0x8(%rdx),%rdx</span><br><span class="line">0x000000000040117a &lt;+134&gt;:   add    $0x1,%eax</span><br><span class="line">0x000000000040117d &lt;+137&gt;:   cmp    %ecx,%eax</span><br><span class="line">0x000000000040117f &lt;+139&gt;:   jne    0x401176 &lt;phase_6+130&gt;</span><br><span class="line">0x0000000000401181 &lt;+141&gt;:   jmp    0x401188 &lt;phase_6+148&gt;</span><br></pre></td></tr></table></figure>
+
+<p>该循环显然处理的是一个链表结构，其从rdx处返回ecx位置的链表节点。</p>
+<p>接下来进入另一个小循环：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">0x0000000000401183 &lt;+143&gt;:   mov    $0x6032d0,%edx</span><br><span class="line">0x0000000000401188 &lt;+148&gt;:   mov    %rdx,0x20(%rsp,%rsi,2)</span><br><span class="line">0x000000000040118d &lt;+153&gt;:   add    $0x4,%rsi</span><br><span class="line">0x0000000000401191 &lt;+157&gt;:   cmp    $0x18,%rsi</span><br><span class="line">0x0000000000401195 &lt;+161&gt;:   je     0x4011ab &lt;phase_6+183&gt;</span><br><span class="line">0x0000000000401197 &lt;+163&gt;:   mov    (%rsp,%rsi,1),%ecx</span><br><span class="line">0x000000000040119a &lt;+166&gt;:   cmp    $0x1,%ecx</span><br><span class="line">0x000000000040119d &lt;+169&gt;:   jle    0x401183 &lt;phase_6+143&gt;</span><br><span class="line">0x000000000040119f &lt;+171&gt;:   mov    $0x1,%eax</span><br><span class="line">0x00000000004011a4 &lt;+176&gt;:   mov    $0x6032d0,%edx</span><br><span class="line">0x00000000004011a9 &lt;+181&gt;:   jmp    0x401176 &lt;phase_6+130&gt;</span><br></pre></td></tr></table></figure>
+
+<p>遍历<code>7减</code>操作后的数组，该循环用于根据处理后的取出对应链表节点指针并将其存放为数组，链表的头节点地址为<code>0x6032d0</code>。</p>
+<p>故本段的作用是根据输入数组取出节点形成节点指针数组，指针节点数组的位置在0x20(%rsp)处。</p>
+<p>接下来进行第三段大循环：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">0x00000000004011ab &lt;+183&gt;:   mov    0x20(%rsp),%rbx</span><br><span class="line">0x00000000004011b0 &lt;+188&gt;:   lea    0x28(%rsp),%rax</span><br><span class="line">0x00000000004011b5 &lt;+193&gt;:   lea    0x50(%rsp),%rsi</span><br><span class="line">0x00000000004011ba &lt;+198&gt;:   mov    %rbx,%rcx</span><br><span class="line">0x00000000004011bd &lt;+201&gt;:   mov    (%rax),%rdx</span><br><span class="line">0x00000000004011c0 &lt;+204&gt;:   mov    %rdx,0x8(%rcx)</span><br><span class="line">0x00000000004011c4 &lt;+208&gt;:   add    $0x8,%rax</span><br><span class="line">0x00000000004011c8 &lt;+212&gt;:   cmp    %rsi,%rax</span><br><span class="line">0x00000000004011cb &lt;+215&gt;:   je     0x4011d2 &lt;phase_6+222&gt;</span><br><span class="line">0x00000000004011cd &lt;+217&gt;:   mov    %rdx,%rcx</span><br><span class="line">0x00000000004011d0 &lt;+220&gt;:   jmp    0x4011bd &lt;phase_6+201&gt;</span><br><span class="line">0x00000000004011d2 &lt;+222&gt;:   movq   $0x0,0x8(%rdx)</span><br><span class="line">0x00000000004011da &lt;+230&gt;:   mov    $0x5,%ebp</span><br><span class="line">0x00000000004011df &lt;+235&gt;:   mov    0x8(%rbx),%rax</span><br><span class="line">0x00000000004011e3 &lt;+239&gt;:   mov    (%rax),%eax</span><br><span class="line">0x00000000004011e5 &lt;+241&gt;:   cmp    %eax,(%rbx)</span><br><span class="line">0x00000000004011e7 &lt;+243&gt;:   jge    0x4011ee &lt;phase_6+250&gt;</span><br><span class="line">0x00000000004011e9 &lt;+245&gt;:   call   0x40143a &lt;explode_bomb&gt;</span><br><span class="line">0x00000000004011ee &lt;+250&gt;:   mov    0x8(%rbx),%rbx</span><br><span class="line">0x00000000004011f2 &lt;+254&gt;:   sub    $0x1,%ebp</span><br><span class="line">0x00000000004011f5 &lt;+257&gt;:   jne    0x4011df &lt;phase_6+235&gt;</span><br></pre></td></tr></table></figure>
+
+<p>一开始是一段小循环：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">0x00000000004011bd &lt;+201&gt;:   mov    (%rax),%rdx</span><br><span class="line">0x00000000004011c0 &lt;+204&gt;:   mov    %rdx,0x8(%rcx)</span><br><span class="line">0x00000000004011c4 &lt;+208&gt;:   add    $0x8,%rax</span><br><span class="line">0x00000000004011c8 &lt;+212&gt;:   cmp    %rsi,%rax</span><br><span class="line">0x00000000004011cb &lt;+215&gt;:   je     0x4011d2 &lt;phase_6+222&gt;</span><br><span class="line">0x00000000004011cd &lt;+217&gt;:   mov    %rdx,%rcx</span><br><span class="line">0x00000000004011d0 &lt;+220&gt;:   jmp    0x4011bd &lt;phase_6+201&gt;</span><br></pre></td></tr></table></figure>
+
+<p>该段循环重建链表，使得其顺序与链表节点数组顺序相同。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">0x00000000004011d2 &lt;+222&gt;:   movq   $0x0,0x8(%rdx)</span><br><span class="line">0x00000000004011da &lt;+230&gt;:   mov    $0x5,%ebp</span><br><span class="line">0x00000000004011df &lt;+235&gt;:   mov    0x8(%rbx),%rax</span><br><span class="line">0x00000000004011e3 &lt;+239&gt;:   mov    (%rax),%eax</span><br><span class="line">0x00000000004011e5 &lt;+241&gt;:   cmp    %eax,(%rbx)</span><br><span class="line">0x00000000004011e7 &lt;+243&gt;:   jge    0x4011ee &lt;phase_6+250&gt;</span><br><span class="line">0x00000000004011e9 &lt;+245&gt;:   call   0x40143a &lt;explode_bomb&gt;</span><br><span class="line">0x00000000004011ee &lt;+250&gt;:   mov    0x8(%rbx),%rbx</span><br><span class="line">0x00000000004011f2 &lt;+254&gt;:   sub    $0x1,%ebp</span><br><span class="line">0x00000000004011f5 &lt;+257&gt;:   jne    0x4011df &lt;phase_6+235&gt;</span><br></pre></td></tr></table></figure>
+
+<p>该段对重排后的链表节点进行判定，要求链表单调递减。</p>
+<p>现在开始反推：</p>
+<ol>
+<li><p>要求最终节点单调递减。</p>
+</li>
+<li><p>进行了链表重构，重构顺序为<code>7减</code>数组指定链表节点顺序。</p>
+</li>
+<li><p>故输入应该为<code>1-6</code>的组合，并且其<code>7减</code>数组使得单调递减。</p>
+</li>
+<li><p>令<code>7减</code>数组转为原数组即可。</p>
+</li>
+</ol>
+<p><code>x/1xw 0x6032d0</code>得：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">0x6032d0 &lt;node1&gt;:       0x0000014c</span><br></pre></td></tr></table></figure>
+
+<p><code>x/2xg 0x6032d0</code>得：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">0x6032d0 &lt;node1&gt;:       0x000000010000014c      0x00000000006032e0</span><br></pre></td></tr></table></figure>
+
+<p><code>x/1xw 0x6032e0</code>得：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">0x6032e0 &lt;node2&gt;:       0x000000a8</span><br></pre></td></tr></table></figure>
+
+<p><code>x/2xg 0x6032e0</code>得：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">0x6032e0 &lt;node2&gt;:       0x00000002000000a8      0x00000000006032f0</span><br></pre></td></tr></table></figure>
+
+<p><code>x/1xw 0x6032f0</code>得：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">0x6032f0 &lt;node3&gt;:       0x0000039c</span><br></pre></td></tr></table></figure>
+
+<p><code>x/2xg 0x6032f0</code>得：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">0x6032f0 &lt;node3&gt;:       0x000000030000039c      0x0000000000603300</span><br></pre></td></tr></table></figure>
+
+<p><code>x/1xw 0x603300</code>得：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">0x603300 &lt;node4&gt;:       0x000002b3</span><br></pre></td></tr></table></figure>
+
+<p><code>x/2xg 0x603300</code>得：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">0x603300 &lt;node4&gt;:       0x00000004000002b3      0x0000000000603310</span><br></pre></td></tr></table></figure>
+
+<p><code>x/1xw 0x603310</code>得：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">0x603310 &lt;node5&gt;:       0x000001dd</span><br></pre></td></tr></table></figure>
+
+<p><code>x/2xg 0x603310</code>得：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">0x603310 &lt;node5&gt;:       0x00000005000001dd      0x0000000000603320</span><br></pre></td></tr></table></figure>
+
+<p><code>x/1xw 0x603320</code>得：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">0x603320 &lt;node6&gt;:       0x000001bb</span><br></pre></td></tr></table></figure>
+
+<p><code>x/2xg 0x603320</code>得：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">0x603320 &lt;node6&gt;:       0x00000006000001bb      0x0000000000000000</span><br></pre></td></tr></table></figure>
+
+<p>希望值为单调递减的索引应为<code>3 4 5 6 1 2</code>。</p>
+<p>故<code>7减</code>数组应当为：<code>3 4 5 6 1 2</code>。</p>
+<p>故答案应为：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">4 3 2 1 6 5</span><br></pre></td></tr></table></figure>
+
+<h2 id="secret-phase"><a href="#secret-phase" class="headerlink" title="secret_phase"></a>secret_phase</h2><p>实际上还存在一个<code>secret_phase</code>，其入口在<code>phase_defused</code>中。</p>
+<p>使用<code>disas phase_defused</code>获取<code>phase_defused</code>源码：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line">0x00000000004015c4 &lt;+0&gt;:     sub    $0x78,%rsp</span><br><span class="line">0x00000000004015c8 &lt;+4&gt;:     mov    %fs:0x28,%rax</span><br><span class="line">0x00000000004015d1 &lt;+13&gt;:    mov    %rax,0x68(%rsp)</span><br><span class="line">0x00000000004015d6 &lt;+18&gt;:    xor    %eax,%eax</span><br><span class="line">0x00000000004015d8 &lt;+20&gt;:    cmpl   $0x6,0x202181(%rip)        #0x603760 &lt;num_input_strings&gt;</span><br><span class="line">0x00000000004015df &lt;+27&gt;:    jne    0x40163f &lt;phase_defused+123&gt;</span><br><span class="line">0x00000000004015e1 &lt;+29&gt;:    lea    0x10(%rsp),%r8</span><br><span class="line">0x00000000004015e6 &lt;+34&gt;:    lea    0xc(%rsp),%rcx</span><br><span class="line">0x00000000004015eb &lt;+39&gt;:    lea    0x8(%rsp),%rdx</span><br><span class="line">0x00000000004015f0 &lt;+44&gt;:    mov    $0x402619,%esi</span><br><span class="line">0x00000000004015f5 &lt;+49&gt;:    mov    $0x603870,%edi</span><br><span class="line">0x00000000004015fa &lt;+54&gt;:    call   0x400bf0 &lt;__isoc99_sscanf@plt&gt;</span><br><span class="line">0x00000000004015ff &lt;+59&gt;:    cmp    $0x3,%eax</span><br><span class="line">0x0000000000401602 &lt;+62&gt;:    jne    0x401635 &lt;phase_defused+113&gt;</span><br><span class="line">0x0000000000401604 &lt;+64&gt;:    mov    $0x402622,%esi</span><br><span class="line">0x0000000000401609 &lt;+69&gt;:    lea    0x10(%rsp),%rdi</span><br><span class="line">0x000000000040160e &lt;+74&gt;:    call   0x401338 &lt;strings_not_equal&gt;</span><br><span class="line">0x0000000000401613 &lt;+79&gt;:    test   %eax,%eax</span><br><span class="line">0x0000000000401615 &lt;+81&gt;:    jne    0x401635 &lt;phase_defused+113&gt;</span><br><span class="line">0x0000000000401617 &lt;+83&gt;:    mov    $0x4024f8,%edi</span><br><span class="line">0x000000000040161c &lt;+88&gt;:    call   0x400b10 &lt;puts@plt&gt;</span><br><span class="line">0x0000000000401621 &lt;+93&gt;:    mov    $0x402520,%edi</span><br><span class="line">0x0000000000401626 &lt;+98&gt;:    call   0x400b10 &lt;puts@plt&gt;</span><br><span class="line">0x000000000040162b &lt;+103&gt;:   mov    $0x0,%eax</span><br><span class="line">0x0000000000401630 &lt;+108&gt;:   call   0x401242 &lt;secret_phase&gt;</span><br><span class="line">0x0000000000401635 &lt;+113&gt;:   mov    $0x402558,%edi</span><br><span class="line">0x000000000040163a &lt;+118&gt;:   call   0x400b10 &lt;puts@plt&gt;</span><br><span class="line">0x000000000040163f &lt;+123&gt;:   mov    0x68(%rsp),%rax</span><br><span class="line">0x0000000000401644 &lt;+128&gt;:   xor    %fs:0x28,%rax</span><br><span class="line">0x000000000040164d &lt;+137&gt;:   je     0x401654 &lt;phase_defused+144&gt;</span><br><span class="line">0x000000000040164f &lt;+139&gt;:   call   0x400b30 &lt;__stack_chk_fail@plt&gt;</span><br><span class="line">0x0000000000401654 &lt;+144&gt;:   add    $0x78,%rsp</span><br><span class="line">0x0000000000401658 &lt;+148&gt;:   ret</span><br></pre></td></tr></table></figure>
+
+<p>在&lt;phase_defused+20&gt;中，要求将<code>0x202181(%rip)</code>等于6，否则不会进入<secret_phase>。<code>rip</code>寄存器保存下一条指令地址，即最终目标为<code>0x202181 + 0x4015df = 0x603760</code>。<code>x/1xw 0x603760</code>得0，且其对应符号为<code>num_input_strings</code>。</p>
+<p>在<code>objdump -d bomb &gt; bomb.s</code>得到的<code>bomb.s</code>文件中查找<code>num_input_strings</code>，发现只在<code>read_line</code>中使用。</p>
+<p>接下来，是对一段字符串的解析，<code>0x603870</code>为源字符串。<code>p (char *)0x402619</code>结果为<code>%d %d %s</code>。故应当解析出两个整数和一个字符串。</p>
+<p>接下来进行字符串相等判断，<code>p (char *)0x402622</code>结果为<code>&quot;DrEvil&quot;</code>。因此第三个参数应该为<code>DrEvil</code>。</p>
+<p>接下来打印两行字符串，<code>p (char *)0x4024f8</code>和<code>p (char *)0x402520</code>结果分别为<code>&quot;Curses, you&#39;ve found the secret phase!&quot;</code>和<code>&quot;But finding it and solving it are quite different...&quot;</code>。</p>
+<p>之后进入<secret_phase>。结束后进行正常的资源释放。</p>
+<p>使用<code>disas read_line</code>获取<code>read_line</code>源码：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br></pre></td><td class="code"><pre><span class="line">0x000000000040149e &lt;+0&gt;:     sub    $0x8,%rsp</span><br><span class="line">0x00000000004014a2 &lt;+4&gt;:     mov    $0x0,%eax</span><br><span class="line">0x00000000004014a7 &lt;+9&gt;:     call   0x4013f9 &lt;skip&gt;</span><br><span class="line">0x00000000004014ac &lt;+14&gt;:    test   %rax,%rax</span><br><span class="line">0x00000000004014af &lt;+17&gt;:    jne    0x40151f &lt;read_line+129&gt;</span><br><span class="line">0x00000000004014b1 &lt;+19&gt;:    mov    0x202290(%rip),%rax        # 0x603748 &lt;stdin@@GLIBC_2.2.5&gt;</span><br><span class="line">0x00000000004014b8 &lt;+26&gt;:    cmp    %rax,0x2022a9(%rip)        # 0x603768 &lt;infile&gt;</span><br><span class="line">0x00000000004014bf &lt;+33&gt;:    jne    0x4014d5 &lt;read_line+55&gt;</span><br><span class="line">0x00000000004014c1 &lt;+35&gt;:    mov    $0x4025d5,%edi</span><br><span class="line">0x00000000004014c6 &lt;+40&gt;:    call   0x400b10 &lt;puts@plt&gt;</span><br><span class="line">0x00000000004014cb &lt;+45&gt;:    mov    $0x8,%edi</span><br><span class="line">0x00000000004014d0 &lt;+50&gt;:    call   0x400c20 &lt;exit@plt&gt;</span><br><span class="line">0x00000000004014d5 &lt;+55&gt;:    mov    $0x4025f3,%edi</span><br><span class="line">0x00000000004014da &lt;+60&gt;:    call   0x400ae0 &lt;getenv@plt&gt;</span><br><span class="line">0x00000000004014df &lt;+65&gt;:    test   %rax,%rax</span><br><span class="line">0x00000000004014e2 &lt;+68&gt;:    je     0x4014ee &lt;read_line+80&gt;</span><br><span class="line">0x00000000004014e4 &lt;+70&gt;:    mov    $0x0,%edi</span><br><span class="line">0x00000000004014e9 &lt;+75&gt;:    call   0x400c20 &lt;exit@plt&gt;</span><br><span class="line">0x00000000004014ee &lt;+80&gt;:    mov    0x202253(%rip),%rax        # 0x603748 &lt;stdin@@GLIBC_2.2.5&gt;</span><br><span class="line">0x00000000004014f5 &lt;+87&gt;:    mov    %rax,0x20226c(%rip)        # 0x603768 &lt;infile&gt;</span><br><span class="line">0x00000000004014fc &lt;+94&gt;:    mov    $0x0,%eax</span><br><span class="line">0x0000000000401501 &lt;+99&gt;:    call   0x4013f9 &lt;skip&gt;</span><br><span class="line">0x0000000000401506 &lt;+104&gt;:   test   %rax,%rax</span><br><span class="line">0x0000000000401509 &lt;+107&gt;:   jne    0x40151f &lt;read_line+129&gt;</span><br><span class="line">0x000000000040150b &lt;+109&gt;:   mov    $0x4025d5,%edi</span><br><span class="line">0x0000000000401510 &lt;+114&gt;:   call   0x400b10 &lt;puts@plt&gt;</span><br><span class="line">0x0000000000401515 &lt;+119&gt;:   mov    $0x0,%edi</span><br><span class="line">0x000000000040151a &lt;+124&gt;:   call   0x400c20 &lt;exit@plt&gt;</span><br><span class="line">0x000000000040151f &lt;+129&gt;:   mov    0x20223b(%rip),%edx        # 0x603760 &lt;num_input_strings&gt;</span><br><span class="line">0x0000000000401525 &lt;+135&gt;:   movslq %edx,%rax</span><br><span class="line">0x0000000000401528 &lt;+138&gt;:   lea    (%rax,%rax,4),%rsi</span><br><span class="line">0x000000000040152c &lt;+142&gt;:   shl    $0x4,%rsi</span><br><span class="line">0x0000000000401530 &lt;+146&gt;:   add    $0x603780,%rsi</span><br><span class="line">0x0000000000401537 &lt;+153&gt;:   mov    %rsi,%rdi</span><br><span class="line">0x000000000040153a &lt;+156&gt;:   mov    $0x0,%eax</span><br><span class="line">0x000000000040153f &lt;+161&gt;:   mov    $0xffffffffffffffff,%rcx</span><br><span class="line">0x0000000000401546 &lt;+168&gt;:   repnz scas %es:(%rdi),%al</span><br><span class="line">0x0000000000401548 &lt;+170&gt;:   not    %rcx</span><br><span class="line">0x000000000040154b &lt;+173&gt;:   sub    $0x1,%rcx</span><br><span class="line">0x000000000040154f &lt;+177&gt;:   cmp    $0x4e,%ecx</span><br><span class="line">0x0000000000401552 &lt;+180&gt;:   jle    0x40159a &lt;read_line+252&gt;</span><br><span class="line">0x0000000000401554 &lt;+182&gt;:   mov    $0x4025fe,%edi</span><br><span class="line">0x0000000000401559 &lt;+187&gt;:   call   0x400b10 &lt;puts@plt&gt;</span><br><span class="line">0x000000000040155e &lt;+192&gt;:   mov    0x2021fc(%rip),%eax        # 0x603760 &lt;num_input_strings&gt;</span><br><span class="line">0x0000000000401564 &lt;+198&gt;:   lea    0x1(%rax),%edx</span><br><span class="line">0x0000000000401567 &lt;+201&gt;:   mov    %edx,0x2021f3(%rip)        # 0x603760 &lt;num_input_strings&gt;</span><br><span class="line">0x000000000040156d &lt;+207&gt;:   cltq</span><br><span class="line">0x000000000040156f &lt;+209&gt;:   imul   $0x50,%rax,%rax</span><br><span class="line">0x0000000000401573 &lt;+213&gt;:   movabs $0x636e7572742a2a2a,%rdi</span><br><span class="line">0x000000000040157d &lt;+223&gt;:   mov    %rdi,0x603780(%rax)</span><br><span class="line">0x0000000000401584 &lt;+230&gt;:   movabs $0x2a2a2a64657461,%rdi</span><br><span class="line">0x000000000040158e &lt;+240&gt;:   mov    %rdi,0x603788(%rax)</span><br><span class="line">0x0000000000401595 &lt;+247&gt;:   call   0x40143a &lt;explode_bomb&gt;</span><br><span class="line">0x000000000040159a &lt;+252&gt;:   sub    $0x1,%ecx</span><br><span class="line">0x000000000040159d &lt;+255&gt;:   movslq %ecx,%rcx</span><br><span class="line">0x00000000004015a0 &lt;+258&gt;:   movslq %edx,%rax</span><br><span class="line">0x00000000004015a3 &lt;+261&gt;:   lea    (%rax,%rax,4),%rax</span><br><span class="line">0x00000000004015a7 &lt;+265&gt;:   shl    $0x4,%rax</span><br><span class="line">0x00000000004015ab &lt;+269&gt;:   movb   $0x0,0x603780(%rcx,%rax,1)</span><br><span class="line">0x00000000004015b3 &lt;+277&gt;:   add    $0x1,%edx</span><br><span class="line">0x00000000004015b6 &lt;+280&gt;:   mov    %edx,0x2021a4(%rip)        # 0x603760 &lt;num_input_strings&gt;</span><br><span class="line">0x00000000004015bc &lt;+286&gt;:   mov    %rsi,%rax</span><br><span class="line">0x00000000004015bf &lt;+289&gt;:   add    $0x8,%rsp</span><br><span class="line">0x00000000004015c3 &lt;+293&gt;:   ret</span><br></pre></td></tr></table></figure>
+
+<p>在其中存在如下代码将<code>num_input_strings</code>的值增加1。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">0x000000000040155e &lt;+192&gt;:   mov    0x2021fc(%rip),%eax        # 0x603760 &lt;num_input_strings&gt;</span><br><span class="line">0x0000000000401564 &lt;+198&gt;:   lea    0x1(%rax),%edx</span><br><span class="line">0x0000000000401567 &lt;+201&gt;:   mov    %edx,0x2021f3(%rip)        # 0x603760 &lt;num_input_strings&gt;</span><br></pre></td></tr></table></figure>
+
+<p>接下来关注跳转语句，发现除了以下代码后，其他的跳转语句不能避开该上述指令。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">0x000000000040153a &lt;+156&gt;:   mov    $0x0,%eax</span><br><span class="line">0x000000000040153f &lt;+161&gt;:   mov    $0xffffffffffffffff,%rcx</span><br><span class="line">0x0000000000401546 &lt;+168&gt;:   repnz scas %es:(%rdi),%al</span><br><span class="line">0x0000000000401548 &lt;+170&gt;:   not    %rcx</span><br><span class="line">0x000000000040154b &lt;+173&gt;:   sub    $0x1,%rcx</span><br><span class="line">0x000000000040154f &lt;+177&gt;:   cmp    $0x4e,%ecx</span><br><span class="line">0x0000000000401552 &lt;+180&gt;:   jle    0x40159a &lt;read_line+252&gt;</span><br></pre></td></tr></table></figure>
+
+<p>该句计算输入语句的长度，若为0时跳过递增指令。</p>
+<p>经过上述分析，可明白<code>num_input_strings</code>代表使用<code>read_line</code>读入过的的非0字符串数。</p>
+<p>接下来需要追踪<code>0x603870</code>处字符串由谁修改。显然该字符串是输入字符串（内部缓存会被复用，信息会被清除）。故是<code>read_line</code>的返回值。接下来查看<code>read_line</code>的返回值信息：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">0x00000000004015bc &lt;+286&gt;:   mov    %rsi,%rax</span><br></pre></td></tr></table></figure>
+
+<p>故查看<code>rsi</code>的最后修改处：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">0x000000000040151f &lt;+129&gt;:   mov    0x20223b(%rip),%edx        # 0x603760 &lt;num_input_strings&gt;</span><br><span class="line">0x0000000000401525 &lt;+135&gt;:   movslq %edx,%rax</span><br><span class="line">0x0000000000401528 &lt;+138&gt;:   lea    (%rax,%rax,4),%rsi</span><br><span class="line">0x000000000040152c &lt;+142&gt;:   shl    $0x4,%rsi</span><br><span class="line">0x0000000000401530 &lt;+146&gt;:   add    $0x603780,%rsi</span><br></pre></td></tr></table></figure>
+
+<p>故返回值地址为<code>0x603780 + 16 * 5 * num_input_strings</code>，当其为<code>0x603870</code>时，解得<code>num_input_strings</code>为3，故应当在<code>phase_4</code>的答案结尾加上<code>DrEvil</code>，修改后的<code>phase_4</code>答案为：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">7 0 DrEvil</span><br></pre></td></tr></table></figure>
+
+<p>使用<code>disas secret_phase</code>获取<code>secret_phase</code>源码：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">0x0000000000401242 &lt;+0&gt;:     push   %rbx</span><br><span class="line">0x0000000000401243 &lt;+1&gt;:     call   0x40149e &lt;read_line&gt;</span><br><span class="line">0x0000000000401248 &lt;+6&gt;:     mov    $0xa,%edx</span><br><span class="line">0x000000000040124d &lt;+11&gt;:    mov    $0x0,%esi</span><br><span class="line">0x0000000000401252 &lt;+16&gt;:    mov    %rax,%rdi</span><br><span class="line">0x0000000000401255 &lt;+19&gt;:    call   0x400bd0 &lt;strtol@plt&gt;</span><br><span class="line">0x000000000040125a &lt;+24&gt;:    mov    %rax,%rbx</span><br><span class="line">0x000000000040125d &lt;+27&gt;:    lea    -0x1(%rax),%eax</span><br><span class="line">0x0000000000401260 &lt;+30&gt;:    cmp    $0x3e8,%eax</span><br><span class="line">0x0000000000401265 &lt;+35&gt;:    jbe    0x40126c &lt;secret_phase+42&gt;</span><br><span class="line">0x0000000000401267 &lt;+37&gt;:    call   0x40143a &lt;explode_bomb&gt;</span><br><span class="line">0x000000000040126c &lt;+42&gt;:    mov    %ebx,%esi</span><br><span class="line">0x000000000040126e &lt;+44&gt;:    mov    $0x6030f0,%edi</span><br><span class="line">0x0000000000401273 &lt;+49&gt;:    call   0x401204 &lt;fun7&gt;</span><br><span class="line">0x0000000000401278 &lt;+54&gt;:    cmp    $0x2,%eax</span><br><span class="line">0x000000000040127b &lt;+57&gt;:    je     0x401282 &lt;secret_phase+64&gt;</span><br><span class="line">0x000000000040127d &lt;+59&gt;:    call   0x40143a &lt;explode_bomb&gt;</span><br><span class="line">0x0000000000401282 &lt;+64&gt;:    mov    $0x402438,%edi</span><br><span class="line">0x0000000000401287 &lt;+69&gt;:    call   0x400b10 &lt;puts@plt&gt;</span><br><span class="line">0x000000000040128c &lt;+74&gt;:    call   0x4015c4 &lt;phase_defused&gt;</span><br><span class="line">0x0000000000401291 &lt;+79&gt;:    pop    %rbx</span><br><span class="line">0x0000000000401292 &lt;+80&gt;:    ret</span><br></pre></td></tr></table></figure>
+
+<p>&lt;secret_phase+19&gt;处表明输入的是一个数字，&lt;secret_phase+30&gt;表明该数字为正数且小于等于<code>0x3e9</code>。</p>
+<p>&lt;secret_phase+49&gt;调用函数<code>fun7</code>，之后对返回值进行判断，要求其返回值为2。</p>
+<p>之后打印一些信息后便结束了。</p>
+<p>使用<code>disas fun7</code>获取<code>fun7</code>源码，其第一个参数为<code>0x6030f0</code>，第二个参数为输入参数：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">0x0000000000401204 &lt;+0&gt;:     sub    $0x8,%rsp</span><br><span class="line">0x0000000000401208 &lt;+4&gt;:     test   %rdi,%rdi</span><br><span class="line">0x000000000040120b &lt;+7&gt;:     je     0x401238 &lt;fun7+52&gt;</span><br><span class="line">0x000000000040120d &lt;+9&gt;:     mov    (%rdi),%edx</span><br><span class="line">0x000000000040120f &lt;+11&gt;:    cmp    %esi,%edx</span><br><span class="line">0x0000000000401211 &lt;+13&gt;:    jle    0x401220 &lt;fun7+28&gt;</span><br><span class="line">0x0000000000401213 &lt;+15&gt;:    mov    0x8(%rdi),%rdi</span><br><span class="line">0x0000000000401217 &lt;+19&gt;:    call   0x401204 &lt;fun7&gt;</span><br><span class="line">0x000000000040121c &lt;+24&gt;:    add    %eax,%eax</span><br><span class="line">0x000000000040121e &lt;+26&gt;:    jmp    0x40123d &lt;fun7+57&gt;</span><br><span class="line">0x0000000000401220 &lt;+28&gt;:    mov    $0x0,%eax</span><br><span class="line">0x0000000000401225 &lt;+33&gt;:    cmp    %esi,%edx</span><br><span class="line">0x0000000000401227 &lt;+35&gt;:    je     0x40123d &lt;fun7+57&gt;</span><br><span class="line">0x0000000000401229 &lt;+37&gt;:    mov    0x10(%rdi),%rdi</span><br><span class="line">0x000000000040122d &lt;+41&gt;:    call   0x401204 &lt;fun7&gt;</span><br><span class="line">0x0000000000401232 &lt;+46&gt;:    lea    0x1(%rax,%rax,1),%eax</span><br><span class="line">0x0000000000401236 &lt;+50&gt;:    jmp    0x40123d &lt;fun7+57&gt;</span><br><span class="line">0x0000000000401238 &lt;+52&gt;:    mov    $0xffffffff,%eax</span><br><span class="line">0x000000000040123d &lt;+57&gt;:    add    $0x8,%rsp</span><br><span class="line">0x0000000000401241 &lt;+61&gt;:    ret</span><br></pre></td></tr></table></figure>
+
+<p>一个典型的二叉树递归，其对应的C代码应为：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> <span class="title function_">fun7</span><span class="params">(TreeNode *root, <span class="type">long</span> value)</span> &#123;</span><br><span class="line">	<span class="keyword">if</span>(<span class="literal">NULL</span> == root) &#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">if</span>(root -&gt; value &lt; value) &#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="number">2</span> * func7(root-&gt;more, value) + <span class="number">1</span>;</span><br><span class="line">	&#125; <span class="keyword">else</span> <span class="keyword">if</span>(root -&gt; value &gt; value) &#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="number">2</span> * func7(root-&gt;less, value);</span><br><span class="line">	&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>接下来查看二叉树结点：</p>
+<p><code>x/3xg 0x6030f0</code>：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">0x6030f0 &lt;n1&gt;:  0x0000000000000024      0x0000000000603110</span><br><span class="line">0x603100 &lt;n1+16&gt;:       0x0000000000603130</span><br></pre></td></tr></table></figure>
+
+<p><code>x/3xg 0x603110</code>：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">0x603110 &lt;n21&gt;: 0x0000000000000008      0x0000000000603190</span><br><span class="line">0x603120 &lt;n21+16&gt;:      0x0000000000603150</span><br></pre></td></tr></table></figure>
+
+<p><code>x/3xg 0x603130</code>：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">0x603130 &lt;n22&gt;: 0x0000000000000032      0x0000000000603170</span><br><span class="line">0x603140 &lt;n22+16&gt;:      0x00000000006031b0</span><br></pre></td></tr></table></figure>
+
+<p><code>x/3xg 0x603190</code>：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">0x603190 &lt;n31&gt;: 0x0000000000000006      0x00000000006031f0</span><br><span class="line">0x6031a0 &lt;n31+16&gt;:      0x0000000000603250</span><br></pre></td></tr></table></figure>
+
+<p><code>x/3xg 0x603150</code>：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">0x603150 &lt;n32&gt;: 0x0000000000000016      0x0000000000603270</span><br><span class="line">0x603160 &lt;n32+16&gt;:      0x0000000000603230</span><br></pre></td></tr></table></figure>
+
+<p><code>x/3xg 0x603170</code>：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">0x603170 &lt;n33&gt;: 0x000000000000002d      0x00000000006031d0</span><br><span class="line">0x603180 &lt;n33+16&gt;:      0x0000000000603290</span><br></pre></td></tr></table></figure>
+
+<p><code>x/3xg 0x6031b0</code>：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">0x6031b0 &lt;n34&gt;: 0x000000000000006b      0x0000000000603210</span><br><span class="line">0x6031c0 &lt;n34+16&gt;:      0x00000000006032b0</span><br></pre></td></tr></table></figure>
+
+<p><code>x/3xg 0x6031f0</code>：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">0x6031f0 &lt;n41&gt;: 0x0000000000000001      0x0000000000000000</span><br><span class="line">0x603200 &lt;n41+16&gt;:      0x0000000000000000</span><br></pre></td></tr></table></figure>
+
+<p><code>x/3xg 0x603250</code>：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">0x603250 &lt;n42&gt;: 0x0000000000000007      0x0000000000000000</span><br><span class="line">0x603260 &lt;n42+16&gt;:      0x0000000000000000</span><br></pre></td></tr></table></figure>
+
+<p><code>x/3xg 0x603270</code>：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">0x603270 &lt;n43&gt;: 0x0000000000000014      0x0000000000000000</span><br><span class="line">0x603280 &lt;n43+16&gt;:      0x0000000000000000</span><br></pre></td></tr></table></figure>
+
+<p><code>x/3xg 0x603230</code>：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">0x603230 &lt;n44&gt;: 0x0000000000000023      0x0000000000000000</span><br><span class="line">0x603240 &lt;n44+16&gt;:      0x0000000000000000</span><br></pre></td></tr></table></figure>
+
+<p><code>x/3xg 0x6031d0</code>：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">0x6031d0 &lt;n45&gt;: 0x0000000000000028      0x0000000000000000</span><br><span class="line">0x6031e0 &lt;n45+16&gt;:      0x0000000000000000</span><br></pre></td></tr></table></figure>
+
+<p><code>x/3xg 0x603290</code>：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">0x603290 &lt;n46&gt;: 0x000000000000002f      0x0000000000000000</span><br><span class="line">0x6032a0 &lt;n46+16&gt;:      0x0000000000000000</span><br></pre></td></tr></table></figure>
+
+<p><code>x/3xg 0x603210</code>：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">0x603210 &lt;n47&gt;: 0x0000000000000063      0x0000000000000000</span><br><span class="line">0x603220 &lt;n47+16&gt;:      0x0000000000000000</span><br></pre></td></tr></table></figure>
+
+<p><code>x/3xg 0x6032b0</code>：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">0x6032b0 &lt;n48&gt;: 0x00000000000003e9      0x0000000000000000</span><br><span class="line">0x6032c0 &lt;n48+16&gt;:      0x0000000000000000</span><br></pre></td></tr></table></figure>
+
+<p>这是一棵4层的满二叉树，结点的层序遍历后结果值序列如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">0x24 0x8 0x32 0x6 0x16 0x2d 0x6b 0x1 0x7 0x14 0x23 0x28 0x2f 0x63 0x3e9</span><br></pre></td></tr></table></figure>
+
+<p>此时有以下root移动方式使得结果为2：</p>
+<ol>
+<li><p>less more</p>
+</li>
+<li><p>less more less</p>
+</li>
+</ol>
+<p>故结果值可能为<code>0x16</code>和<code>0x14</code>，均符合条件。</p>
+<p>故答案为（一行一个）：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">22</span><br><span class="line">20</span><br></pre></td></tr></table></figure>
+
+<h2 id="通过截图"><a href="#通过截图" class="headerlink" title="通过截图"></a>通过截图</h2><p>最后附上通过的截图：</p>
+<p><img src="/2024/09/01/0/0.jpg"></p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
     <link itemprop="mainEntityOfPage" href="http://example.com/2024/08/30/1/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -913,95 +1314,10 @@
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2024/08/09/0/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="Loujuch">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Code Bank">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2024/08/09/0/" class="post-title-link" itemprop="url">Oracle VM VirtualBox与Debian 12设置虚拟机可外网并设置Host-Only网络的固定IP</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">Posted on</span>
-
-              <time title="Created: 2024-08-09 23:17:44" itemprop="dateCreated datePublished" datetime="2024-08-09T23:17:44+08:00">2024-08-09</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2024-08-24 15:45:43" itemprop="dateModified" datetime="2024-08-24T15:45:43+08:00">2024-08-24</time>
-              </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h2 id="Oracle-VM-VirtualBox创建Host-Only网络"><a href="#Oracle-VM-VirtualBox创建Host-Only网络" class="headerlink" title="Oracle VM VirtualBox创建Host-Only网络"></a>Oracle VM VirtualBox创建Host-Only网络</h2><p>按照下图数字顺序操作：</p>
-<p><img src="/2024/08/09/0/0.jpg"></p>
-<p><img src="/2024/08/09/0/1.jpg"></p>
-<p>最后可以创建一个Host-Only网络（因我之前已创建过所以图中显示有一个，正常需新建）。同时可以获得该网卡的IP地址和子网掩码。</p>
-<h2 id="Oracle-VM-VirtualBox设置虚拟机具有双网卡"><a href="#Oracle-VM-VirtualBox设置虚拟机具有双网卡" class="headerlink" title="Oracle VM VirtualBox设置虚拟机具有双网卡"></a>Oracle VM VirtualBox设置虚拟机具有双网卡</h2><p>按照下图数字顺序操作：</p>
-<p><img src="/2024/08/09/0/2.jpg"></p>
-<p><img src="/2024/08/09/0/3.jpg"></p>
-<p><img src="/2024/08/09/0/4.jpg"></p>
-<p>因为新建的虚拟电脑默认开启一个NAT网卡，所以不需要对NAT网卡进行额外的配置，只需要增加一个Host-Only网卡。</p>
-<p>第5步中因为我已完成配置因此图中已勾选好，正常需要进行勾选。</p>
-<h2 id="Debian-12配置多网卡与固定IP"><a href="#Debian-12配置多网卡与固定IP" class="headerlink" title="Debian 12配置多网卡与固定IP"></a>Debian 12配置多网卡与固定IP</h2><p>编辑<code>/etc/network/interfaces</code>文件将其修改为如下。其中<code>enp0s3</code>和<code>enp0s8</code>分别对应NAT网卡和Host-Only网卡。</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"># This file describes the network interfaces available on your system</span><br><span class="line"># and how to activate them. For more information, see interfaces(5).</span><br><span class="line"></span><br><span class="line">source /etc/network/interfaces.d/*</span><br><span class="line"></span><br><span class="line"># The loopback network interface</span><br><span class="line">auto lo</span><br><span class="line">iface lo inet loopback</span><br><span class="line"></span><br><span class="line"># The primary network interface</span><br><span class="line">allow-hotplug enp0s3</span><br><span class="line">iface enp0s3 inet dhcp</span><br><span class="line"></span><br><span class="line"># The only-host network interfaces</span><br><span class="line">auto enp0s8</span><br><span class="line">iface enp0s8 inet static</span><br><span class="line">address 192.168.56.11</span><br><span class="line">netmask 255.255.255.0</span><br><span class="line">gateway 192.168.56.1</span><br></pre></td></tr></table></figure>
-
-<p>配置表明机器具有两个网卡，其中<code>enp0s3</code>使用<code>DHCP</code>获取IP，<code>enp0s8</code>使用固定IP<code>192.168.56.11</code>。</p>
-<p><code>allow-hotplug</code>与<code>auto</code>的区别如下：</p>
-<ol>
-<li><p><code>allow-hotplug</code>：在系统启动的时候启动网络接口，无论网络接口有无连接。如果该接口配置了DHCP，则无论有无网线，系统都会去尝试获取DHCP。</p>
-</li>
-<li><p><code>auto</code>：只有当内核从网络接口检测到热插拔事件后才会启动该接口。如果系统开机时该接口无连接，则系统不会启动该接口。如果在系统启动后插入网线，系统会自动启动该接口。</p>
-</li>
-</ol>
-<h2 id="重启网络服务"><a href="#重启网络服务" class="headerlink" title="重启网络服务"></a>重启网络服务</h2><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">systemctl restart networking.service</span><br></pre></td></tr></table></figure>
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
-    <a class="extend prev" rel="prev" href="/page/2/"><i class="fa fa-angle-left" aria-label="Previous page"></i></a><a class="page-number" href="/">1</a><a class="page-number" href="/page/2/">2</a><span class="page-number current">3</span>
+    <a class="extend prev" rel="prev" href="/page/2/"><i class="fa fa-angle-left" aria-label="Previous page"></i></a><a class="page-number" href="/">1</a><a class="page-number" href="/page/2/">2</a><span class="page-number current">3</span><a class="page-number" href="/page/4/">4</a><a class="extend next" rel="next" href="/page/4/"><i class="fa fa-angle-right" aria-label="Next page"></i></a>
   </nav>
 
 
@@ -1067,12 +1383,12 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">29</span>
+          <span class="site-state-item-count">31</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
       <div class="site-state-item site-state-tags">
-        <span class="site-state-item-count">19</span>
+        <span class="site-state-item-count">21</span>
         <span class="site-state-item-name">tags</span>
       </div>
   </nav>
