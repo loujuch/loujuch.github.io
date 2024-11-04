@@ -145,6 +145,78 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2024/10/27/0/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Loujuch">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Code Bank">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2024/10/27/0/" class="post-title-link" itemprop="url">hexo next主题设置</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+              
+
+              <time title="Created: 2024-10-27 21:39:13 / Modified: 21:55:56" itemprop="dateCreated datePublished" datetime="2024-10-27T21:39:13+08:00">2024-10-27</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="设置目录默认展开"><a href="#设置目录默认展开" class="headerlink" title="设置目录默认展开"></a>设置目录默认展开</h2><ol>
+<li><p>修改<code>themes/next/_config.yml</code>，搜索<code>custom_file_path</code>，去除<code>style</code>前的<code>#</code>注释符。</p>
+</li>
+<li><p>创建<code>source/_data/styles.styl</code>文件，添加下述内容：</p>
+ <figure class="highlight styl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//文章目录默认展开</span></span><br><span class="line"><span class="selector-class">.post-toc</span> <span class="selector-class">.nav</span> <span class="selector-class">.nav-child</span> &#123; </span><br><span class="line">    <span class="attribute">display</span>: block; </span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//文章目录字体大小调整</span></span><br><span class="line"><span class="selector-class">.post-toc</span> <span class="selector-tag">ol</span> &#123;  </span><br><span class="line">    <span class="attribute">font-size</span> : <span class="number">13px</span>;     </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>修改<code>themes/next/_config.yml</code>，搜索<code>toc</code>，将<code>wrap</code>设为<code>true</code>。</p>
+</li>
+</ol>
+<h2 id="设置中文目录跳转"><a href="#设置中文目录跳转" class="headerlink" title="设置中文目录跳转"></a>设置中文目录跳转</h2><p>在<code>next</code>中，有时中文目录难以跳转，通过浏览器检查，可以发现如下问题：</p>
+<p><img src="/2024/10/27/0/0.png"></p>
+<p>根据Github issue的回应，对<code>themes/next/source/js/utils.js</code>修改如下，需要删除两行、添加两行：</p>
+<p><img src="/2024/10/27/0/1.png"></p>
+<p>添加的两行分别为：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">var target = document.getElementById(decodeURI(link.getAttribute(&#x27;href&#x27;)).replace(&#x27;#&#x27;, &#x27;&#x27;));</span><br><span class="line"></span><br><span class="line">return target;</span><br></pre></td></tr></table></figure>
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
     <link itemprop="mainEntityOfPage" href="http://example.com/2024/10/21/0/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1089,94 +1161,6 @@
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2024/09/06/0/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="Loujuch">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Code Bank">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2024/09/06/0/" class="post-title-link" itemprop="url">Git基本概念</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">Posted on</span>
-
-              <time title="Created: 2024-09-06 20:00:10" itemprop="dateCreated datePublished" datetime="2024-09-06T20:00:10+08:00">2024-09-06</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2024-09-07 12:48:47" itemprop="dateModified" datetime="2024-09-07T12:48:47+08:00">2024-09-07</time>
-              </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h2 id="Git四个区域"><a href="#Git四个区域" class="headerlink" title="Git四个区域"></a>Git四个区域</h2><p><img src="/2024/09/06/0/0.png"></p>
-<ul>
-<li><p>工作区(<code>workspack</code>)：实际修改代码的地方，是程序员能够直接操作的地方。</p>
-</li>
-<li><p>暂存区(<code>staging area</code>)：用于存放临时的改动，修改后不可恢复。</p>
-</li>
-<li><p>本地仓库(<code>local repository</code>)：安全存放数据的位置，将各个版本的信息存放在此，可以随时回滚。</p>
-</li>
-<li><p>远程仓库(<code>remote repository</code>)：托管代码的服务器，方便在不同的机器上进行开发。</p>
-</li>
-</ul>
-<h2 id="文件状态"><a href="#文件状态" class="headerlink" title="文件状态"></a>文件状态</h2><p><img src="/2024/09/06/0/1.png"></p>
-<p>Git为文件存在4种状态：</p>
-<ul>
-<li><p><code>untracked</code>：未被Git管理的文件。</p>
-</li>
-<li><p><code>modified</code>：代表已经被Git管理的文件，但该文件与暂存区对应的文件相比存在修改。Git只关心文件整体的修改，通过对比文件的SHA-1值判断文件是否被修改。</p>
-</li>
-<li><p><code>staged</code>：当前已经被提交到暂存区的文件。</p>
-</li>
-<li><p><code>unmodified</code>：当前已经提交形成镜像的文件。</p>
-</li>
-</ul>
-<p>除此之外，对于具有远端仓库的文件，根据是否上传到远端仓库还可以分为<code>pushed</code>和<code>unPushed</code>。</p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
@@ -1246,12 +1230,12 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">32</span>
+          <span class="site-state-item-count">33</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
       <div class="site-state-item site-state-tags">
-        <span class="site-state-item-count">21</span>
+        <span class="site-state-item-count">22</span>
         <span class="site-state-item-name">tags</span>
       </div>
   </nav>

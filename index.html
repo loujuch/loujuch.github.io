@@ -145,6 +145,65 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2024/11/04/0/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Loujuch">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Code Bank">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2024/11/04/0/" class="post-title-link" itemprop="url">Bash运行某个程序一段时间后停止该程序</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+              
+
+              <time title="Created: 2024-11-04 22:09:02 / Modified: 22:19:39" itemprop="dateCreated datePublished" datetime="2024-11-04T22:09:02+08:00">2024-11-04</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>Bash未提供定时函数来设置程序终止时间，但可以通过<strong>后台运行+定时kill</strong>的方式实现相似功能，具体脚本Demo如下：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#!/bin/bash</span></span><br><span class="line"></span><br><span class="line">./test &amp;</span><br><span class="line"></span><br><span class="line">PID=$!</span><br><span class="line"><span class="comment"># 也可以使用下述方法获取PID</span></span><br><span class="line"><span class="comment"># PID=`ps aux | grep &#x27;./test&#x27; | grep -v &#x27;grep&#x27; | awk &#x27;&#123;print $2&#125;&#x27;`</span></span><br><span class="line"></span><br><span class="line">WAIT_TIME=5</span><br><span class="line"></span><br><span class="line"><span class="built_in">sleep</span> <span class="variable">$&#123;WAIT_TIME&#125;</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">kill</span> -9 <span class="variable">$&#123;PID&#125;</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">wait</span> <span class="variable">$&#123;PID&#125;</span></span><br></pre></td></tr></table></figure>
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
     <link itemprop="mainEntityOfPage" href="http://example.com/2024/11/03/4/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1640,78 +1699,6 @@
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2024/10/27/0/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="Loujuch">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Code Bank">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2024/10/27/0/" class="post-title-link" itemprop="url">hexo next主题设置</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">Posted on</span>
-              
-
-              <time title="Created: 2024-10-27 21:39:13 / Modified: 21:55:56" itemprop="dateCreated datePublished" datetime="2024-10-27T21:39:13+08:00">2024-10-27</time>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h2 id="设置目录默认展开"><a href="#设置目录默认展开" class="headerlink" title="设置目录默认展开"></a>设置目录默认展开</h2><ol>
-<li><p>修改<code>themes/next/_config.yml</code>，搜索<code>custom_file_path</code>，去除<code>style</code>前的<code>#</code>注释符。</p>
-</li>
-<li><p>创建<code>source/_data/styles.styl</code>文件，添加下述内容：</p>
- <figure class="highlight styl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//文章目录默认展开</span></span><br><span class="line"><span class="selector-class">.post-toc</span> <span class="selector-class">.nav</span> <span class="selector-class">.nav-child</span> &#123; </span><br><span class="line">    <span class="attribute">display</span>: block; </span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//文章目录字体大小调整</span></span><br><span class="line"><span class="selector-class">.post-toc</span> <span class="selector-tag">ol</span> &#123;  </span><br><span class="line">    <span class="attribute">font-size</span> : <span class="number">13px</span>;     </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>修改<code>themes/next/_config.yml</code>，搜索<code>toc</code>，将<code>wrap</code>设为<code>true</code>。</p>
-</li>
-</ol>
-<h2 id="设置中文目录跳转"><a href="#设置中文目录跳转" class="headerlink" title="设置中文目录跳转"></a>设置中文目录跳转</h2><p>在<code>next</code>中，有时中文目录难以跳转，通过浏览器检查，可以发现如下问题：</p>
-<p><img src="/2024/10/27/0/0.png"></p>
-<p>根据Github issue的回应，对<code>themes/next/source/js/utils.js</code>修改如下，需要删除两行、添加两行：</p>
-<p><img src="/2024/10/27/0/1.png"></p>
-<p>添加的两行分别为：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">var target = document.getElementById(decodeURI(link.getAttribute(&#x27;href&#x27;)).replace(&#x27;#&#x27;, &#x27;&#x27;));</span><br><span class="line"></span><br><span class="line">return target;</span><br></pre></td></tr></table></figure>
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
@@ -1781,12 +1768,12 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">32</span>
+          <span class="site-state-item-count">33</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
       <div class="site-state-item site-state-tags">
-        <span class="site-state-item-count">21</span>
+        <span class="site-state-item-count">22</span>
         <span class="site-state-item-name">tags</span>
       </div>
   </nav>
