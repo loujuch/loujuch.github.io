@@ -145,6 +145,555 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2024/11/11/2/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Loujuch">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Code Bank">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2024/11/11/2/" class="post-title-link" itemprop="url">Android Camera device HAL 3.6文档翻译——S9：关于控件和元数据的说明</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+              
+
+              <time title="Created: 2024-11-11 23:49:51 / Modified: 23:52:35" itemprop="dateCreated datePublished" datetime="2024-11-11T23:49:51+08:00">2024-11-11</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>本节主要是对可变元数据标签的含义和用法进行说明。</p>
+<blockquote>
+<p><em>This section contains notes about the interpretation and usage of various metadata tags.</em></p>
+</blockquote>
+<h2 id="S9-1-高质量（HIGH-QUALITY）模式和快速（FAST）模式"><a href="#S9-1-高质量（HIGH-QUALITY）模式和快速（FAST）模式" class="headerlink" title="S9.1 高质量（HIGH_QUALITY）模式和快速（FAST）模式"></a>S9.1 高质量（HIGH_QUALITY）模式和快速（FAST）模式</h2><p>许多相机后处理模块可能具有<code>HIGH_QUALITY</code>、<code>FAST</code>或<code>OFF</code>操作模式。这些模块通常也有一个‘可用模式’标签，用于表示给定设备有哪些操作模式可用。下面是实现这些模式的一般策略：</p>
+<blockquote>
+<p><em>Many camera post-processing blocks may be listed as having HIGH_QUALITY, FAST, and OFF operating modes. These blocks will typically also have an ‘available modes’ tag representing which of these operating modes are available on a given device. The general policy regarding implementing these modes is as follows:</em></p>
+</blockquote>
+<ol>
+<li><p>无法禁用的硬件模块的操作模式控制器不能将<code>OFF</code>列在其自身的‘可用模式’标签中。</p>
+<blockquote>
+<p><em>Operating mode controls of hardware blocks that cannot be disabled must not list OFF in their corresponding ‘available modes’ tags.</em></p>
+</blockquote>
+</li>
+<li><p>如果硬件模块可以被禁用，<code>OFF</code>将总是包含其具有的‘可用模式’标签中。</p>
+<blockquote>
+<p><em>OFF will always be included in their corresponding ‘available modes’ tag if it is possible to disable that hardware block.</em></p>
+</blockquote>
+</li>
+<li><p>对于设备支持的所有后处理模块，<code>FAST</code>必须始终被包含在对应的‘可用模式’标签中。如果一个后处理模块还有不符合<code>FAST</code>模式帧率要求的更慢、更高质量的操作模式，<code>HIGH_QUALITY</code>应该被包含在对应的‘可用模式’标签中以表示该操作模式。</p>
+<blockquote>
+<p><em>FAST must always be included in the ‘available modes’ tags for all post-processing blocks supported on the device.  If a post-processing block also has a slower and higher quality operating mode that does not meet the framerate requirements for FAST mode, HIGH_QUALITY should be included in the ‘available modes’ tag to represent this operating mode.</em></p>
+</blockquote>
+</li>
+</ol>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2024/11/11/1/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Loujuch">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Code Bank">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2024/11/11/1/" class="post-title-link" itemprop="url">Android Camera device HAL 3.6文档翻译——S3：操作模式</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+              
+
+              <time title="Created: 2024-11-11 23:39:09 / Modified: 23:54:35" itemprop="dateCreated datePublished" datetime="2024-11-11T23:39:09+08:00">2024-11-11</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>HAL3相机设备被要求支持两种可能操作模式，两种操作模式分别为受限模式和完整模式。高端设备应当支持完整模式。限制模式则被要求其硬件与HAL1版本的设备实现大致相同，并且应当被使用在更老或相对低端的设备中。完整模式应当是受限模式的严格超集，并且都具有文档所示的必要的操作流程。</p>
+<blockquote>
+<p><em>The camera 3 HAL device can implement one of two possible operational modes; limited and full. Full support is expected from new higher-end devices. Limited mode has hardware requirements roughly in line with those for a camera HAL device v1 implementation, and is expected from older or inexpensive devices. Full is a strict superset of limited, and they share the same essential operational flow, as documented above.</em></p>
+</blockquote>
+<p>HAL必须在android.info.supportedHardwareLevel静态元数据条目中给出支持的操作模式，为0是表明支持受限模式，为1表示支持完整模式。</p>
+<blockquote>
+<p><em>The HAL must indicate its level of support with the android.info.supportedHardwareLevel static metadata entry, with 0 indicating limited mode, and 1 indicating full mode support.</em></p>
+</blockquote>
+<p>粗略的说，受限模式的设备不允许应用控制捕获设置（只支持3A设置）、高分辨率图像的高帧率捕获、读出传感器生成的生数据或高于最大纪录分辨率的YUV输出流支持（JPEG仅适用于大图像）。</p>
+<blockquote>
+<p><em>Roughly speaking, limited-mode devices do not allow for application control of capture settings (3A control only), high-rate capture of high-resolution images, raw sensor readout, or support for YUV output streams above maximum recording resolution (JPEG only for large images).</em></p>
+</blockquote>
+<p><strong>限制模式行为的细节：</strong></p>
+<blockquote>
+<p><em><strong>Details of limited mode behavior:</strong></em></p>
+</blockquote>
+<ul>
+<li><p>限制模式设备不需要实现捕获请求设置和实际图像数据被捕获间的精确捕获。相反的，设置的修改将可能会在之后的一段时间后才生效，并可能不会对一个输出帧应用全部的设置条目修改。快速的改变设置可能会导致一些设置从未被任何捕获使用。然而，包含高分辨率输出缓冲区（&gt;1080p）的捕获必须使用指定的设置（关于处理帧率，请参阅下文）。</p>
+<blockquote>
+<p><em>Limited-mode devices do not need to implement accurate synchronization between capture request settings and the actual image data captured. Instead, changes to settings may take effect some time in the future, and possibly not for the same output frame for each settings entry. Rapid changes in settings may result in some settings never being used for a capture. However, captures that include high-resolution output buffers ( &gt; 1080p ) have to use the settings as specified (but see below for processing rate).</em></p>
+</blockquote>
+</li>
+<li><p>限制模式设备不需要支持大多数设置&#x2F;结果&#x2F;静态元数据信息。特别的，只希望如下设置被限制模式设备消费或制造：</p>
+<blockquote>
+<p><em>Limited-mode devices do not need to support most of the settings&#x2F;result&#x2F;static info metadata. Specifically, only the following settings are expected to be consumed or produced by a limited-mode HAL device:</em></p>
+</blockquote>
+<blockquote>
+<p><code>android.control.aeAntibandingMode (controls and dynamic)</code><br><code>android.control.aeExposureCompensation (controls and dynamic)</code><br><code>android.control.aeLock (controls and dynamic)</code><br><code>android.control.aeMode (controls and dynamic)</code><br><code>android.control.aeRegions (controls and dynamic)</code><br><code>android.control.aeTargetFpsRange (controls and dynamic)</code><br><code>android.control.aePrecaptureTrigger (controls and dynamic)</code><br><code>android.control.afMode (controls and dynamic)</code><br><code>android.control.afRegions (controls and dynamic)</code><br><code>android.control.awbLock (controls and dynamic)</code><br><code>android.control.awbMode (controls and dynamic)</code><br><code>android.control.awbRegions (controls and dynamic)</code><br><code>android.control.captureIntent (controls and dynamic)</code><br><code>android.control.effectMode (controls and dynamic)</code><br><code>android.control.mode (controls and dynamic)</code><br><code>android.control.sceneMode (controls and dynamic)</code><br><code>android.control.videoStabilizationMode (controls and dynamic)</code><br><code>android.control.aeAvailableAntibandingModes (static)</code><br><code>android.control.aeAvailableModes (static)</code><br><code>android.control.aeAvailableTargetFpsRanges (static)</code><br><code>android.control.aeCompensationRange (static)</code><br><code>android.control.aeCompensationStep (static)</code><br><code>android.control.afAvailableModes (static)</code><br><code>android.control.availableEffects (static)</code><br><code>android.control.availableSceneModes (static)</code><br><code>android.control.availableVideoStabilizationModes (static)</code><br><code>android.control.awbAvailableModes (static)</code><br><code>android.control.maxRegions (static)</code><br><code>android.control.sceneModeOverrides (static)</code><br><code>android.control.aeState (dynamic)</code><br><code>android.control.afState (dynamic)</code><br><code>android.control.awbState (dynamic)</code></p>
+<p><code>android.flash.mode (controls and dynamic)</code><br><code>android.flash.info.available (static)</code></p>
+<p><code>android.info.supportedHardwareLevel (static)</code></p>
+<p><code>android.jpeg.gpsCoordinates (controls and dynamic)</code><br><code>android.jpeg.gpsProcessingMethod (controls and dynamic)</code><br><code>android.jpeg.gpsTimestamp (controls and dynamic)</code><br><code>android.jpeg.orientation (controls and dynamic)</code><br><code>android.jpeg.quality (controls and dynamic)</code><br><code>android.jpeg.thumbnailQuality (controls and dynamic)</code><br><code>android.jpeg.thumbnailSize (controls and dynamic)</code><br><code>android.jpeg.availableThumbnailSizes (static)</code><br><code>android.jpeg.maxSize (static)</code></p>
+<p><code>android.lens.info.minimumFocusDistance (static)</code></p>
+<p><code>android.request.id (controls and dynamic)</code></p>
+<p><code>android.scaler.cropRegion (controls and dynamic)</code><br><code>android.scaler.availableStreamConfigurations (static)</code><br><code>android.scaler.availableMinFrameDurations (static)</code><br><code>android.scaler.availableStallDurations (static)</code><br><code>android.scaler.availableMaxDigitalZoom (static)</code><br><code>android.scaler.maxDigitalZoom (static)</code><br><code>android.scaler.croppingType (static)</code></p>
+<p><code>android.sensor.orientation (static)</code><br><code>android.sensor.timestamp (dynamic)</code></p>
+<p><code>android.statistics.faceDetectMode (controls and dynamic)</code><br><code>android.statistics.info.availableFaceDetectModes (static)</code><br><code>android.statistics.faceIds (dynamic)</code><br><code>android.statistics.faceLandmarks (dynamic)</code><br><code>android.statistics.faceRectangles (dynamic)</code><br><code>android.statistics.faceScores (dynamic)</code></p>
+<p><code>android.sync.frameNumber (dynamic)</code><br><code>android.sync.maxLatency (static)</code></p>
+</blockquote>
+</li>
+<li><p>包含高分辨率输出缓冲区（&gt;1080p）的受限模式设备捕获可能会阻塞在<code>process_capture_request()</code>直到所有输出缓冲区完成填充。一个完全模式的HAL设备必须按照对应像素格式的静态元数据中指定的速率处理高分辨率请求序列。HAL仍将调用<code>process_capture_result()</code>用于提供输出；对于受限模式设备，框架层将简单的阻塞在<code>process_capture_request()</code>直到对应高分辨率捕获请求的<code>process_capture_result()</code>的调用完成。</p>
+<blockquote>
+<p><em>Captures in limited mode that include high-resolution (&gt; 1080p) output buffers may block in process_capture_request() until all the output buffers have been filled. A full-mode HAL device must process sequences of high-resolution requests at the rate indicated in the static metadata for that pixel format. The HAL must still call process_capture_result() to provide the output; the framework must simply be prepared for process_capture_request() to block until after process_capture_result() for that request completes for high-resolution captures for limited-mode devices.</em></p>
+</blockquote>
+</li>
+<li><p>完全模式设备必须支持如下额外功能：</p>
+<blockquote>
+<p><em>Full-mode devices must support below additional capabilities:</em></p>
+</blockquote>
+<ul>
+<li><p>必须在最大分辨率下具有大于20fps的帧率，最好能达到30fps。</p>
+<blockquote>
+<p><em>30fps at maximum resolution is preferred, more than 20fps is required.</em></p>
+</blockquote>
+</li>
+<li><p>逐帧控制（<code>android.sync.maxLatency == PER_FRAME_CONTROL</code>）</p>
+<blockquote>
+<p><em>Per frame control (android.sync.maxLatency &#x3D;&#x3D; PER_FRAME_CONTROL).</em></p>
+</blockquote>
+</li>
+<li><p>传感器手动控制元数据。详见在<code>android.request.availableCapabilities</code>中定义的<code>MANUAL_SENSOR</code>。</p>
+<blockquote>
+<p><em>Sensor manual control metadata. See MANUAL_SENSOR defined in android.request.availableCapabilities.</em></p>
+</blockquote>
+</li>
+<li><p>后处理手动控制元数据。详见在<code>android.request.availableCapabilities</code>中定义的<code>MANUAL_POST_PROCESSING</code>。</p>
+<blockquote>
+<p><em>Post-processing manual control metadata. See MANUAL_POST_PROCESSING defined in android.request.availableCapabilities.</em></p>
+</blockquote>
+</li>
+</ul>
+</li>
+</ul>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2024/11/11/0/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Loujuch">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Code Bank">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2024/11/11/0/" class="post-title-link" itemprop="url">Android Camera device HAL 3.6文档翻译——S6：错误管理</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+              
+
+              <time title="Created: 2024-11-11 23:31:22 / Modified: 23:39:05" itemprop="dateCreated datePublished" datetime="2024-11-11T23:31:22+08:00">2024-11-11</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>在发生严重错误时，所有有返回值的HAL相机设备操作函数将返回<code>-ENODEV</code>或<code>NULL</code>。这表示当前设备不能继续运行并应该被框架层关闭。一旦错误被一些方法返回或<code>notify()</code>被使用<code>ERROR_DEVICE</code>参数调用，则只有<code>close()</code>方法能被成功调用，其他方法都将返回<code>-ENODEV</code>或<code>NULL</code>。</p>
+<blockquote>
+<p><em>Camera HAL device ops functions that have a return value will all return -ENODEV &#x2F; NULL in case of a serious error. This means the device cannot continue operation, and must be closed by the framework. Once this error is returned by some method, or if notify() is called with ERROR_DEVICE, only the close() method can be called successfully. All other methods will return -ENODEV &#x2F; NULL.</em></p>
+</blockquote>
+<p>如果设备被以错误的顺序操作，例如框架层在调用<code>initialize()</code>前调用<code>configure_streams()</code>，设备必须对该调用回<code>-ENOSYS</code>并不做其他任何操作。</p>
+<blockquote>
+<p><em>If a device op is called in the wrong sequence, for example if the framework calls configure_streams() is called before initialize(), the device must return -ENOSYS from the call, and do nothing.</em></p>
+</blockquote>
+<p>图像捕获过程中的瞬时错误必须按照如下规则通过<code>notify()</code>报告：</p>
+<blockquote>
+<p><em>Transient errors in image capture must be reported through notify() as follows:</em></p>
+</blockquote>
+<ol>
+<li><p>若整个捕获失败，HAL将通过使用<code>ERROR_REQUEST</code>参数调用<code>notify()</code>进行报告。单独的元数据返回或缓冲区输出错误不会通过该方式报告。</p>
+<blockquote>
+<p><em>The failure of an entire capture to occur must be reported by the HAL by calling notify() with ERROR_REQUEST. Individual errors for the result metadata or the output buffers must not be reported in this case.</em></p>
+</blockquote>
+</li>
+<li><p>如果无法为捕获生成元数据，但已经有图像缓冲区被填充，HAL将通过使用<code>ERROR_RESULT</code>参数调用<code>notify()</code>进行报告。</p>
+<blockquote>
+<p><em>If the metadata for a capture cannot be produced, but some image buffers were filled, the HAL must call notify() with ERROR_RESULT.</em></p>
+</blockquote>
+</li>
+<li><p>如果用于输出的图像缓冲区不能被填充，但已经有元数据被生成或某些其他的缓冲区被填充，HAL将对每个失败的缓冲区通过使用<code>ERROR_BUFFER</code>参数调用<code>notify()</code>进行报告。</p>
+<blockquote>
+<p><em>If an output image buffer could not be filled, but either the metadata was produced or some other buffers were filled, the HAL must call notify() with ERROR_BUFFER for each failed buffer.</em></p>
+</blockquote>
+</li>
+</ol>
+<p>HAL必须仍然对每个具有瞬时错误的示例使用有效的输出或输入（如果提交了输入缓冲区）的<code>buffer_handle_t</code>调用<code>process_capture_result</code>。当元数据无法生成时，将其字段设为<code>NULL</code>。如果图像缓冲区不能被填充，则必须携带错误状态通过<code>process_capture_result</code>返回，这些缓冲区的释放栅栏必须被设置为传递给框架层的获取栅栏或是-1栅栏（如果它们已经被HAL等待）。</p>
+<blockquote>
+<p><em>In each of these transient failure cases, the HAL must still call process_capture_result, with valid output and input (if an input buffer was submitted) buffer_handle_t. If the result metadata could not be produced, it should be NULL. If some buffers could not be filled, they must be returned with process_capture_result in the error state, their release fences must be set to the acquire fences passed by the framework, or -1 if they have been waited on by the HAL already.</em></p>
+</blockquote>
+<p>使用无效参数调用相应的方法时将会返回<code>-EINVAL</code>。在这种情况下，框架层应该表现得像该方法从未被调用过一样。</p>
+<blockquote>
+<p><em>Invalid input arguments result in -EINVAL from the appropriate methods. In that case, the framework must act as if that call had never been made.</em></p>
+</blockquote>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2024/11/06/0/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Loujuch">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Code Bank">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2024/11/06/0/" class="post-title-link" itemprop="url">并发编程三大特性</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2024-11-06 22:34:49" itemprop="dateCreated datePublished" datetime="2024-11-06T22:34:49+08:00">2024-11-06</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2024-11-11 23:30:35" itemprop="dateModified" datetime="2024-11-11T23:30:35+08:00">2024-11-11</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="并发编程三大特性"><a href="#并发编程三大特性" class="headerlink" title="并发编程三大特性"></a>并发编程三大特性</h2><p>为了确保在多线程环境下内存操作的线程安全，通常要求操作具有如下特性：</p>
+<ol>
+<li><p>原子性：对一个或多个操作，要么全部完成执行，要么全部不完成执行，不能处于完成一半的状态。</p>
+</li>
+<li><p>可见性：在一个控制流完成操作后，要求其他控制流能够立即获得该操作的修改。</p>
+</li>
+<li><p>有序性：在一个控制流眼中，其他控制流的行为应该与其代码序一致。</p>
+</li>
+</ol>
+<h2 id="三特征的破坏和保证"><a href="#三特征的破坏和保证" class="headerlink" title="三特征的破坏和保证"></a>三特征的破坏和保证</h2><p>直觉上，并发编程三大特性是机器里说应当进行保证的。然而，为了加强性能，计算机内部做了许多优化，使得机器无法自动的的保证上述多线程环境下程序满足上述三项性质，这需要程序员手动对其的进行控制。</p>
+<p>下面将详细叙述相关优化和对应优化带来的优势、应该优化导致无法保证的特性和程序员保存对应特性的方法控制方法。</p>
+<h3 id="情况0-基础情况——单控制流独占设备"><a href="#情况0-基础情况——单控制流独占设备" class="headerlink" title="情况0: 基础情况——单控制流独占设备"></a>情况0: 基础情况——单控制流独占设备</h3><p>现在想象一个最简单的情况，在这种情况中计算机系统只允许一个控制流运行，并且直到这个控制流运行完全结束前不会被打断，也就是该控制流完全独占该机器。</p>
+<p><img src="/2024/11/06/0/0.png"></p>
+<p>这十分符合人类直觉，计算机系统也将保证该情况下的程序操作具有全部三个特性。因此可以将其视为判断标准，当多线程环境下控制流的执行结果与该情况相同，则为正确，否则则为错误。</p>
+<blockquote>
+<p>该情况其实在计算机蛮荒时期出现过，被称为单道批处理系统。</p>
+<p>其可以一次性多个作业（控制流），机器将会自动的依次串行执行作业，在上一个作业执行完毕前不会执行下一个作业。</p>
+</blockquote>
+<h3 id="情况1-中断的出现——多控制流共享设备"><a href="#情况1-中断的出现——多控制流共享设备" class="headerlink" title="情况1: 中断的出现——多控制流共享设备"></a>情况1: 中断的出现——多控制流共享设备</h3><h4 id="优化点的引入"><a href="#优化点的引入" class="headerlink" title="优化点的引入"></a>优化点的引入</h4><p>虽然情况0很符合人类直觉，但具有如下问题：</p>
+<ol>
+<li><p>资源利用率低：当与慢速设备进行交互时，当前控制流需要等待交互完成，因此处理器将处于等待状态，这将导致处理器的利用率降低。</p>
+</li>
+<li><p>响应时间长：一个作业需要等待之前的作业完成才会开始执行，因此无法保证作业的响应时间。</p>
+</li>
+</ol>
+<h4 id="改进措施"><a href="#改进措施" class="headerlink" title="改进措施"></a>改进措施</h4><p>随着硬件的发展，DMA、中断等技术的出现，使得计算机系统能够使得多个控制流轮流共享设备，这解决了上述的两个问题：</p>
+<ol>
+<li><p>当进行与慢速设备的交互或大块内存的复制等操作时，可以使用DMA机制进行数据传输，处理器则执行下一个控制流；数据传输完毕时会引发中断，通知处理器处理之前未完成的控制流。通过该方式，计算机系统极大地提高了系统的资源利用率。</p>
+</li>
+<li><p>为了降低作业的响应时间，计算机系统将设置时钟，使得每隔指定时间便能够产生中断。在接收到中断后，处理器将会更换处理的控制流，这使得提交的作业将在合理的时间内开始处理。</p>
+</li>
+</ol>
+<p><img src="/2024/11/06/0/1.png"></p>
+<blockquote>
+<p>改进后的系统被称为多道批处理系统（只进行了优化点1）和分时系统（进行了优化点1和优化点2）。</p>
+<p>这种逻辑上实现多任务、实际上进行串行执行的多任务运行方式被称为并行。</p>
+<p>本次改进是由DMA和中断技术的产生而发生的：</p>
+<ol>
+<li><p>DMA技术：在主板上引入专门用于数据传输的DMA芯片，当需要进行大规模数据传输时，处理器能够将传输任务交给DMA芯片，从而空出宝贵的处理器时间处理其他高价值任务。</p>
+</li>
+<li><p>中断技术：向计算机系统引入了异步通信方式，中断信号的发送方可能为外设或处理器，接收方则为处理器。当处理器接收到中断信号时，将会暂停当前处理的程序，并执行指定的程序。</p>
+</li>
+</ol>
+<p>在DMA和中断技术出现前，处理器只能通过轮询的方式处理数据传输和错误信号，这便是单道批处理系统出现的原因。</p>
+</blockquote>
+<h4 id="引入的新问题"><a href="#引入的新问题" class="headerlink" title="引入的新问题"></a>引入的新问题</h4><p>尽管上述改进措施能够提升计算机系统的性能，但控制流的并行处理方式打破了之前的串行处理假设，这直接导致了原子性的破坏。</p>
+<p>具体而言，该破坏包含两个层次：</p>
+<ol>
+<li><p>语句级别的破坏：在高级语言中，一条语句有时对应着数条的机器语句。例如对数据的修改语句通常会涉及<code>访存-修改-写回</code>等步骤，在这些步骤执行的过程中将有可能被中断打断，使得该条语句的操作将会失去原子性。</p>
+<p> 例如，如下C语言代码：</p>
+ <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> a = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line"><span class="type">int</span> <span class="title function_">main</span><span class="params">(<span class="type">int</span> argc, <span class="type">char</span> *argv[])</span> &#123;</span><br><span class="line">    ++a;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p> 编译出的对应X64汇编语言如下（未开启编译优化并去除预处理器指令）：</p>
+ <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">main:</span><br><span class="line">    pushq %rbp</span><br><span class="line">    movq  %rsp, %rbp</span><br><span class="line">    movl  %edi, -4(%rbp)</span><br><span class="line">    movq  %rsi, -16(%rbp)</span><br><span class="line">    movl  a(%rip), %eax</span><br><span class="line">    addl  $1, %eax</span><br><span class="line">    movl  %eax, a(%rip)</span><br><span class="line">    movl  $0, %eax</span><br><span class="line">    popq  %rbp</span><br><span class="line">    ret</span><br></pre></td></tr></table></figure>
+
+<p> 可以看到<code>++a;</code>语句被编译为了<code>movl  a(%rip), %eax</code>、<code>addl  $1, %eax</code>、<code>movl  %eax, a(%rip)</code>三条汇编语句，这些汇编语句在执行间可能被中断打断，因此该条C语句不具有原子性。</p>
+<p> <img src="/2024/11/06/0/2.png"></p>
+</li>
+<li><p>逻辑级别的破坏：当一个逻辑上需要多条语句原子性的执行时，语句执行间可能会被中断打断，使得该操作失去原子性。</p>
+<p> 例如，转账时逻辑上需要进行两个变量的同时修改，模拟的C语言语句如下：</p>
+ <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">my_money += <span class="number">7827798</span>;</span><br><span class="line">other_person_money -= <span class="number">7827798</span>;</span><br></pre></td></tr></table></figure>
+
+<p> 此时两条语句间的执行可能会被中断打断，使得其他线程获得<code>my_money</code>增加7827798但<code>other_person_money</code>不变的结果，因此这些C语句不具有原子性。</p>
+<p> <img src="/2024/11/06/0/3.png"></p>
+</li>
+</ol>
+<h4 id="问题的解决"><a href="#问题的解决" class="headerlink" title="问题的解决"></a>问题的解决</h4><p>针对该情况，计算机硬件系统给出了两个方向的解决方案：</p>
+<ol>
+<li><p>在需要原子性的地方暂时关闭中断，这样使得该控制流不会被换出，这在物理上保证了操作的原子性。</p>
+<p> 控制流的转换依赖于中断信号的通知，通过关闭中断响应，处理器能够保证执行的操作不会被打断，保证了操作的原子性。</p>
+<p> <img src="/2024/11/06/0/4.png"></p>
+<p> 通常各种类型的处理器都会提供相应的关&#x2F;开中断机制，操作系统也会提供对应的封装。因为其平台相关性较强且在软件开发过程中几乎不会用上，故此处不再延申。</p>
+</li>
+<li><p>在每次写回时查看当前值是否被修改了，如果发生修改则重做之前的操作，这在逻辑上保证了操作的原子性。</p>
+<p> 从逻辑上来说，只要各个控制流处理在写回前保证之前的处理操作的输入未被修改，就能够保证该次处理的串行性：</p>
+ <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> a = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line"><span class="type">int</span> <span class="title function_">main</span><span class="params">(<span class="type">int</span> argc, <span class="type">char</span> *argv[])</span> &#123;</span><br><span class="line">    <span class="keyword">while</span>(<span class="literal">true</span>) &#123;</span><br><span class="line">        <span class="type">int</span> tmp = a;</span><br><span class="line">        <span class="type">int</span> tmpa = tmp + <span class="number">1</span>;</span><br><span class="line">        <span class="keyword">if</span>(tmp == a) &#123;</span><br><span class="line">            a = tmpa;</span><br><span class="line">            <span class="keyword">break</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p> 很明显上述代码相比起之前更为复杂且仍然线程不安全，因此处理器通常会给出CAS原子指令，该指令类似于<code>原子性</code>的执行下列操作：</p>
+ <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> <span class="title function_">CAS</span><span class="params">(<span class="type">int</span> V, <span class="type">int</span> A, <span class="type">int</span> B)</span> &#123;</span><br><span class="line">    <span class="keyword">if</span>(V == A) &#123;</span><br><span class="line">        V = B;</span><br><span class="line">        <span class="keyword">return</span> <span class="number">1</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p> 使用CAS改写后，原代码变为：</p>
+ <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> a = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line"><span class="type">int</span> <span class="title function_">main</span><span class="params">(<span class="type">int</span> argc, <span class="type">char</span> *argv[])</span> &#123;</span><br><span class="line">    <span class="type">int</span> tmp;</span><br><span class="line">    <span class="keyword">do</span> &#123;</span><br><span class="line">        tmp = a;</span><br><span class="line">    &#125; <span class="keyword">while</span>(<span class="number">0</span> == CAS(a, tmp, tmp + <span class="number">1</span>));</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p> 此时，当其他控制流的操作影响了a的值时，当前控制流都能够检测出，并且根据新值重新进行处理，从逻辑上保证了操作的原子性。</p>
+<p> <img src="/2024/11/06/0/5.png"></p>
+</li>
+</ol>
+<h3 id="情况2-多个执行核心——同时运行多个控制流"><a href="#情况2-多个执行核心——同时运行多个控制流" class="headerlink" title="情况2: 多个执行核心——同时运行多个控制流"></a>情况2: 多个执行核心——同时运行多个控制流</h3><h4 id="优化点的引入-1"><a href="#优化点的引入-1" class="headerlink" title="优化点的引入"></a>优化点的引入</h4><p>在实际计算机系统中，计算的速度与时钟频率和指令完成执行所需时钟数量有关，当指令所需时钟数量一定时，时钟频率越高，计算速度越快；当时钟频率一定时，指令所需时钟数量越低，计算速度越快。</p>
+<p>但受限于物理器件和指令系统，时钟频率和指令所需时钟数量方面的提升十分困难且有限，这限制了单核处理器的性能。</p>
+<h4 id="改进措施-1"><a href="#改进措施-1" class="headerlink" title="改进措施"></a>改进措施</h4><p>基于当前多任务的处理方式，通过在处理器上添加多个相互独立的处理单元，计算机系统能够同时运行多个任务（控制流），这极大地提高了计算机系统的处理能力。</p>
+<p>这些处理单元在计算时相互独立，但共享着同一套内存、外设等。</p>
+<p><img src="/2024/11/06/0/6.png"></p>
+<blockquote>
+<p>这种在物理上同时执行多任务的运行方式被称为并发。</p>
+<p>通常情况下，在一个支持多核并发的系统中，往往也会支持并行操作。</p>
+</blockquote>
+<h4 id="引入的新问题-1"><a href="#引入的新问题-1" class="headerlink" title="引入的新问题"></a>引入的新问题</h4><p>尽管上述改进措施能够提升计算机系统的性能，但并发的控制流将有可能导致访存的冲突，同时多个处理单元内将有多个寄存器组，这导致了以下问题：</p>
+<ol>
+<li><p>共享资源的并发访问：在多个控制流同时运行时，有可能或导致在同一时刻多个控制流同时访问同一个共享资源，这破坏了操作的原子性。</p>
+<p> <img src="/2024/11/06/0/7.png"></p>
+</li>
+<li><p>冗余的数据副本：在多个处理单元中存在多组相互独立的寄存器组，这些寄存器组中可能会存在指向相同变量的数据。当其中一方修改相应数据时，另一方可能仍然使用之前存储在寄存器中的数据，这破坏了操作的可见性。</p>
+<p> 例如，如下C语言代码：</p>
+ <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> a = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line"><span class="type">void</span> <span class="title function_">wait</span><span class="params">()</span> &#123;</span><br><span class="line">    <span class="keyword">while</span> (<span class="number">0</span> == a);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="type">void</span> <span class="title function_">notify</span><span class="params">()</span> &#123;</span><br><span class="line">    a = <span class="number">1</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p> 编译出的对应X64汇编语言如下（开启O1编译优化并去除预处理器指令）：</p>
+ <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">_Z4waitv:</span><br><span class="line">    movl  a(%rip), %eax</span><br><span class="line">.L2:</span><br><span class="line">    testl %eax, %eax</span><br><span class="line">    je	.L2</span><br><span class="line">    ret</span><br><span class="line"></span><br><span class="line">_Z6notifyv:</span><br><span class="line">    movl $1, a(%rip)</span><br><span class="line">    ret</span><br></pre></td></tr></table></figure>
+
+<p> 当一个执行流中调用<code>notify</code>修改<code>a</code>的值时，调用<code>wait</code>的线程仍然会读取寄存器中的副本，这表明其出现了可见性的破坏。</p>
+</li>
+</ol>
+<h4 id="问题的解决-1"><a href="#问题的解决-1" class="headerlink" title="问题的解决"></a>问题的解决</h4><p>针对上述问题，计算机系统依次给出了相应的解决方案：</p>
+<ol>
+<li><p>针对并发访问冲突问题，计算机系统提供了总线锁进行解决。在总线锁定期间，处理单元将会在总线上发送LOCK信号，这将阻止其他处理单元通过总线访问资源。</p>
+<p> 总线锁的具体实现与对应的处理器平台有关，通常情况下，当一个处理单元获得总线锁后，便独占了全部共享资源。这从硬件层面解决了操作原子性的问题。</p>
+<p> <img src="/2024/11/06/0/8.png"></p>
+<p> 通常情况下总线锁通过在对应汇编语言指令前添加LOCK前缀进行获取，但在部分平台中也可能会对未显示声明的语句添加总线锁。因为其平台相关性较强且在软件开发过程中几乎不会用上，故此处不再延申。</p>
+</li>
+<li><p>针对可见性问题，该问题在当前形态下可以在编译期进行解决，C语言提供了<code>volatile</code>关键字来保证每次对变量的访问均来自内存。</p>
+<p> 例如，如下C语言代码：</p>
+ <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">volatile</span> <span class="type">int</span> a = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line"><span class="type">void</span> <span class="title function_">wait</span><span class="params">()</span> &#123;</span><br><span class="line">    <span class="keyword">while</span> (<span class="number">0</span> == a);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="type">void</span> <span class="title function_">notify</span><span class="params">()</span> &#123;</span><br><span class="line">    a = <span class="number">1</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p> 编译出的对应X64汇编语言如下（开启O3编译优化并去除预处理器指令）：</p>
+ <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">_Z4waitv:</span><br><span class="line">.L2:</span><br><span class="line">    movl  a(%rip), %eax</span><br><span class="line">    testl %eax, %eax</span><br><span class="line">    je	.L2</span><br><span class="line">    ret</span><br><span class="line"></span><br><span class="line">_Z6notifyv:</span><br><span class="line">    movl $1, a(%rip)</span><br><span class="line">    ret</span><br></pre></td></tr></table></figure>
+
+<p> 由汇编代码中可以看出，当访问对应变量时，控制流总会去访问对应的内存，这便解决了寄存器变量不更新导致的可见性问题。</p>
+</li>
+</ol>
+<h3 id="情况3-更快的访存——单控制流下的Cache"><a href="#情况3-更快的访存——单控制流下的Cache" class="headerlink" title="情况3: 更快的访存——单控制流下的Cache"></a>情况3: 更快的访存——单控制流下的Cache</h3><h4 id="优化点的引入-2"><a href="#优化点的引入-2" class="headerlink" title="优化点的引入"></a>优化点的引入</h4><p>本情况实际上是对情况1的优化，与情况2基本无关。</p>
+<p>在之前的构想中，处理器都是直接与内存进行交互的。随着技术的发展，处理器的速度不断加快，与内存的读写速度间的差异逐渐变大，如果每条指令和数据都需要进行访存操作，这将严重降低计算机性能。</p>
+<p>目前使用的内存基本均由DRAM组成，在使用中其表现出了如下问题：</p>
+<ol>
+<li><p>DRAM基于电容机制存储数据，使得其需要定期刷新以保持内部数据，这降低了其的信息存取速度。</p>
+</li>
+<li><p>通常而言，内存只能一次性进行有限数量的操作（具体由通道数而定），同时CPU、GPU、DMA等都存在内存访问需求，这制约了内存的并发处理能力。</p>
+</li>
+</ol>
+<p>这些问题都制约了内存的处理能力。</p>
+<h4 id="改进措施-2"><a href="#改进措施-2" class="headerlink" title="改进措施"></a>改进措施</h4><p>在对计算机程序进行统计时会发现，计算机程序的运行具有浓厚的局部性特征，这使得将当前内存的子集放置到一个更快的物理存储结构成为提高系统性能的方案，这些用于存放内存子集数据的物理存储结构被称为Cache。</p>
+<p><img src="/2024/11/06/0/9.png"></p>
+<blockquote>
+<p>局部性包含了时间局部性和空间局部性，其中时间局部性指在某个时间点访问的内存，在相邻的时间点更有可能被访问；空间局部性指在当某个地址空间被访问时，其相邻的地址空间更有可能被访问。</p>
+<p>局部性表示了循环结构在程序运行中的重要地位，同时也因为数组结构的广泛使用、局部变量在栈上连续分布等原因而出现。</p>
+<p>例如：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">void</span> <span class="title function_">set</span><span class="params">(<span class="type">int</span> *num, <span class="type">unsigned</span> len, <span class="type">int</span> val)</span> &#123;</span><br><span class="line">   <span class="keyword">for</span> (<span class="type">unsigned</span> i = <span class="number">0</span>; i &lt; len; ++i) &#123; <span class="comment">// 循环结构使得指令被反复使用</span></span><br><span class="line">       num[i] = val; <span class="comment">// 数组结构和局部变量的连续排布使得相邻存储空间被使用</span></span><br><span class="line">   &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</blockquote>
+<p>Cache进行了如下优化，使得其相对于内存而言具有更快的速度：</p>
+<ol>
+<li><p>使用基于锁存器结构的SRAM组成，这种结构在物理结构上具有更快的速度。</p>
+</li>
+<li><p>通过缓存分区、私有缓存等方式，使得Cache具有较好的并发处理能力。</p>
+</li>
+<li><p>仅有CPU占用，不涉及与其他物理元件的争用。</p>
+</li>
+<li><p>排线上更接近CPU，数据传输延时少。</p>
+</li>
+</ol>
+<h4 id="带Cache的内存写入"><a href="#带Cache的内存写入" class="headerlink" title="带Cache的内存写入"></a>带Cache的内存写入</h4><p>在该情况下，显然这不会导致并发三特性的破坏，但在该情况下如何进行数据写入方面仍具有一些值得讨论的问题。</p>
+<p>目前，在包含Cache的计算机系统中，对数据进行写入操作有两种常用方法：</p>
+<ol>
+<li><p>直写法：处理器同时修改Cache和对应内存地址的数据。</p>
+<p> 直写法需要处理器直接与内存进行交互，这将会降低系统的执行效率。</p>
+</li>
+<li><p>回写法：处理器只修改Cache的值，在对应的Cache换出时才写入对应内存。</p>
+<p> 回写法减少了处理器与内存的交互，提高了执行效率。但由于回写过程的存在，使得需要更复杂的硬件，并且存在潜在的一致性问题。</p>
+</li>
+</ol>
+<p>目前主流计算机系统普遍采用回写法作为内存修改方法，下面的全部讨论均以此为基础。</p>
+<h3 id="情况4-冗余的代价——多控制流下的Cache同步"><a href="#情况4-冗余的代价——多控制流下的Cache同步" class="headerlink" title="情况4: 冗余的代价——多控制流下的Cache同步"></a>情况4: 冗余的代价——多控制流下的Cache同步</h3><h4 id="改进措施-3"><a href="#改进措施-3" class="headerlink" title="改进措施"></a>改进措施</h4><p>目前计算机系统通常将Cache分为3层——L1、L2和L3，其中L1离CPU最近，L3最远。这3层的情况如下：</p>
+<ol>
+<li><p>L3在三层中最大，内部存储内存的数据子集，通常情况下由所有CPU共享。</p>
+</li>
+<li><p>L2第二大，内部存储L3的数据子集，通常情况每个CPU核心都有自己的L2。</p>
+</li>
+<li><p>L1最小，内部存储L2的数据子集，每个CPU核心都有自己的L1，并且在L1中会分为指令缓存和数据缓存。</p>
+</li>
+</ol>
+<h3 id="情况5-更极致地性能追求——指令乱序"><a href="#情况5-更极致地性能追求——指令乱序" class="headerlink" title="情况5: 更极致地性能追求——指令乱序"></a>情况5: 更极致地性能追求——指令乱序</h3>
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
     <link itemprop="mainEntityOfPage" href="http://example.com/2024/11/04/1/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -168,10 +717,16 @@
                 <i class="fa fa-calendar-o"></i>
               </span>
               <span class="post-meta-item-text">Posted on</span>
-              
 
-              <time title="Created: 2024-11-04 22:27:40 / Modified: 23:23:29" itemprop="dateCreated datePublished" datetime="2024-11-04T22:27:40+08:00">2024-11-04</time>
+              <time title="Created: 2024-11-04 22:27:40" itemprop="dateCreated datePublished" datetime="2024-11-04T22:27:40+08:00">2024-11-04</time>
             </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2024-11-05 22:55:22" itemprop="dateModified" datetime="2024-11-05T22:55:22+08:00">2024-11-05</time>
+              </span>
 
           
 
@@ -492,10 +1047,16 @@
                 <i class="fa fa-calendar-o"></i>
               </span>
               <span class="post-meta-item-text">Posted on</span>
-              
 
-              <time title="Created: 2024-11-03 17:57:46 / Modified: 21:57:43" itemprop="dateCreated datePublished" datetime="2024-11-03T17:57:46+08:00">2024-11-03</time>
+              <time title="Created: 2024-11-03 17:57:46" itemprop="dateCreated datePublished" datetime="2024-11-03T17:57:46+08:00">2024-11-03</time>
             </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2024-11-06 22:41:07" itemprop="dateModified" datetime="2024-11-06T22:41:07+08:00">2024-11-06</time>
+              </span>
 
           
 
@@ -598,7 +1159,8 @@
 <blockquote>
 <p>After some time, the framework may stop submitting new requests, wait for the existing captures to complete (all buffers filled, all results returned), and then call configure_streams() again. This resets the camera hardware and pipeline for a new set of input&#x2F;output streams. Some streams may be reused from the previous configuration; if these streams’ buffers had already been registered with the HAL, they will not be registered again. The framework then continues from step 7, if at least one registered output stream remains (otherwise, step 5 is required first).</p>
 </blockquote>
-<p>或者框架层可能调用<code>camera3_device_t-&gt;common-&gt;close()</code>终止相机会话。这可能在没有其他任何来自框架层的请求活动的任何时候被调用，但该调用将会被阻塞直到所有正在处理的捕获完成（所有结果返回且所有缓冲区被填充）。在<code>close</code>调用返回后，不允许从HAL调用<code>camera3_callback_ops_t</code>函数。一旦<code>close()</code>的调用开始运行，框架层不能调用任何其他HAL设备函数。</p>
+</li>
+<li><p>同时，框架层可能调用<code>camera3_device_t-&gt;common-&gt;close()</code>终止相机会话。这可能在没有其他任何来自框架层的请求活动的任何时候被调用，但该调用将会被阻塞直到所有正在处理的捕获完成（所有结果返回且所有缓冲区被填充）。在<code>close</code>调用返回后，不允许从HAL调用<code>camera3_callback_ops_t</code>函数。一旦<code>close()</code>的调用开始运行，框架层不能调用任何其他HAL设备函数。</p>
 <blockquote>
 <p>Alternatively, the framework may call camera3_device_t-&gt;common-&gt;close() to end the camera session. This may be called at any time when no other calls from the framework are active, although the call may block until all in-flight captures have completed (all results returned, all buffers filled). After the close call returns, no more calls to the camera3_callback_ops_t functions are allowed from the HAL. Once the close() call is underway, the framework may not call any other HAL device functions.</p>
 </blockquote>
@@ -825,830 +1387,6 @@
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2024/11/03/0/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="Loujuch">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Code Bank">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2024/11/03/0/" class="post-title-link" itemprop="url">CMake基础模板</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">Posted on</span>
-              
-
-              <time title="Created: 2024-11-03 11:02:44 / Modified: 11:21:34" itemprop="dateCreated datePublished" datetime="2024-11-03T11:02:44+08:00">2024-11-03</time>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>项目结构如下：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">project</span><br><span class="line">├─include</span><br><span class="line">│  └─hello.hpp</span><br><span class="line">├─src</span><br><span class="line">│  ├─lib</span><br><span class="line">│  │  └─hello.cpp</span><br><span class="line">│  └─main.cpp</span><br><span class="line">├─test</span><br><span class="line">│  └─my_test.cpp</span><br><span class="line">└─CMakeLists.txt</span><br></pre></td></tr></table></figure>
-
-<p>使用如下CMake进行编译：</p>
-<figure class="highlight cmake"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 设置CMake最低版本</span></span><br><span class="line"><span class="keyword">cmake_minimum_required</span>(VERSION <span class="number">3.10</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 设置项目名</span></span><br><span class="line"><span class="keyword">project</span>(demo)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 设置编译模式为Debug</span></span><br><span class="line"><span class="keyword">set</span>(CMAKE_BUILD_TYPE <span class="string">&quot;Debug&quot;</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 设置需要的CPP标准</span></span><br><span class="line"><span class="keyword">set</span>(CMAKE_CXX_STANDARD <span class="number">17</span>)</span><br><span class="line"><span class="keyword">set</span>(CMAKE_CXX_STANDARD_REQUIRED <span class="keyword">True</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 设置输出目录</span></span><br><span class="line"><span class="keyword">set</span>(EXECUTABLE_OUTPUT_PATH <span class="variable">$&#123;CMAKE_BINARY_DIR&#125;</span>/bin)</span><br><span class="line"><span class="keyword">set</span>(LIBRARY_OUTPUT_PATH <span class="variable">$&#123;CMAKE_BINARY_DIR&#125;</span>/lib)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 打开测试</span></span><br><span class="line"><span class="keyword">enable_testing</span>()</span><br><span class="line"></span><br><span class="line"><span class="comment"># 添加头文件路径</span></span><br><span class="line"><span class="keyword">include_directories</span>(<span class="variable">$&#123;CMAKE_CURRENT_SOURCE_DIR&#125;</span>/<span class="keyword">include</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 设置库源文件文件</span></span><br><span class="line"><span class="keyword">aux_source_directory</span>(<span class="variable">$&#123;CMAKE_CURRENT_SOURCE_DIR&#125;</span>/src/lib LIB_SRCS)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 添加静态库目标</span></span><br><span class="line"><span class="keyword">add_library</span>(hello STATIC <span class="variable">$&#123;LIB_SRCS&#125;</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 设置可执行文件源文件</span></span><br><span class="line"><span class="keyword">file</span>(GLOB MAIN_SRCS <span class="variable">$&#123;CMAKE_CURRENT_SOURCE_DIR&#125;</span>/src/*.cpp)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 添加可执行文件目标</span></span><br><span class="line"><span class="keyword">add_executable</span>(<span class="variable">$&#123;PROJECT_NAME&#125;</span> <span class="variable">$&#123;MAIN_SRCS&#125;</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 链接静态库</span></span><br><span class="line"><span class="keyword">target_link_libraries</span>(<span class="variable">$&#123;PROJECT_NAME&#125;</span> hello)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 设置测试文件源文件</span></span><br><span class="line"><span class="keyword">file</span>(GLOB TEST_SRCS <span class="variable">$&#123;CMAKE_CURRENT_SOURCE_DIR&#125;</span>/<span class="keyword">test</span>/*.cpp)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 为每一个测试文件</span></span><br><span class="line"><span class="keyword">foreach</span>(SRC IN LISTS TEST_SRCS)</span><br><span class="line">    <span class="comment"># 生成测试文件二进制文件名</span></span><br><span class="line">    <span class="keyword">get_filename_component</span>(FILE_NAME <span class="variable">$&#123;SRC&#125;</span> NAME_WE)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 生成测试文件二进制文件</span></span><br><span class="line">    <span class="keyword">add_executable</span>(<span class="variable">$&#123;FILE_NAME&#125;</span> <span class="variable">$&#123;SRC&#125;</span>)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 链接静态库</span></span><br><span class="line">    <span class="keyword">target_link_libraries</span>(<span class="variable">$&#123;FILE_NAME&#125;</span> hello)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 添加测试命令</span></span><br><span class="line">    <span class="keyword">add_test</span>(NAME <span class="variable">$&#123;FILE_NAME&#125;</span> <span class="keyword">COMMAND</span> <span class="variable">$&#123;FILE_NAME&#125;</span>)</span><br><span class="line"><span class="keyword">endforeach</span>()</span><br></pre></td></tr></table></figure>
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2024/11/02/2/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="Loujuch">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Code Bank">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2024/11/02/2/" class="post-title-link" itemprop="url">CPP中的线程同步机制</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">Posted on</span>
-              
-
-              <time title="Created: 2024-11-02 15:22:07 / Modified: 22:02:52" itemprop="dateCreated datePublished" datetime="2024-11-02T15:22:07+08:00">2024-11-02</time>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h2 id="锁机制原理"><a href="#锁机制原理" class="headerlink" title="锁机制原理"></a>锁机制原理</h2><p>锁机制源于信号量，其实现与操作系统息息相关。一般而言，线程存在下图所示的5种状态，其中当线程处于阻塞状态时，不会调度到处理机中运行。</p>
-<p><img src="/2024/11/02/2/0.png" alt="线程状态"></p>
-<p>信号量机制则为在需互斥线程间共享一个数据，同时提供<code>P</code>、<code>V</code>两种操作，两种操作的行为如下：</p>
-<ol>
-<li><p><code>P</code>操作：将数据减一，当数据小于零时，将当前线程阻塞。</p>
-</li>
-<li><p><code>V</code>操作：将数据加一，若此时存在线程阻塞在该信号量时，则唤醒其中一个。</p>
-</li>
-</ol>
-<p>当信号量中使用布尔变量作为共享数据时，则仅允许一个线程进入临界区，实现并发互斥。通常将该信号量称为锁。</p>
-<h2 id="CPP中的锁"><a href="#CPP中的锁" class="headerlink" title="CPP中的锁"></a>CPP中的锁</h2><h3 id="分类"><a href="#分类" class="headerlink" title="分类"></a>分类</h3><p>在CPP中，根据不同的标准，大致可以分为如下部分：</p>
-<p><img src="/2024/11/02/2/1.png"></p>
-<p>其中，各标准的含义如下：</p>
-<ol>
-<li><p>可重入：在一个线程获得目标锁后，再次请求同一把锁时不会阻塞。</p>
-</li>
-<li><p>限时性：在线程阻塞等待目标锁时，可以设置超时时间，超时时即使未获得目标锁也会解除阻塞。（不是锁的通常分类，但CPP实现中将其区分出来。）</p>
-</li>
-<li><p>分读写：上锁操作分为读锁和写锁，其中，写锁和互斥锁相同，一旦加上便无法再加上其他写锁和读锁；读锁则可以加上多重，即加上后可以再加上其他读锁，但无法再加上写锁。</p>
-</li>
-</ol>
-<p>根据上述分类标准，CPP中的锁的属性如下：</p>
-<table>
-<thead>
-<tr>
-<th>锁类型</th>
-<th>可重入</th>
-<th>可限时</th>
-<th>分读写</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>mutex</td>
-<td>n</td>
-<td>n</td>
-<td>n</td>
-</tr>
-<tr>
-<td>timed_mutex</td>
-<td>n</td>
-<td>y</td>
-<td>n</td>
-</tr>
-<tr>
-<td>recursive_mutex</td>
-<td>y</td>
-<td>n</td>
-<td>n</td>
-</tr>
-<tr>
-<td>recursive_timed_mutex</td>
-<td>y</td>
-<td>y</td>
-<td>n</td>
-</tr>
-<tr>
-<td>shared_mutex</td>
-<td>n</td>
-<td>n</td>
-<td>y</td>
-</tr>
-<tr>
-<td>shared_timed_mutex</td>
-<td>n</td>
-<td>y</td>
-<td>y</td>
-</tr>
-</tbody></table>
-<h3 id="公共接口"><a href="#公共接口" class="headerlink" title="公共接口"></a>公共接口</h3><p>所有锁都提供了一些相似的接口，例如，所有的锁只能够调用默认构造函数创建，不能够进行拷贝和移动。其他相似接口如下：</p>
-<table>
-<thead>
-<tr>
-<th>接口</th>
-<th>含义</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>void lock();</td>
-<td>获得目标锁，若无法获得则阻塞当前线程。<br>如果使用的锁可重入，则同一线程可多次调用，否则会在第二次调用时发生死锁。</td>
-</tr>
-<tr>
-<td>bool try_lock() noexcept;</td>
-<td>尝试获得锁，若无法立即获得也会立即返回false，否则获得该锁并返回true。</td>
-</tr>
-<tr>
-<td>void unlock();</td>
-<td>释放目标锁。</td>
-</tr>
-</tbody></table>
-<p>上述接口所有的锁都具有，因此在锁的RAII机制中具有重要作用。</p>
-<h3 id="限时接口"><a href="#限时接口" class="headerlink" title="限时接口"></a>限时接口</h3><p>所有可限时的锁都提供了一些相似的接口，这些相似接口如下：</p>
-<table>
-<thead>
-<tr>
-<th>接口</th>
-<th>含义</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>template &lt;class Rep, class Period&gt;<br>bool try_lock_for(const std::chrono::duration&lt;Rep, Period&gt;&amp; timeout_duration);</td>
-<td>尝试获得目标锁，若未能在timeout_duration的时间内获得该锁则放弃申请，返回false；否则获得该锁，返回true。<br>timeout_duration小于等于timeout_duration.zero()时等价于try_lock。</td>
-</tr>
-<tr>
-<td>template &lt;class Clock, class Duration&gt;<br>bool try_lock_until(const std::chrono::time_point&lt;Clock, Duration&gt;&amp; timeout_time)</td>
-<td>尝试获得目标锁，若未能在时间timeout_time前内获得该锁则放弃申请，返回false；否则获得该锁，返回true。<br>timeout_time早于当前时间时等价于try_lock。</td>
-</tr>
-</tbody></table>
-<h3 id="读写接口"><a href="#读写接口" class="headerlink" title="读写接口"></a>读写接口</h3><p>所有分读写的锁使用lock接口作为写锁接口，都提供了一些相似的读锁接口，这些相似接口如下：</p>
-<table>
-<thead>
-<tr>
-<th>接口</th>
-<th>含义</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>void lock_shared();</td>
-<td>获得目标读锁，若无法获得则阻塞当前线程。</td>
-</tr>
-<tr>
-<td>bool try_lock_shared() noexcept;</td>
-<td>尝试获得目标读锁，若无法立即获得也会立即返回false，否则获得该锁并返回true。</td>
-</tr>
-<tr>
-<td>void unlock_shared();</td>
-<td>释放目标锁。</td>
-</tr>
-</tbody></table>
-<h3 id="读写限时接口"><a href="#读写限时接口" class="headerlink" title="读写限时接口"></a>读写限时接口</h3><p>所有分读写且可限时同时也提供了一些相似的可限时读锁接口，这些相似接口如下：</p>
-<table>
-<thead>
-<tr>
-<th>接口</th>
-<th>含义</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>template &lt;class Rep, class Period&gt;<br>bool try_lock_shared_for(const std::chrono::duration&lt;Rep, Period&gt;&amp; timeout_duration);</td>
-<td>尝试获得目标锁，若未能在timeout_duration的时间内获得该锁则放弃申请，返回false；否则获得该锁，返回true。<br>timeout_duration小于等于timeout_duration.zero()时等价于try_lock_shared。</td>
-</tr>
-<tr>
-<td>template &lt;class Clock, class Duration&gt;<br>bool try_lock_shared_until(const std::chrono::time_point&lt;Clock, Duration&gt;&amp; timeout_time)</td>
-<td>尝试获得目标锁，若未能在时间timeout_time前内获得该锁则放弃申请，返回false；否则获得该锁，返回true。<br>timeout_time早于当前时间时等价于try_lock_shared。</td>
-</tr>
-</tbody></table>
-<h2 id="CPP在锁上的RAII机制"><a href="#CPP在锁上的RAII机制" class="headerlink" title="CPP在锁上的RAII机制"></a>CPP在锁上的RAII机制</h2><p>CPP提供了四个类用于实现基于RAII的锁机制，这些类均能够在构造函数中锁上传入的锁，在析构函数中释放对应的锁，有效的解决了因代码改动新加分支等原因导致的锁未释放问题。</p>
-<p>同时，还允许通过传入参数进行锁定策略的修改，相应的锁定策略如下：</p>
-<table>
-<thead>
-<tr>
-<th>策略参数</th>
-<th>策略</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>&lt;默认&gt;</td>
-<td>调用传入参数的上锁方法，会发生阻塞。</td>
-</tr>
-<tr>
-<td>std::defer_lock</td>
-<td>假设当前未获得锁，之后会手动申请。</td>
-</tr>
-<tr>
-<td>std::try_to_lock</td>
-<td>尝试获取锁，但有可能失败，这不会阻塞。</td>
-</tr>
-<tr>
-<td>std::adopt_lock</td>
-<td>假设当前已经获取了锁。</td>
-</tr>
-<tr>
-<td>std::chrono::duration</td>
-<td>调用传入参数的lock_for方法，会发生阻塞。</td>
-</tr>
-<tr>
-<td>std::chrono::time_point</td>
-<td>调用传入参数的lock_until方法，会发生阻塞。</td>
-</tr>
-</tbody></table>
-<p>实现RAII机制的类的类型和特点如下：</p>
-<table>
-<thead>
-<tr>
-<th>类型</th>
-<th>特点</th>
-<th>支持策略</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>lock_guard</td>
-<td>不可移动，不可拷贝</td>
-<td>adopt_lock</td>
-</tr>
-<tr>
-<td>scoped_lock</td>
-<td>不可移动，不可拷贝。<br>能够一次申请多把锁。</td>
-<td>adopt_lock</td>
-</tr>
-<tr>
-<td>unique_lock</td>
-<td>可移动，不可拷贝</td>
-<td>defer_lock、try_to_lock、adopt_lock、duration、time_point</td>
-</tr>
-<tr>
-<td>shared_lock</td>
-<td>可移动，不可拷贝。<br>申请的是读锁。</td>
-<td>defer_lock、try_to_lock、adopt_lock、duration、time_point</td>
-</tr>
-</tbody></table>
-<p>同时，<code>unique_lock</code>和<code>shared_lock</code>还提供了如下接口：</p>
-<table>
-<thead>
-<tr>
-<th>接口</th>
-<th>含义</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>void lock();</td>
-<td>获得目标锁，若无法获得则阻塞当前线程。<br>如果使用的锁可重入，则同一线程可多次调用，否则会在第二次调用时发生死锁。</td>
-</tr>
-<tr>
-<td>bool try_lock() noexcept;</td>
-<td>尝试获得锁，若无法立即获得也会立即返回false，否则获得该锁并返回true。</td>
-</tr>
-<tr>
-<td>template &lt;class Rep, class Period&gt;<br>bool try_lock_for(const std::chrono::duration&lt;Rep, Period&gt;&amp; timeout_duration);</td>
-<td>尝试获得目标锁，若未能在timeout_duration的时间内获得该锁则放弃申请，返回false；否则获得该锁，返回true。<br>timeout_duration小于等于timeout_duration.zero()时等价于try_lock。</td>
-</tr>
-<tr>
-<td>template &lt;class Clock, class Duration&gt;<br>bool try_lock_until(const std::chrono::time_point&lt;Clock, Duration&gt;&amp; timeout_time)</td>
-<td>尝试获得目标锁，若未能在时间timeout_time前内获得该锁则放弃申请，返回false；否则获得该锁，返回true。<br>timeout_time早于当前时间时等价于try_lock。</td>
-</tr>
-<tr>
-<td>void unlock();</td>
-<td>释放目标锁。</td>
-</tr>
-<tr>
-<td>mutex_type* release() noexcept;</td>
-<td>未释放目标锁的放弃对目标锁的控制权。</td>
-</tr>
-<tr>
-<td>bool owns_lock() const noexcept;</td>
-<td>返回其是否持有已锁定的锁。</td>
-</tr>
-<tr>
-<td>explicit operator bool() const noexcept;</td>
-<td>隐式类型转换函数，相当于调用owns_lock。</td>
-</tr>
-</tbody></table>
-<h2 id="CPP提供的通用锁定方法"><a href="#CPP提供的通用锁定方法" class="headerlink" title="CPP提供的通用锁定方法"></a>CPP提供的通用锁定方法</h2><p>CPP提供以下能够获取锁的方法：</p>
-<table>
-<thead>
-<tr>
-<th>接口</th>
-<th>含义</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>template &lt;class Lockable1, class Lockable2, class… LockableN&gt;<br>void lock(Lockable1&amp; lock1, Lockable2&amp; lock2, LockableN&amp;… lockn);</td>
-<td>使用死锁避免算法尝试获得多把锁。</td>
-</tr>
-<tr>
-<td>template &lt;class Lockable1, class Lockable2, class… LockableN&gt;<br>int try_lock(Lockable1&amp; lock1, Lockable2&amp; lock2, LockableN&amp;… lockn);</td>
-<td>从头开始锁定传入的锁，如果存在失败的，则立即返回失败锁在传入参数的以0为底的下标；若都获取成功，返回-1。</td>
-</tr>
-</tbody></table>
-<h2 id="CPP条件变量"><a href="#CPP条件变量" class="headerlink" title="CPP条件变量"></a>CPP条件变量</h2><p>条件变量将会是CPP线程同步的重要机制，其原理和信号量类似，是通过线程的阻塞和唤醒实现的。</p>
-<p>CPP中提供了<code>condition_variable</code>和<code>condition_variable_any</code>作为条件变量，两者完全一致，唯一的区别是<code>condition_variable</code>wait时只能使用<code>std::unique&lt;std::mutex&gt;</code>作为参数而<code>condition_variable_any</code>wait时能够使用任意锁作为参数。</p>
-<p>两者提供了相似的接口，具体如下：</p>
-<table>
-<thead>
-<tr>
-<th>接口</th>
-<th>含义</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>void notify_one() noexcept;</td>
-<td>唤醒正在等待该条件变量的一个线程。</td>
-</tr>
-<tr>
-<td>void notify_all() noexcept;</td>
-<td>唤醒正在等待该条件变量的所有线程，即使被唤醒线程因为锁竞争等原因再次阻塞也不会再次等待条件变量信号。</td>
-</tr>
-<tr>
-<td>void wait(Lock&amp; lock);</td>
-<td>等待条件变量唤醒信号，要求lock已经由当前线程持有。</td>
-</tr>
-<tr>
-<td>void wait(Lock&amp; lock, Predicate pred);</td>
-<td>相当于while(!pred()) { wait(lock); }。</td>
-</tr>
-<tr>
-<td>std::cv_status wait_until(Lock&amp; lock, const std::chrono::time_point&lt;Clock, Duration&gt;&amp; abs_time);</td>
-<td>等待条件变量唤醒信号或到达指定时间，要求lock已经由当前线程持有。</td>
-</tr>
-<tr>
-<td>bool wait_until(Lock&amp; lock, const std::chrono::time_point&lt;Clock, Duration&gt;&amp; abs_time， Predicate pred);</td>
-<td>相当于while(!pred) { if(wait_until(lock, abs_time) &#x3D;&#x3D; std::cv_status::timeout) { return pred(); } } return true;。</td>
-</tr>
-<tr>
-<td>std::cv_status wait_for(Lock&amp; lock, const std::chrono::duration&lt;Rep, Period&gt;&amp; rel_time);</td>
-<td>相当于wait_until(lock, std::chrono::steady_clock::now() + rel_time)。</td>
-</tr>
-<tr>
-<td>bool wait_for(Lock&amp; lock, const std::chrono::duration&lt;Rep, Period&gt;&amp; rel_time， Predicate pred);</td>
-<td>相当于wait_until(lock, std::chrono::steady_clock::now() + rel_time, std::move(pred));。</td>
-</tr>
-</tbody></table>
-<p>其中，<code>std::cv_status</code>包含以下类型：</p>
-<ol>
-<li><p>std::cv_status::no_timeout：未超时</p>
-</li>
-<li><p>std::cv_status::timeout：超时</p>
-</li>
-</ol>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2024/11/02/1/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="Loujuch">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Code Bank">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2024/11/02/1/" class="post-title-link" itemprop="url">gdb基本调试命令</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">Posted on</span>
-              
-
-              <time title="Created: 2024-11-02 12:48:42 / Modified: 13:56:51" itemprop="dateCreated datePublished" datetime="2024-11-02T12:48:42+08:00">2024-11-02</time>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h2 id="基本介绍"><a href="#基本介绍" class="headerlink" title="基本介绍"></a>基本介绍</h2><p>gdb是Linux下常用的命令行调试器，在Debian下使用如下命令安装：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">sudo</span> apt install gdb -y</span><br></pre></td></tr></table></figure>
-
-<p>可以使用如下三种方式运行gdb程序，对目标二进制文件进行调试：</p>
-<ol>
-<li><p><code>gdb &lt;file_name&gt;</code>：运行目标文件，从头开始调试。</p>
-</li>
-<li><p><code>gdb &lt;file_name&gt; &lt;core_name&gt;</code>：根据core文件对目标文件进行调试。</p>
-</li>
-<li><p><code>gdb &lt;file_name&gt; &lt;pid&gt;</code>：远程调试，调试目标文件的对应正在运行的进程。</p>
-</li>
-</ol>
-<p>在进入调试界面后，可以使用一些调试命令以更好地对程序进行调试，其主要分为以下几类：</p>
-<ol>
-<li><p>流程控制：按照使用者想法运行程序。</p>
-</li>
-<li><p>断点管理：管理断点，使得程序在运行时满足某种条件时能够暂停。</p>
-</li>
-<li><p>信息输出：输出使用者希望输出的信息。</p>
-</li>
-<li><p>环境设置：动态改变程序内部或外部的执行环境。</p>
-</li>
-</ol>
-<h2 id="流程控制"><a href="#流程控制" class="headerlink" title="流程控制"></a>流程控制</h2><table>
-<thead>
-<tr>
-<th>指令</th>
-<th>缩写</th>
-<th>作用</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>run [&lt;arg&gt;]</td>
-<td>r</td>
-<td>运行未运行的程序</td>
-</tr>
-<tr>
-<td>cotinue [&lt;ignore_num&gt;]</td>
-<td>c</td>
-<td>在程序被中断后继续运行</td>
-</tr>
-<tr>
-<td>step [&lt;inst_num&gt;]</td>
-<td>s</td>
-<td>执行inst_num条指令，遇到函数时进入函数（如果该函数有调试信息）</td>
-</tr>
-<tr>
-<td>next [&lt;inst_num&gt;]</td>
-<td>n</td>
-<td>执行inst_num条指令，遇到函数视为一条指令，不会进入函数内部</td>
-</tr>
-<tr>
-<td>finish</td>
-<td>fin</td>
-<td>执行直到当前函数返回，并打印返回值</td>
-</tr>
-<tr>
-<td>until [&lt;target&gt;]</td>
-<td>u</td>
-<td>执行完当前循环，若目标位置被指定则执行到目标位置，除非函数返回</td>
-</tr>
-</tbody></table>
-<h2 id="断点管理"><a href="#断点管理" class="headerlink" title="断点管理"></a>断点管理</h2><h3 id="断点"><a href="#断点" class="headerlink" title="断点"></a>断点</h3><p>断点用于观察控制流的运行位置，当控制流运行到断点时停止程序。</p>
-<table>
-<thead>
-<tr>
-<th>指令</th>
-<th>缩写</th>
-<th>作用</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>break [&lt;pos&gt; [if &lt;cond&gt;]]</td>
-<td>b</td>
-<td>设置断点在pos，如设置了cond，则当条件未达成时不触发断点</td>
-</tr>
-</tbody></table>
-<p>其中<code>pos</code>的设置如下：</p>
-<ol>
-<li><p><code>&lt;file_name&gt;:&lt;line_num&gt;</code>：在进入指定文件对应行号的指令前设置断点。</p>
-</li>
-<li><p><code>&lt;file_name&gt;:&lt;func_name&gt;</code>：在进入指定文件对应函数的指令前设置断点。</p>
-</li>
-<li><p><code>*&lt;inst_addr&gt;</code>：在进入指定地址对应的指令前设置断点。</p>
-</li>
-</ol>
-<h3 id="观察点"><a href="#观察点" class="headerlink" title="观察点"></a>观察点</h3><p>观察点用于观察目标表达式的值是否发生变化。目标表达式的值发生变化时停止程序。</p>
-<table>
-<thead>
-<tr>
-<th>指令</th>
-<th>缩写</th>
-<th>作用</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>watch [&lt;expr&gt; [if &lt;cond&gt;]]</td>
-<td>w</td>
-<td>若目标表达式的值发生变化，则停止程序</td>
-</tr>
-<tr>
-<td>rwatch [&lt;expr&gt; [if &lt;cond&gt;]]</td>
-<td>rw</td>
-<td>若目标表达式被读，则停止程序</td>
-</tr>
-<tr>
-<td>awatch [&lt;expr&gt; [if &lt;cond&gt;]]</td>
-<td>aw</td>
-<td>若目标表达式被读或写，则停止程序</td>
-</tr>
-</tbody></table>
-<h3 id="捕捉点"><a href="#捕捉点" class="headerlink" title="捕捉点"></a>捕捉点</h3><p>捕获点用于捕获当前程序发生的行为，当指定行为发生时停止程序。</p>
-<table>
-<thead>
-<tr>
-<th>指令</th>
-<th>缩写</th>
-<th>作用</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>catch &lt;event&gt;</td>
-<td>cat</td>
-<td>发生event对应事件时停止程序</td>
-</tr>
-<tr>
-<td>tcatch &lt;event&gt;</td>
-<td>tc</td>
-<td>发生event对应事件时停止程序，只会触发一次</td>
-</tr>
-</tbody></table>
-<p>其中event如下：</p>
-<table>
-<thead>
-<tr>
-<th>event</th>
-<th>事件</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>throw</td>
-<td>C++抛出异常时</td>
-</tr>
-<tr>
-<td>catch</td>
-<td>C++捕获异常时</td>
-</tr>
-<tr>
-<td>exec</td>
-<td>调用exec时，只在HP-UX下有用（修改进程运行程序）</td>
-</tr>
-<tr>
-<td>fork</td>
-<td>调用fork时，只在HP-UX下有用（创建进程）</td>
-</tr>
-<tr>
-<td>vfork</td>
-<td>调用vfork时，只在HP-UX下有用（创建进程）</td>
-</tr>
-<tr>
-<td>load</td>
-<td>调用load时，只在HP-UX下有用（加载动态库）</td>
-</tr>
-<tr>
-<td>unload</td>
-<td>调用unload时，只在HP-UX下有用（卸载动态库）</td>
-</tr>
-</tbody></table>
-<h3 id="停止点控制"><a href="#停止点控制" class="headerlink" title="停止点控制"></a>停止点控制</h3><table>
-<thead>
-<tr>
-<th>指令</th>
-<th>缩写</th>
-<th>作用</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>clear [&lt;pos_range&gt;]</td>
-<td>cl</td>
-<td>删除指定位置范围的停止点</td>
-</tr>
-<tr>
-<td>delete [&lt;id_list&gt;]</td>
-<td>del</td>
-<td>根据停止点ID删除对应停止点</td>
-</tr>
-<tr>
-<td>disable [&lt;id_list&gt;]</td>
-<td>dis</td>
-<td>根据停止点ID停用对应停止点</td>
-</tr>
-<tr>
-<td>enable [&lt;id_list&gt;]</td>
-<td>en</td>
-<td>根据停止点ID启用对应停止点</td>
-</tr>
-<tr>
-<td>condition &lt;id&gt; &lt;cond&gt;</td>
-<td>cond</td>
-<td>给对应停止点添加触发条件</td>
-</tr>
-<tr>
-<td>ignore &lt;id&gt; &lt;ign_num&gt;</td>
-<td>ig</td>
-<td>忽略对应停止点指定次数</td>
-</tr>
-</tbody></table>
-<h2 id="信息输出"><a href="#信息输出" class="headerlink" title="信息输出"></a>信息输出</h2><table>
-<thead>
-<tr>
-<th>指令</th>
-<th>缩写</th>
-<th>作用</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>print &lt;expr&gt;</td>
-<td>p</td>
-<td>打印指定变量或表达式的值</td>
-</tr>
-<tr>
-<td>display &lt;expr&gt;</td>
-<td>disp</td>
-<td>追踪目标表达式的值，每次停止时打印追踪的表达式值</td>
-</tr>
-<tr>
-<td>info &lt;sign&gt;</td>
-<td>i</td>
-<td>打印gdb内部信息</td>
-</tr>
-<tr>
-<td>x &lt;addr&gt;</td>
-<td></td>
-<td>打印内存信息</td>
-</tr>
-</tbody></table>
-<h2 id="环境设置"><a href="#环境设置" class="headerlink" title="环境设置"></a>环境设置</h2><table>
-<thead>
-<tr>
-<th>指令</th>
-<th>缩写</th>
-<th>作用</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>set &lt;context&gt;</td>
-<td></td>
-<td>设置环境变量或gdb状态等</td>
-</tr>
-</tbody></table>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2024/11/02/0/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="Loujuch">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Code Bank">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2024/11/02/0/" class="post-title-link" itemprop="url">Win 10 配置CPP开发环境</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">Posted on</span>
-              
-
-              <time title="Created: 2024-11-02 10:21:54 / Modified: 12:44:17" itemprop="dateCreated datePublished" datetime="2024-11-02T10:21:54+08:00">2024-11-02</time>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h2 id="安装Chocolatey"><a href="#安装Chocolatey" class="headerlink" title="安装Chocolatey"></a>安装Chocolatey</h2><p>使用Chocolatey进行包管理，其安装方法详见<a target="_blank" rel="noopener" href="https://chocolatey.org/install#individual">chocolatey安装</a>。</p>
-<ol>
-<li><p>使用管理员权限运行<code>powershell</code>。</p>
-</li>
-<li><p>执行如下命令。</p>
- <figure class="highlight ps1"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">Set-ExecutionPolicy</span> Bypass <span class="literal">-Scope</span> <span class="keyword">Process</span> <span class="literal">-Force</span>; [<span class="type">System.Net.ServicePointManager</span>]::SecurityProtocol = [<span class="type">System.Net.ServicePointManager</span>]::SecurityProtocol <span class="operator">-bor</span> <span class="number">3072</span>; <span class="built_in">iex</span> ((<span class="built_in">New-Object</span> System.Net.WebClient).DownloadString(<span class="string">&#x27;https://community.chocolatey.org/install.ps1&#x27;</span>))</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>输入<code>choco -?</code>验证是否安装成功。</p>
-</li>
-</ol>
-<h2 id="安装依赖包"><a href="#安装依赖包" class="headerlink" title="安装依赖包"></a>安装依赖包</h2><ol>
-<li><p>使用管理员权限运行<code>powershell</code>。</p>
-</li>
-<li><p>执行如下命令。</p>
- <figure class="highlight ps1"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">choco install <span class="literal">--yes</span> mingw make cmake git</span><br></pre></td></tr></table></figure>
-
-
-</li>
-<li><p>执行如下命令验证是否安装成功:</p>
- <figure class="highlight ps1"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">gcc <span class="literal">--version</span></span><br><span class="line">g++ <span class="literal">--version</span></span><br><span class="line">make <span class="literal">--version</span></span><br><span class="line">cmake <span class="literal">--version</span></span><br><span class="line">git <span class="literal">--version</span></span><br></pre></td></tr></table></figure></li>
-</ol>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
@@ -1718,12 +1456,12 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">34</span>
+          <span class="site-state-item-count">38</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
       <div class="site-state-item site-state-tags">
-        <span class="site-state-item-count">22</span>
+        <span class="site-state-item-count">24</span>
         <span class="site-state-item-name">tags</span>
       </div>
   </nav>

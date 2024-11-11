@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 7.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"example.com","root":"/","scheme":"Mist","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="HAL3相机设备被要求支持两种可能操作模式，两种操作模式分别为受限模式和完整模式。高端设备应当支持完整模式。限制模式则被要求其硬件与HAL1版本的设备实现大致相同，并且应当被使用在更老或相对低端的设备中。完整模式应当是受限模式的严格超集，并且都具有文档所示的必要的操作流程。  The camera 3 HAL device can implement one of two possible ope">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Android Camera device HAL 3.6文档翻译——S3：操作模式">
+<meta property="og:url" content="http://example.com/2024/11/11/1/index.html">
+<meta property="og:site_name" content="Code Bank">
+<meta property="og:description" content="HAL3相机设备被要求支持两种可能操作模式，两种操作模式分别为受限模式和完整模式。高端设备应当支持完整模式。限制模式则被要求其硬件与HAL1版本的设备实现大致相同，并且应当被使用在更老或相对低端的设备中。完整模式应当是受限模式的严格超集，并且都具有文档所示的必要的操作流程。  The camera 3 HAL device can implement one of two possible ope">
+<meta property="og:locale">
+<meta property="article:published_time" content="2024-11-11T15:39:09.000Z">
+<meta property="article:modified_time" content="2024-11-11T15:54:35.020Z">
+<meta property="article:author" content="Loujuch">
+<meta property="article:tag" content="Camera device HAL">
+<meta property="article:tag" content="翻译">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://example.com/2024/11/11/1/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-Hans'
+  };
+</script>
+
+  <title>Android Camera device HAL 3.6文档翻译——S3：操作模式 | Code Bank</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Code Bank</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>Archives</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2024/11/11/1/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Loujuch">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Code Bank">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Android Camera device HAL 3.6文档翻译——S3：操作模式
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+              
+
+              <time title="Created: 2024-11-11 23:39:09 / Modified: 23:54:35" itemprop="dateCreated datePublished" datetime="2024-11-11T23:39:09+08:00">2024-11-11</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>HAL3相机设备被要求支持两种可能操作模式，两种操作模式分别为受限模式和完整模式。高端设备应当支持完整模式。限制模式则被要求其硬件与HAL1版本的设备实现大致相同，并且应当被使用在更老或相对低端的设备中。完整模式应当是受限模式的严格超集，并且都具有文档所示的必要的操作流程。</p>
+<blockquote>
+<p><em>The camera 3 HAL device can implement one of two possible operational modes; limited and full. Full support is expected from new higher-end devices. Limited mode has hardware requirements roughly in line with those for a camera HAL device v1 implementation, and is expected from older or inexpensive devices. Full is a strict superset of limited, and they share the same essential operational flow, as documented above.</em></p>
+</blockquote>
+<p>HAL必须在android.info.supportedHardwareLevel静态元数据条目中给出支持的操作模式，为0是表明支持受限模式，为1表示支持完整模式。</p>
+<blockquote>
+<p><em>The HAL must indicate its level of support with the android.info.supportedHardwareLevel static metadata entry, with 0 indicating limited mode, and 1 indicating full mode support.</em></p>
+</blockquote>
+<p>粗略的说，受限模式的设备不允许应用控制捕获设置（只支持3A设置）、高分辨率图像的高帧率捕获、读出传感器生成的生数据或高于最大纪录分辨率的YUV输出流支持（JPEG仅适用于大图像）。</p>
+<blockquote>
+<p><em>Roughly speaking, limited-mode devices do not allow for application control of capture settings (3A control only), high-rate capture of high-resolution images, raw sensor readout, or support for YUV output streams above maximum recording resolution (JPEG only for large images).</em></p>
+</blockquote>
+<p><strong>限制模式行为的细节：</strong></p>
+<blockquote>
+<p><em><strong>Details of limited mode behavior:</strong></em></p>
+</blockquote>
+<ul>
+<li><p>限制模式设备不需要实现捕获请求设置和实际图像数据被捕获间的精确捕获。相反的，设置的修改将可能会在之后的一段时间后才生效，并可能不会对一个输出帧应用全部的设置条目修改。快速的改变设置可能会导致一些设置从未被任何捕获使用。然而，包含高分辨率输出缓冲区（&gt;1080p）的捕获必须使用指定的设置（关于处理帧率，请参阅下文）。</p>
+<blockquote>
+<p><em>Limited-mode devices do not need to implement accurate synchronization between capture request settings and the actual image data captured. Instead, changes to settings may take effect some time in the future, and possibly not for the same output frame for each settings entry. Rapid changes in settings may result in some settings never being used for a capture. However, captures that include high-resolution output buffers ( &gt; 1080p ) have to use the settings as specified (but see below for processing rate).</em></p>
+</blockquote>
+</li>
+<li><p>限制模式设备不需要支持大多数设置&#x2F;结果&#x2F;静态元数据信息。特别的，只希望如下设置被限制模式设备消费或制造：</p>
+<blockquote>
+<p><em>Limited-mode devices do not need to support most of the settings&#x2F;result&#x2F;static info metadata. Specifically, only the following settings are expected to be consumed or produced by a limited-mode HAL device:</em></p>
+</blockquote>
+<blockquote>
+<p><code>android.control.aeAntibandingMode (controls and dynamic)</code><br><code>android.control.aeExposureCompensation (controls and dynamic)</code><br><code>android.control.aeLock (controls and dynamic)</code><br><code>android.control.aeMode (controls and dynamic)</code><br><code>android.control.aeRegions (controls and dynamic)</code><br><code>android.control.aeTargetFpsRange (controls and dynamic)</code><br><code>android.control.aePrecaptureTrigger (controls and dynamic)</code><br><code>android.control.afMode (controls and dynamic)</code><br><code>android.control.afRegions (controls and dynamic)</code><br><code>android.control.awbLock (controls and dynamic)</code><br><code>android.control.awbMode (controls and dynamic)</code><br><code>android.control.awbRegions (controls and dynamic)</code><br><code>android.control.captureIntent (controls and dynamic)</code><br><code>android.control.effectMode (controls and dynamic)</code><br><code>android.control.mode (controls and dynamic)</code><br><code>android.control.sceneMode (controls and dynamic)</code><br><code>android.control.videoStabilizationMode (controls and dynamic)</code><br><code>android.control.aeAvailableAntibandingModes (static)</code><br><code>android.control.aeAvailableModes (static)</code><br><code>android.control.aeAvailableTargetFpsRanges (static)</code><br><code>android.control.aeCompensationRange (static)</code><br><code>android.control.aeCompensationStep (static)</code><br><code>android.control.afAvailableModes (static)</code><br><code>android.control.availableEffects (static)</code><br><code>android.control.availableSceneModes (static)</code><br><code>android.control.availableVideoStabilizationModes (static)</code><br><code>android.control.awbAvailableModes (static)</code><br><code>android.control.maxRegions (static)</code><br><code>android.control.sceneModeOverrides (static)</code><br><code>android.control.aeState (dynamic)</code><br><code>android.control.afState (dynamic)</code><br><code>android.control.awbState (dynamic)</code></p>
+<p><code>android.flash.mode (controls and dynamic)</code><br><code>android.flash.info.available (static)</code></p>
+<p><code>android.info.supportedHardwareLevel (static)</code></p>
+<p><code>android.jpeg.gpsCoordinates (controls and dynamic)</code><br><code>android.jpeg.gpsProcessingMethod (controls and dynamic)</code><br><code>android.jpeg.gpsTimestamp (controls and dynamic)</code><br><code>android.jpeg.orientation (controls and dynamic)</code><br><code>android.jpeg.quality (controls and dynamic)</code><br><code>android.jpeg.thumbnailQuality (controls and dynamic)</code><br><code>android.jpeg.thumbnailSize (controls and dynamic)</code><br><code>android.jpeg.availableThumbnailSizes (static)</code><br><code>android.jpeg.maxSize (static)</code></p>
+<p><code>android.lens.info.minimumFocusDistance (static)</code></p>
+<p><code>android.request.id (controls and dynamic)</code></p>
+<p><code>android.scaler.cropRegion (controls and dynamic)</code><br><code>android.scaler.availableStreamConfigurations (static)</code><br><code>android.scaler.availableMinFrameDurations (static)</code><br><code>android.scaler.availableStallDurations (static)</code><br><code>android.scaler.availableMaxDigitalZoom (static)</code><br><code>android.scaler.maxDigitalZoom (static)</code><br><code>android.scaler.croppingType (static)</code></p>
+<p><code>android.sensor.orientation (static)</code><br><code>android.sensor.timestamp (dynamic)</code></p>
+<p><code>android.statistics.faceDetectMode (controls and dynamic)</code><br><code>android.statistics.info.availableFaceDetectModes (static)</code><br><code>android.statistics.faceIds (dynamic)</code><br><code>android.statistics.faceLandmarks (dynamic)</code><br><code>android.statistics.faceRectangles (dynamic)</code><br><code>android.statistics.faceScores (dynamic)</code></p>
+<p><code>android.sync.frameNumber (dynamic)</code><br><code>android.sync.maxLatency (static)</code></p>
+</blockquote>
+</li>
+<li><p>包含高分辨率输出缓冲区（&gt;1080p）的受限模式设备捕获可能会阻塞在<code>process_capture_request()</code>直到所有输出缓冲区完成填充。一个完全模式的HAL设备必须按照对应像素格式的静态元数据中指定的速率处理高分辨率请求序列。HAL仍将调用<code>process_capture_result()</code>用于提供输出；对于受限模式设备，框架层将简单的阻塞在<code>process_capture_request()</code>直到对应高分辨率捕获请求的<code>process_capture_result()</code>的调用完成。</p>
+<blockquote>
+<p><em>Captures in limited mode that include high-resolution (&gt; 1080p) output buffers may block in process_capture_request() until all the output buffers have been filled. A full-mode HAL device must process sequences of high-resolution requests at the rate indicated in the static metadata for that pixel format. The HAL must still call process_capture_result() to provide the output; the framework must simply be prepared for process_capture_request() to block until after process_capture_result() for that request completes for high-resolution captures for limited-mode devices.</em></p>
+</blockquote>
+</li>
+<li><p>完全模式设备必须支持如下额外功能：</p>
+<blockquote>
+<p><em>Full-mode devices must support below additional capabilities:</em></p>
+</blockquote>
+<ul>
+<li><p>必须在最大分辨率下具有大于20fps的帧率，最好能达到30fps。</p>
+<blockquote>
+<p><em>30fps at maximum resolution is preferred, more than 20fps is required.</em></p>
+</blockquote>
+</li>
+<li><p>逐帧控制（<code>android.sync.maxLatency == PER_FRAME_CONTROL</code>）</p>
+<blockquote>
+<p><em>Per frame control (android.sync.maxLatency &#x3D;&#x3D; PER_FRAME_CONTROL).</em></p>
+</blockquote>
+</li>
+<li><p>传感器手动控制元数据。详见在<code>android.request.availableCapabilities</code>中定义的<code>MANUAL_SENSOR</code>。</p>
+<blockquote>
+<p><em>Sensor manual control metadata. See MANUAL_SENSOR defined in android.request.availableCapabilities.</em></p>
+</blockquote>
+</li>
+<li><p>后处理手动控制元数据。详见在<code>android.request.availableCapabilities</code>中定义的<code>MANUAL_POST_PROCESSING</code>。</p>
+<blockquote>
+<p><em>Post-processing manual control metadata. See MANUAL_POST_PROCESSING defined in android.request.availableCapabilities.</em></p>
+</blockquote>
+</li>
+</ul>
+</li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Camera-device-HAL/" rel="tag"># Camera device HAL</a>
+              <a href="/tags/%E7%BF%BB%E8%AF%91/" rel="tag"># 翻译</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2024/11/11/0/" rel="prev" title="Android Camera device HAL 3.6文档翻译——S6：错误管理">
+      <i class="fa fa-chevron-left"></i> Android Camera device HAL 3.6文档翻译——S6：错误管理
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2024/11/11/2/" rel="next" title="Android Camera device HAL 3.6文档翻译——S9：关于控件和元数据的说明">
+      Android Camera device HAL 3.6文档翻译——S9：关于控件和元数据的说明 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Loujuch</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">38</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">24</span>
+        <span class="site-state-item-name">tags</span>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2024</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Loujuch</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://mist.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a>
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

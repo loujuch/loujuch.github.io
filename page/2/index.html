@@ -145,6 +145,830 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2024/11/03/0/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Loujuch">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Code Bank">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2024/11/03/0/" class="post-title-link" itemprop="url">CMake基础模板</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+              
+
+              <time title="Created: 2024-11-03 11:02:44 / Modified: 11:21:34" itemprop="dateCreated datePublished" datetime="2024-11-03T11:02:44+08:00">2024-11-03</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>项目结构如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">project</span><br><span class="line">├─include</span><br><span class="line">│  └─hello.hpp</span><br><span class="line">├─src</span><br><span class="line">│  ├─lib</span><br><span class="line">│  │  └─hello.cpp</span><br><span class="line">│  └─main.cpp</span><br><span class="line">├─test</span><br><span class="line">│  └─my_test.cpp</span><br><span class="line">└─CMakeLists.txt</span><br></pre></td></tr></table></figure>
+
+<p>使用如下CMake进行编译：</p>
+<figure class="highlight cmake"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 设置CMake最低版本</span></span><br><span class="line"><span class="keyword">cmake_minimum_required</span>(VERSION <span class="number">3.10</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 设置项目名</span></span><br><span class="line"><span class="keyword">project</span>(demo)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 设置编译模式为Debug</span></span><br><span class="line"><span class="keyword">set</span>(CMAKE_BUILD_TYPE <span class="string">&quot;Debug&quot;</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 设置需要的CPP标准</span></span><br><span class="line"><span class="keyword">set</span>(CMAKE_CXX_STANDARD <span class="number">17</span>)</span><br><span class="line"><span class="keyword">set</span>(CMAKE_CXX_STANDARD_REQUIRED <span class="keyword">True</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 设置输出目录</span></span><br><span class="line"><span class="keyword">set</span>(EXECUTABLE_OUTPUT_PATH <span class="variable">$&#123;CMAKE_BINARY_DIR&#125;</span>/bin)</span><br><span class="line"><span class="keyword">set</span>(LIBRARY_OUTPUT_PATH <span class="variable">$&#123;CMAKE_BINARY_DIR&#125;</span>/lib)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 打开测试</span></span><br><span class="line"><span class="keyword">enable_testing</span>()</span><br><span class="line"></span><br><span class="line"><span class="comment"># 添加头文件路径</span></span><br><span class="line"><span class="keyword">include_directories</span>(<span class="variable">$&#123;CMAKE_CURRENT_SOURCE_DIR&#125;</span>/<span class="keyword">include</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 设置库源文件文件</span></span><br><span class="line"><span class="keyword">aux_source_directory</span>(<span class="variable">$&#123;CMAKE_CURRENT_SOURCE_DIR&#125;</span>/src/lib LIB_SRCS)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 添加静态库目标</span></span><br><span class="line"><span class="keyword">add_library</span>(hello STATIC <span class="variable">$&#123;LIB_SRCS&#125;</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 设置可执行文件源文件</span></span><br><span class="line"><span class="keyword">file</span>(GLOB MAIN_SRCS <span class="variable">$&#123;CMAKE_CURRENT_SOURCE_DIR&#125;</span>/src/*.cpp)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 添加可执行文件目标</span></span><br><span class="line"><span class="keyword">add_executable</span>(<span class="variable">$&#123;PROJECT_NAME&#125;</span> <span class="variable">$&#123;MAIN_SRCS&#125;</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 链接静态库</span></span><br><span class="line"><span class="keyword">target_link_libraries</span>(<span class="variable">$&#123;PROJECT_NAME&#125;</span> hello)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 设置测试文件源文件</span></span><br><span class="line"><span class="keyword">file</span>(GLOB TEST_SRCS <span class="variable">$&#123;CMAKE_CURRENT_SOURCE_DIR&#125;</span>/<span class="keyword">test</span>/*.cpp)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 为每一个测试文件</span></span><br><span class="line"><span class="keyword">foreach</span>(SRC IN LISTS TEST_SRCS)</span><br><span class="line">    <span class="comment"># 生成测试文件二进制文件名</span></span><br><span class="line">    <span class="keyword">get_filename_component</span>(FILE_NAME <span class="variable">$&#123;SRC&#125;</span> NAME_WE)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 生成测试文件二进制文件</span></span><br><span class="line">    <span class="keyword">add_executable</span>(<span class="variable">$&#123;FILE_NAME&#125;</span> <span class="variable">$&#123;SRC&#125;</span>)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 链接静态库</span></span><br><span class="line">    <span class="keyword">target_link_libraries</span>(<span class="variable">$&#123;FILE_NAME&#125;</span> hello)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 添加测试命令</span></span><br><span class="line">    <span class="keyword">add_test</span>(NAME <span class="variable">$&#123;FILE_NAME&#125;</span> <span class="keyword">COMMAND</span> <span class="variable">$&#123;FILE_NAME&#125;</span>)</span><br><span class="line"><span class="keyword">endforeach</span>()</span><br></pre></td></tr></table></figure>
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2024/11/02/2/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Loujuch">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Code Bank">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2024/11/02/2/" class="post-title-link" itemprop="url">CPP中的线程同步机制</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+              
+
+              <time title="Created: 2024-11-02 15:22:07 / Modified: 22:02:52" itemprop="dateCreated datePublished" datetime="2024-11-02T15:22:07+08:00">2024-11-02</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="锁机制原理"><a href="#锁机制原理" class="headerlink" title="锁机制原理"></a>锁机制原理</h2><p>锁机制源于信号量，其实现与操作系统息息相关。一般而言，线程存在下图所示的5种状态，其中当线程处于阻塞状态时，不会调度到处理机中运行。</p>
+<p><img src="/2024/11/02/2/0.png" alt="线程状态"></p>
+<p>信号量机制则为在需互斥线程间共享一个数据，同时提供<code>P</code>、<code>V</code>两种操作，两种操作的行为如下：</p>
+<ol>
+<li><p><code>P</code>操作：将数据减一，当数据小于零时，将当前线程阻塞。</p>
+</li>
+<li><p><code>V</code>操作：将数据加一，若此时存在线程阻塞在该信号量时，则唤醒其中一个。</p>
+</li>
+</ol>
+<p>当信号量中使用布尔变量作为共享数据时，则仅允许一个线程进入临界区，实现并发互斥。通常将该信号量称为锁。</p>
+<h2 id="CPP中的锁"><a href="#CPP中的锁" class="headerlink" title="CPP中的锁"></a>CPP中的锁</h2><h3 id="分类"><a href="#分类" class="headerlink" title="分类"></a>分类</h3><p>在CPP中，根据不同的标准，大致可以分为如下部分：</p>
+<p><img src="/2024/11/02/2/1.png"></p>
+<p>其中，各标准的含义如下：</p>
+<ol>
+<li><p>可重入：在一个线程获得目标锁后，再次请求同一把锁时不会阻塞。</p>
+</li>
+<li><p>限时性：在线程阻塞等待目标锁时，可以设置超时时间，超时时即使未获得目标锁也会解除阻塞。（不是锁的通常分类，但CPP实现中将其区分出来。）</p>
+</li>
+<li><p>分读写：上锁操作分为读锁和写锁，其中，写锁和互斥锁相同，一旦加上便无法再加上其他写锁和读锁；读锁则可以加上多重，即加上后可以再加上其他读锁，但无法再加上写锁。</p>
+</li>
+</ol>
+<p>根据上述分类标准，CPP中的锁的属性如下：</p>
+<table>
+<thead>
+<tr>
+<th>锁类型</th>
+<th>可重入</th>
+<th>可限时</th>
+<th>分读写</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>mutex</td>
+<td>n</td>
+<td>n</td>
+<td>n</td>
+</tr>
+<tr>
+<td>timed_mutex</td>
+<td>n</td>
+<td>y</td>
+<td>n</td>
+</tr>
+<tr>
+<td>recursive_mutex</td>
+<td>y</td>
+<td>n</td>
+<td>n</td>
+</tr>
+<tr>
+<td>recursive_timed_mutex</td>
+<td>y</td>
+<td>y</td>
+<td>n</td>
+</tr>
+<tr>
+<td>shared_mutex</td>
+<td>n</td>
+<td>n</td>
+<td>y</td>
+</tr>
+<tr>
+<td>shared_timed_mutex</td>
+<td>n</td>
+<td>y</td>
+<td>y</td>
+</tr>
+</tbody></table>
+<h3 id="公共接口"><a href="#公共接口" class="headerlink" title="公共接口"></a>公共接口</h3><p>所有锁都提供了一些相似的接口，例如，所有的锁只能够调用默认构造函数创建，不能够进行拷贝和移动。其他相似接口如下：</p>
+<table>
+<thead>
+<tr>
+<th>接口</th>
+<th>含义</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>void lock();</td>
+<td>获得目标锁，若无法获得则阻塞当前线程。<br>如果使用的锁可重入，则同一线程可多次调用，否则会在第二次调用时发生死锁。</td>
+</tr>
+<tr>
+<td>bool try_lock() noexcept;</td>
+<td>尝试获得锁，若无法立即获得也会立即返回false，否则获得该锁并返回true。</td>
+</tr>
+<tr>
+<td>void unlock();</td>
+<td>释放目标锁。</td>
+</tr>
+</tbody></table>
+<p>上述接口所有的锁都具有，因此在锁的RAII机制中具有重要作用。</p>
+<h3 id="限时接口"><a href="#限时接口" class="headerlink" title="限时接口"></a>限时接口</h3><p>所有可限时的锁都提供了一些相似的接口，这些相似接口如下：</p>
+<table>
+<thead>
+<tr>
+<th>接口</th>
+<th>含义</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>template &lt;class Rep, class Period&gt;<br>bool try_lock_for(const std::chrono::duration&lt;Rep, Period&gt;&amp; timeout_duration);</td>
+<td>尝试获得目标锁，若未能在timeout_duration的时间内获得该锁则放弃申请，返回false；否则获得该锁，返回true。<br>timeout_duration小于等于timeout_duration.zero()时等价于try_lock。</td>
+</tr>
+<tr>
+<td>template &lt;class Clock, class Duration&gt;<br>bool try_lock_until(const std::chrono::time_point&lt;Clock, Duration&gt;&amp; timeout_time)</td>
+<td>尝试获得目标锁，若未能在时间timeout_time前内获得该锁则放弃申请，返回false；否则获得该锁，返回true。<br>timeout_time早于当前时间时等价于try_lock。</td>
+</tr>
+</tbody></table>
+<h3 id="读写接口"><a href="#读写接口" class="headerlink" title="读写接口"></a>读写接口</h3><p>所有分读写的锁使用lock接口作为写锁接口，都提供了一些相似的读锁接口，这些相似接口如下：</p>
+<table>
+<thead>
+<tr>
+<th>接口</th>
+<th>含义</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>void lock_shared();</td>
+<td>获得目标读锁，若无法获得则阻塞当前线程。</td>
+</tr>
+<tr>
+<td>bool try_lock_shared() noexcept;</td>
+<td>尝试获得目标读锁，若无法立即获得也会立即返回false，否则获得该锁并返回true。</td>
+</tr>
+<tr>
+<td>void unlock_shared();</td>
+<td>释放目标锁。</td>
+</tr>
+</tbody></table>
+<h3 id="读写限时接口"><a href="#读写限时接口" class="headerlink" title="读写限时接口"></a>读写限时接口</h3><p>所有分读写且可限时同时也提供了一些相似的可限时读锁接口，这些相似接口如下：</p>
+<table>
+<thead>
+<tr>
+<th>接口</th>
+<th>含义</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>template &lt;class Rep, class Period&gt;<br>bool try_lock_shared_for(const std::chrono::duration&lt;Rep, Period&gt;&amp; timeout_duration);</td>
+<td>尝试获得目标锁，若未能在timeout_duration的时间内获得该锁则放弃申请，返回false；否则获得该锁，返回true。<br>timeout_duration小于等于timeout_duration.zero()时等价于try_lock_shared。</td>
+</tr>
+<tr>
+<td>template &lt;class Clock, class Duration&gt;<br>bool try_lock_shared_until(const std::chrono::time_point&lt;Clock, Duration&gt;&amp; timeout_time)</td>
+<td>尝试获得目标锁，若未能在时间timeout_time前内获得该锁则放弃申请，返回false；否则获得该锁，返回true。<br>timeout_time早于当前时间时等价于try_lock_shared。</td>
+</tr>
+</tbody></table>
+<h2 id="CPP在锁上的RAII机制"><a href="#CPP在锁上的RAII机制" class="headerlink" title="CPP在锁上的RAII机制"></a>CPP在锁上的RAII机制</h2><p>CPP提供了四个类用于实现基于RAII的锁机制，这些类均能够在构造函数中锁上传入的锁，在析构函数中释放对应的锁，有效的解决了因代码改动新加分支等原因导致的锁未释放问题。</p>
+<p>同时，还允许通过传入参数进行锁定策略的修改，相应的锁定策略如下：</p>
+<table>
+<thead>
+<tr>
+<th>策略参数</th>
+<th>策略</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>&lt;默认&gt;</td>
+<td>调用传入参数的上锁方法，会发生阻塞。</td>
+</tr>
+<tr>
+<td>std::defer_lock</td>
+<td>假设当前未获得锁，之后会手动申请。</td>
+</tr>
+<tr>
+<td>std::try_to_lock</td>
+<td>尝试获取锁，但有可能失败，这不会阻塞。</td>
+</tr>
+<tr>
+<td>std::adopt_lock</td>
+<td>假设当前已经获取了锁。</td>
+</tr>
+<tr>
+<td>std::chrono::duration</td>
+<td>调用传入参数的lock_for方法，会发生阻塞。</td>
+</tr>
+<tr>
+<td>std::chrono::time_point</td>
+<td>调用传入参数的lock_until方法，会发生阻塞。</td>
+</tr>
+</tbody></table>
+<p>实现RAII机制的类的类型和特点如下：</p>
+<table>
+<thead>
+<tr>
+<th>类型</th>
+<th>特点</th>
+<th>支持策略</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>lock_guard</td>
+<td>不可移动，不可拷贝</td>
+<td>adopt_lock</td>
+</tr>
+<tr>
+<td>scoped_lock</td>
+<td>不可移动，不可拷贝。<br>能够一次申请多把锁。</td>
+<td>adopt_lock</td>
+</tr>
+<tr>
+<td>unique_lock</td>
+<td>可移动，不可拷贝</td>
+<td>defer_lock、try_to_lock、adopt_lock、duration、time_point</td>
+</tr>
+<tr>
+<td>shared_lock</td>
+<td>可移动，不可拷贝。<br>申请的是读锁。</td>
+<td>defer_lock、try_to_lock、adopt_lock、duration、time_point</td>
+</tr>
+</tbody></table>
+<p>同时，<code>unique_lock</code>和<code>shared_lock</code>还提供了如下接口：</p>
+<table>
+<thead>
+<tr>
+<th>接口</th>
+<th>含义</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>void lock();</td>
+<td>获得目标锁，若无法获得则阻塞当前线程。<br>如果使用的锁可重入，则同一线程可多次调用，否则会在第二次调用时发生死锁。</td>
+</tr>
+<tr>
+<td>bool try_lock() noexcept;</td>
+<td>尝试获得锁，若无法立即获得也会立即返回false，否则获得该锁并返回true。</td>
+</tr>
+<tr>
+<td>template &lt;class Rep, class Period&gt;<br>bool try_lock_for(const std::chrono::duration&lt;Rep, Period&gt;&amp; timeout_duration);</td>
+<td>尝试获得目标锁，若未能在timeout_duration的时间内获得该锁则放弃申请，返回false；否则获得该锁，返回true。<br>timeout_duration小于等于timeout_duration.zero()时等价于try_lock。</td>
+</tr>
+<tr>
+<td>template &lt;class Clock, class Duration&gt;<br>bool try_lock_until(const std::chrono::time_point&lt;Clock, Duration&gt;&amp; timeout_time)</td>
+<td>尝试获得目标锁，若未能在时间timeout_time前内获得该锁则放弃申请，返回false；否则获得该锁，返回true。<br>timeout_time早于当前时间时等价于try_lock。</td>
+</tr>
+<tr>
+<td>void unlock();</td>
+<td>释放目标锁。</td>
+</tr>
+<tr>
+<td>mutex_type* release() noexcept;</td>
+<td>未释放目标锁的放弃对目标锁的控制权。</td>
+</tr>
+<tr>
+<td>bool owns_lock() const noexcept;</td>
+<td>返回其是否持有已锁定的锁。</td>
+</tr>
+<tr>
+<td>explicit operator bool() const noexcept;</td>
+<td>隐式类型转换函数，相当于调用owns_lock。</td>
+</tr>
+</tbody></table>
+<h2 id="CPP提供的通用锁定方法"><a href="#CPP提供的通用锁定方法" class="headerlink" title="CPP提供的通用锁定方法"></a>CPP提供的通用锁定方法</h2><p>CPP提供以下能够获取锁的方法：</p>
+<table>
+<thead>
+<tr>
+<th>接口</th>
+<th>含义</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>template &lt;class Lockable1, class Lockable2, class… LockableN&gt;<br>void lock(Lockable1&amp; lock1, Lockable2&amp; lock2, LockableN&amp;… lockn);</td>
+<td>使用死锁避免算法尝试获得多把锁。</td>
+</tr>
+<tr>
+<td>template &lt;class Lockable1, class Lockable2, class… LockableN&gt;<br>int try_lock(Lockable1&amp; lock1, Lockable2&amp; lock2, LockableN&amp;… lockn);</td>
+<td>从头开始锁定传入的锁，如果存在失败的，则立即返回失败锁在传入参数的以0为底的下标；若都获取成功，返回-1。</td>
+</tr>
+</tbody></table>
+<h2 id="CPP条件变量"><a href="#CPP条件变量" class="headerlink" title="CPP条件变量"></a>CPP条件变量</h2><p>条件变量将会是CPP线程同步的重要机制，其原理和信号量类似，是通过线程的阻塞和唤醒实现的。</p>
+<p>CPP中提供了<code>condition_variable</code>和<code>condition_variable_any</code>作为条件变量，两者完全一致，唯一的区别是<code>condition_variable</code>wait时只能使用<code>std::unique&lt;std::mutex&gt;</code>作为参数而<code>condition_variable_any</code>wait时能够使用任意锁作为参数。</p>
+<p>两者提供了相似的接口，具体如下：</p>
+<table>
+<thead>
+<tr>
+<th>接口</th>
+<th>含义</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>void notify_one() noexcept;</td>
+<td>唤醒正在等待该条件变量的一个线程。</td>
+</tr>
+<tr>
+<td>void notify_all() noexcept;</td>
+<td>唤醒正在等待该条件变量的所有线程，即使被唤醒线程因为锁竞争等原因再次阻塞也不会再次等待条件变量信号。</td>
+</tr>
+<tr>
+<td>void wait(Lock&amp; lock);</td>
+<td>等待条件变量唤醒信号，要求lock已经由当前线程持有。</td>
+</tr>
+<tr>
+<td>void wait(Lock&amp; lock, Predicate pred);</td>
+<td>相当于while(!pred()) { wait(lock); }。</td>
+</tr>
+<tr>
+<td>std::cv_status wait_until(Lock&amp; lock, const std::chrono::time_point&lt;Clock, Duration&gt;&amp; abs_time);</td>
+<td>等待条件变量唤醒信号或到达指定时间，要求lock已经由当前线程持有。</td>
+</tr>
+<tr>
+<td>bool wait_until(Lock&amp; lock, const std::chrono::time_point&lt;Clock, Duration&gt;&amp; abs_time， Predicate pred);</td>
+<td>相当于while(!pred) { if(wait_until(lock, abs_time) &#x3D;&#x3D; std::cv_status::timeout) { return pred(); } } return true;。</td>
+</tr>
+<tr>
+<td>std::cv_status wait_for(Lock&amp; lock, const std::chrono::duration&lt;Rep, Period&gt;&amp; rel_time);</td>
+<td>相当于wait_until(lock, std::chrono::steady_clock::now() + rel_time)。</td>
+</tr>
+<tr>
+<td>bool wait_for(Lock&amp; lock, const std::chrono::duration&lt;Rep, Period&gt;&amp; rel_time， Predicate pred);</td>
+<td>相当于wait_until(lock, std::chrono::steady_clock::now() + rel_time, std::move(pred));。</td>
+</tr>
+</tbody></table>
+<p>其中，<code>std::cv_status</code>包含以下类型：</p>
+<ol>
+<li><p>std::cv_status::no_timeout：未超时</p>
+</li>
+<li><p>std::cv_status::timeout：超时</p>
+</li>
+</ol>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2024/11/02/1/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Loujuch">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Code Bank">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2024/11/02/1/" class="post-title-link" itemprop="url">gdb基本调试命令</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+              
+
+              <time title="Created: 2024-11-02 12:48:42 / Modified: 13:56:51" itemprop="dateCreated datePublished" datetime="2024-11-02T12:48:42+08:00">2024-11-02</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="基本介绍"><a href="#基本介绍" class="headerlink" title="基本介绍"></a>基本介绍</h2><p>gdb是Linux下常用的命令行调试器，在Debian下使用如下命令安装：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">sudo</span> apt install gdb -y</span><br></pre></td></tr></table></figure>
+
+<p>可以使用如下三种方式运行gdb程序，对目标二进制文件进行调试：</p>
+<ol>
+<li><p><code>gdb &lt;file_name&gt;</code>：运行目标文件，从头开始调试。</p>
+</li>
+<li><p><code>gdb &lt;file_name&gt; &lt;core_name&gt;</code>：根据core文件对目标文件进行调试。</p>
+</li>
+<li><p><code>gdb &lt;file_name&gt; &lt;pid&gt;</code>：远程调试，调试目标文件的对应正在运行的进程。</p>
+</li>
+</ol>
+<p>在进入调试界面后，可以使用一些调试命令以更好地对程序进行调试，其主要分为以下几类：</p>
+<ol>
+<li><p>流程控制：按照使用者想法运行程序。</p>
+</li>
+<li><p>断点管理：管理断点，使得程序在运行时满足某种条件时能够暂停。</p>
+</li>
+<li><p>信息输出：输出使用者希望输出的信息。</p>
+</li>
+<li><p>环境设置：动态改变程序内部或外部的执行环境。</p>
+</li>
+</ol>
+<h2 id="流程控制"><a href="#流程控制" class="headerlink" title="流程控制"></a>流程控制</h2><table>
+<thead>
+<tr>
+<th>指令</th>
+<th>缩写</th>
+<th>作用</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>run [&lt;arg&gt;]</td>
+<td>r</td>
+<td>运行未运行的程序</td>
+</tr>
+<tr>
+<td>cotinue [&lt;ignore_num&gt;]</td>
+<td>c</td>
+<td>在程序被中断后继续运行</td>
+</tr>
+<tr>
+<td>step [&lt;inst_num&gt;]</td>
+<td>s</td>
+<td>执行inst_num条指令，遇到函数时进入函数（如果该函数有调试信息）</td>
+</tr>
+<tr>
+<td>next [&lt;inst_num&gt;]</td>
+<td>n</td>
+<td>执行inst_num条指令，遇到函数视为一条指令，不会进入函数内部</td>
+</tr>
+<tr>
+<td>finish</td>
+<td>fin</td>
+<td>执行直到当前函数返回，并打印返回值</td>
+</tr>
+<tr>
+<td>until [&lt;target&gt;]</td>
+<td>u</td>
+<td>执行完当前循环，若目标位置被指定则执行到目标位置，除非函数返回</td>
+</tr>
+</tbody></table>
+<h2 id="断点管理"><a href="#断点管理" class="headerlink" title="断点管理"></a>断点管理</h2><h3 id="断点"><a href="#断点" class="headerlink" title="断点"></a>断点</h3><p>断点用于观察控制流的运行位置，当控制流运行到断点时停止程序。</p>
+<table>
+<thead>
+<tr>
+<th>指令</th>
+<th>缩写</th>
+<th>作用</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>break [&lt;pos&gt; [if &lt;cond&gt;]]</td>
+<td>b</td>
+<td>设置断点在pos，如设置了cond，则当条件未达成时不触发断点</td>
+</tr>
+</tbody></table>
+<p>其中<code>pos</code>的设置如下：</p>
+<ol>
+<li><p><code>&lt;file_name&gt;:&lt;line_num&gt;</code>：在进入指定文件对应行号的指令前设置断点。</p>
+</li>
+<li><p><code>&lt;file_name&gt;:&lt;func_name&gt;</code>：在进入指定文件对应函数的指令前设置断点。</p>
+</li>
+<li><p><code>*&lt;inst_addr&gt;</code>：在进入指定地址对应的指令前设置断点。</p>
+</li>
+</ol>
+<h3 id="观察点"><a href="#观察点" class="headerlink" title="观察点"></a>观察点</h3><p>观察点用于观察目标表达式的值是否发生变化。目标表达式的值发生变化时停止程序。</p>
+<table>
+<thead>
+<tr>
+<th>指令</th>
+<th>缩写</th>
+<th>作用</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>watch [&lt;expr&gt; [if &lt;cond&gt;]]</td>
+<td>w</td>
+<td>若目标表达式的值发生变化，则停止程序</td>
+</tr>
+<tr>
+<td>rwatch [&lt;expr&gt; [if &lt;cond&gt;]]</td>
+<td>rw</td>
+<td>若目标表达式被读，则停止程序</td>
+</tr>
+<tr>
+<td>awatch [&lt;expr&gt; [if &lt;cond&gt;]]</td>
+<td>aw</td>
+<td>若目标表达式被读或写，则停止程序</td>
+</tr>
+</tbody></table>
+<h3 id="捕捉点"><a href="#捕捉点" class="headerlink" title="捕捉点"></a>捕捉点</h3><p>捕获点用于捕获当前程序发生的行为，当指定行为发生时停止程序。</p>
+<table>
+<thead>
+<tr>
+<th>指令</th>
+<th>缩写</th>
+<th>作用</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>catch &lt;event&gt;</td>
+<td>cat</td>
+<td>发生event对应事件时停止程序</td>
+</tr>
+<tr>
+<td>tcatch &lt;event&gt;</td>
+<td>tc</td>
+<td>发生event对应事件时停止程序，只会触发一次</td>
+</tr>
+</tbody></table>
+<p>其中event如下：</p>
+<table>
+<thead>
+<tr>
+<th>event</th>
+<th>事件</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>throw</td>
+<td>C++抛出异常时</td>
+</tr>
+<tr>
+<td>catch</td>
+<td>C++捕获异常时</td>
+</tr>
+<tr>
+<td>exec</td>
+<td>调用exec时，只在HP-UX下有用（修改进程运行程序）</td>
+</tr>
+<tr>
+<td>fork</td>
+<td>调用fork时，只在HP-UX下有用（创建进程）</td>
+</tr>
+<tr>
+<td>vfork</td>
+<td>调用vfork时，只在HP-UX下有用（创建进程）</td>
+</tr>
+<tr>
+<td>load</td>
+<td>调用load时，只在HP-UX下有用（加载动态库）</td>
+</tr>
+<tr>
+<td>unload</td>
+<td>调用unload时，只在HP-UX下有用（卸载动态库）</td>
+</tr>
+</tbody></table>
+<h3 id="停止点控制"><a href="#停止点控制" class="headerlink" title="停止点控制"></a>停止点控制</h3><table>
+<thead>
+<tr>
+<th>指令</th>
+<th>缩写</th>
+<th>作用</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>clear [&lt;pos_range&gt;]</td>
+<td>cl</td>
+<td>删除指定位置范围的停止点</td>
+</tr>
+<tr>
+<td>delete [&lt;id_list&gt;]</td>
+<td>del</td>
+<td>根据停止点ID删除对应停止点</td>
+</tr>
+<tr>
+<td>disable [&lt;id_list&gt;]</td>
+<td>dis</td>
+<td>根据停止点ID停用对应停止点</td>
+</tr>
+<tr>
+<td>enable [&lt;id_list&gt;]</td>
+<td>en</td>
+<td>根据停止点ID启用对应停止点</td>
+</tr>
+<tr>
+<td>condition &lt;id&gt; &lt;cond&gt;</td>
+<td>cond</td>
+<td>给对应停止点添加触发条件</td>
+</tr>
+<tr>
+<td>ignore &lt;id&gt; &lt;ign_num&gt;</td>
+<td>ig</td>
+<td>忽略对应停止点指定次数</td>
+</tr>
+</tbody></table>
+<h2 id="信息输出"><a href="#信息输出" class="headerlink" title="信息输出"></a>信息输出</h2><table>
+<thead>
+<tr>
+<th>指令</th>
+<th>缩写</th>
+<th>作用</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>print &lt;expr&gt;</td>
+<td>p</td>
+<td>打印指定变量或表达式的值</td>
+</tr>
+<tr>
+<td>display &lt;expr&gt;</td>
+<td>disp</td>
+<td>追踪目标表达式的值，每次停止时打印追踪的表达式值</td>
+</tr>
+<tr>
+<td>info &lt;sign&gt;</td>
+<td>i</td>
+<td>打印gdb内部信息</td>
+</tr>
+<tr>
+<td>x &lt;addr&gt;</td>
+<td></td>
+<td>打印内存信息</td>
+</tr>
+</tbody></table>
+<h2 id="环境设置"><a href="#环境设置" class="headerlink" title="环境设置"></a>环境设置</h2><table>
+<thead>
+<tr>
+<th>指令</th>
+<th>缩写</th>
+<th>作用</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>set &lt;context&gt;</td>
+<td></td>
+<td>设置环境变量或gdb状态等</td>
+</tr>
+</tbody></table>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2024/11/02/0/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Loujuch">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Code Bank">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2024/11/02/0/" class="post-title-link" itemprop="url">Win 10 配置CPP开发环境</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+              
+
+              <time title="Created: 2024-11-02 10:21:54 / Modified: 12:44:17" itemprop="dateCreated datePublished" datetime="2024-11-02T10:21:54+08:00">2024-11-02</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="安装Chocolatey"><a href="#安装Chocolatey" class="headerlink" title="安装Chocolatey"></a>安装Chocolatey</h2><p>使用Chocolatey进行包管理，其安装方法详见<a target="_blank" rel="noopener" href="https://chocolatey.org/install#individual">chocolatey安装</a>。</p>
+<ol>
+<li><p>使用管理员权限运行<code>powershell</code>。</p>
+</li>
+<li><p>执行如下命令。</p>
+ <figure class="highlight ps1"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">Set-ExecutionPolicy</span> Bypass <span class="literal">-Scope</span> <span class="keyword">Process</span> <span class="literal">-Force</span>; [<span class="type">System.Net.ServicePointManager</span>]::SecurityProtocol = [<span class="type">System.Net.ServicePointManager</span>]::SecurityProtocol <span class="operator">-bor</span> <span class="number">3072</span>; <span class="built_in">iex</span> ((<span class="built_in">New-Object</span> System.Net.WebClient).DownloadString(<span class="string">&#x27;https://community.chocolatey.org/install.ps1&#x27;</span>))</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>输入<code>choco -?</code>验证是否安装成功。</p>
+</li>
+</ol>
+<h2 id="安装依赖包"><a href="#安装依赖包" class="headerlink" title="安装依赖包"></a>安装依赖包</h2><ol>
+<li><p>使用管理员权限运行<code>powershell</code>。</p>
+</li>
+<li><p>执行如下命令。</p>
+ <figure class="highlight ps1"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">choco install <span class="literal">--yes</span> mingw make cmake git</span><br></pre></td></tr></table></figure>
+
+
+</li>
+<li><p>执行如下命令验证是否安装成功:</p>
+ <figure class="highlight ps1"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">gcc <span class="literal">--version</span></span><br><span class="line">g++ <span class="literal">--version</span></span><br><span class="line">make <span class="literal">--version</span></span><br><span class="line">cmake <span class="literal">--version</span></span><br><span class="line">git <span class="literal">--version</span></span><br></pre></td></tr></table></figure></li>
+</ol>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
     <link itemprop="mainEntityOfPage" href="http://example.com/2024/10/27/1/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -963,321 +1787,6 @@
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2024/09/21/2/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="Loujuch">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Code Bank">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2024/09/21/2/" class="post-title-link" itemprop="url">Debian安装Hexo环境并托管Github</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">Posted on</span>
-              
-
-              <time title="Created: 2024-09-21 20:44:09 / Modified: 23:50:06" itemprop="dateCreated datePublished" datetime="2024-09-21T20:44:09+08:00">2024-09-21</time>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h2 id="设置GitHub免密登录"><a href="#设置GitHub免密登录" class="headerlink" title="设置GitHub免密登录"></a>设置GitHub免密登录</h2><ol>
-<li><p>安装<code>Git</code>：</p>
-<p> <code>sudo apt install git -y</code></p>
-</li>
-<li><p>配置<code>Git</code>：</p>
-<p> <code>git config --global user.name &lt;你的名称&gt;</code><br> <code>git config --global user.email &lt;你的邮箱&gt;</code></p>
-</li>
-<li><p><code>Git</code>生成密钥，输入以下命令，之后连续按3次回车：</p>
-<p> <code>ssh-keygen -t rsa -C &lt;你的邮箱&gt;</code></p>
-</li>
-<li><p>打印生成的公钥，将输出复制下来：</p>
-<p> <code>cat ~/.ssh/id_rsa.pub</code></p>
-</li>
-<li><p>将复制后的公钥添加到GitHub中：点击页面右上角头像——Setting——SSH And GPG keys——New SSH Keys，填写后添加即可。</p>
-</li>
-<li><p>运行如下命令，输入<code>yes</code>添加服务器，未报错则完成免密设置。</p>
-<p> <code>ssh -T git@github.com</code></p>
-</li>
-</ol>
-<h2 id="安装Hexo"><a href="#安装Hexo" class="headerlink" title="安装Hexo"></a>安装Hexo</h2><p>运行如下命令，运行前请确保能够访问<code>raw.githubusercontent.com</code>，详见我之前写的<code>解决raw.githubusercontent.com无法访问的问题</code>。</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">sudo</span> apt install curl -y</span><br><span class="line">curl https://raw.githubusercontent.com/creationix/nvm/master/install.sh | bash</span><br><span class="line"><span class="built_in">export</span> NVM_NPM_ORG_MIRROR=https://npmmirror.com/mirrors/npm/</span><br><span class="line"><span class="built_in">export</span> NVM_NODEJS_ORG_MIRROR=https://npmmirror.com/mirrors/node/</span><br><span class="line">nvm install stable</span><br><span class="line">npm config <span class="built_in">set</span> registry https://registry.npmmirror.com</span><br><span class="line">npm install hexo-cli -g</span><br></pre></td></tr></table></figure>
-
-<h2 id="设置GitHub托管"><a href="#设置GitHub托管" class="headerlink" title="设置GitHub托管"></a>设置GitHub托管</h2><ol>
-<li><p>创建新的博客目录</p>
-<p> <code>hexo init .</code></p>
-</li>
-<li><p>在GitHub新建仓库，并复制下该仓库的Git URL。</p>
-</li>
-<li><p>修改博客根目录下的<code>_config.yml</code>：</p>
-<p> 将其中的<code>deploy</code>部分修改改为如下格式：</p>
- <figure class="highlight yml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">deploy:</span></span><br><span class="line">    <span class="attr">type:</span> <span class="string">git</span></span><br><span class="line">    <span class="attr">repo:</span> <span class="string">&lt;目标仓库Git</span> <span class="string">URL&gt;</span></span><br><span class="line">    <span class="attr">branch:</span> <span class="string">main</span></span><br></pre></td></tr></table></figure></li>
-</ol>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2024/09/21/1/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="Loujuch">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Code Bank">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2024/09/21/1/" class="post-title-link" itemprop="url">Windows 10与WSL的目录映射</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">Posted on</span>
-              
-
-              <time title="Created: 2024-09-21 20:30:37 / Modified: 20:43:33" itemprop="dateCreated datePublished" datetime="2024-09-21T20:30:37+08:00">2024-09-21</time>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h2 id="WSL访问Windows文件"><a href="#WSL访问Windows文件" class="headerlink" title="WSL访问Windows文件"></a>WSL访问Windows文件</h2><p>Window的各个盘符会挂载到<code>WSL</code>的<code>/mnt</code>目录下，即C盘在<code>/mnt/c</code>、D盘在<code>/mnt/d</code>，以此类推。</p>
-<h2 id="Windows访问WSL文件"><a href="#Windows访问WSL文件" class="headerlink" title="Windows访问WSL文件"></a>Windows访问WSL文件</h2><ol>
-<li><p>在<code>WSL</code>的命令行中输入<code>explorer.exe .</code>，将使用windows资源管理器打开WSL当前目录。</p>
-</li>
-<li><p>WSL根目录挂在在<code>\\wsl$\&lt;系统版本&gt;</code>下，例如<code>\\wsl$\Debian</code>。</p>
-</li>
-</ol>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2024/09/21/0/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="Loujuch">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Code Bank">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2024/09/21/0/" class="post-title-link" itemprop="url">Windows 10 WSL2安装Debian</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">Posted on</span>
-              
-
-              <time title="Created: 2024-09-21 20:03:56 / Modified: 20:30:28" itemprop="dateCreated datePublished" datetime="2024-09-21T20:03:56+08:00">2024-09-21</time>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h2 id="启用相关特性"><a href="#启用相关特性" class="headerlink" title="启用相关特性"></a>启用相关特性</h2><p>以管理员运行CMD，输入：</p>
-<figure class="highlight bat"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">dism.exe /online /enable-feature /featurename:VirtualMachinePlatform /all /norestart</span><br><span class="line">Enable-WindowsOptionalFeature -Online -FeatureName VirtualMachinePlatform -NoRestart</span><br></pre></td></tr></table></figure>
-
-<p>之后重启Windows</p>
-<h2 id="安装WSL2-Debian"><a href="#安装WSL2-Debian" class="headerlink" title="安装WSL2 Debian"></a>安装WSL2 Debian</h2><p>以管理员运行CMD，先测试网络是否联通：</p>
-<figure class="highlight bat"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">wsl.exe --list --online</span><br></pre></td></tr></table></figure>
-
-<p>若输出<code>无法解析服务器的名称或地址</code>则说明无法访问<code>raw.githubusercontent.com</code>，解决方案详见我之前写的<code>解决raw.githubusercontent.com无法访问的问题</code>。</p>
-<p>确定能够访问后，运行如下命令：</p>
-<figure class="highlight bat"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">wsl.exe --install --no-distribution</span><br></pre></td></tr></table></figure>
-
-<p>之后重启Windows</p>
-<p>以管理员运行CMD，运行如下命令：</p>
-<figure class="highlight bat"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">wsl.exe --<span class="built_in">set</span>-default-version <span class="number">2</span></span><br><span class="line">wsl.exe --<span class="built_in">set</span>-default Debian</span><br><span class="line">wsl.exe --install --distribution Debian</span><br></pre></td></tr></table></figure>
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2024/09/07/1/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="Loujuch">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Code Bank">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2024/09/07/1/" class="post-title-link" itemprop="url">Git分支管理</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">Posted on</span>
-
-              <time title="Created: 2024-09-07 14:03:39" itemprop="dateCreated datePublished" datetime="2024-09-07T14:03:39+08:00">2024-09-07</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2024-09-08 17:37:51" itemprop="dateModified" datetime="2024-09-08T17:37:51+08:00">2024-09-08</time>
-              </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h2 id="快照管理方式"><a href="#快照管理方式" class="headerlink" title="快照管理方式"></a>快照管理方式</h2><p>在<code>Git本地文件管理</code>一文中，给出了Git如何将修改变为快照的方法。本文将会给出Git管理快照的方式——分支树。</p>
-<p>Git使用链式结构组织提交，并使用hash标识链上的各个节点。但是，为了便于协作，需要一种方式使得Git能够使用一种方式使得多个人能够对项目的不同部分进行修改和提交。Git使用分支的方式提供这一服务。引入分支后，Git中的快照从原本的链型变成了树形：</p>
-<p><img src="/2024/09/07/1/0.png"></p>
-<h2 id="分支"><a href="#分支" class="headerlink" title="分支"></a>分支</h2><h3 id="分支的实质"><a href="#分支的实质" class="headerlink" title="分支的实质"></a>分支的实质</h3><p>一个分支实质上是一条快照链表，其具有一个头指针，其指向当前快照链表的头。多个分支具有共同部分，于是连成树形：</p>
-<p><img src="/2024/09/07/1/2.png"></p>
-<h3 id="创建分支"><a href="#创建分支" class="headerlink" title="创建分支"></a>创建分支</h3><p>创建分支实质上是创建一个分支头指针，该头指针与其他指针相互独立：</p>
-<p><img src="/2024/09/07/1/3.png"></p>
-<p>在两个分支分别完成一笔提交后，Git内部变为下图：</p>
-<p><img src="/2024/09/07/1/4.png"></p>
-<h3 id="切换分支"><a href="#切换分支" class="headerlink" title="切换分支"></a>切换分支</h3><p>切换分支实质上是切换头节点指向的分支，如果上图中切换到<code>b0</code>分支的话，Git内部变为下图：</p>
-<p><img src="/2024/09/07/1/5.png"></p>
-<h3 id="合并分支"><a href="#合并分支" class="headerlink" title="合并分支"></a>合并分支</h3><p>合并分支是Git分支最重要的操作之一。其实质上是将两个分支后新建一个包含两个分支更改的新分支：</p>
-<p><img src="/2024/09/07/1/6.png"></p>
-<p>合并后的新节点包换合并的两个分支的全部修改，其具体计算方式如下：</p>
-<ol>
-<li><p>找到合并的两个节点所在链表的分叉点。</p>
-</li>
-<li><p>通过<code>git diff</code>的方式获得两个节点相对于分叉点的修改。</p>
-</li>
-<li><p>将两份修改进行合并，产生新的镜像。</p>
-</li>
-</ol>
-<p>可以看出，在这一过程中，如果合并节点在同一位置更改存在不同的更改，这将产生冲突。此时需要管理员手动解决该项冲突，之后继续合并即可。</p>
-<h2 id="分支的持久化存储"><a href="#分支的持久化存储" class="headerlink" title="分支的持久化存储"></a>分支的持久化存储</h2><h3 id="分支头指针存储"><a href="#分支头指针存储" class="headerlink" title="分支头指针存储"></a>分支头指针存储</h3><p>各个分支头指针存储在项目路径下的<code>.git/refs/heads</code>中，其中使用分支名作为对应的文件名，存储着该分支头指针指向的节点的标识。</p>
-<h3 id="HEAD存储"><a href="#HEAD存储" class="headerlink" title="HEAD存储"></a>HEAD存储</h3><p><code>HEAD</code>的引用存储在项目路径下的<code>.git/HEAD</code>文件中，其内容为目前其指向的分支头或是其指向的镜像的hash标识符。</p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
@@ -1347,12 +1856,12 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">34</span>
+          <span class="site-state-item-count">38</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
       <div class="site-state-item site-state-tags">
-        <span class="site-state-item-count">22</span>
+        <span class="site-state-item-count">24</span>
         <span class="site-state-item-name">tags</span>
       </div>
   </nav>

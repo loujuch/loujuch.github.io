@@ -28,7 +28,7 @@
 <meta property="og:description" content="概述原子变量是一类能保证其各个操作均为线程安全的特殊变量，是无锁编程的基础，在高性能场景中应用十分广泛。 对于普通变量而言，因为对变量的修改需要经历读取-修改-写回等步骤，因此对其的修改不是线程安全的。原子变量使用CAS、总线锁等机制，保证上述各个步骤不会被打断，从而保证操作的线程安全。 CPP提供了std::atomic作为原子变量，它能够接受一个可平凡复制且可移动、拷贝的类型作为模板参数。CP">
 <meta property="og:locale">
 <meta property="article:published_time" content="2024-11-04T14:27:40.000Z">
-<meta property="article:modified_time" content="2024-11-04T15:23:29.506Z">
+<meta property="article:modified_time" content="2024-11-05T14:55:22.388Z">
 <meta property="article:author" content="Loujuch">
 <meta property="article:tag" content="CPP">
 <meta property="article:tag" content="多线程">
@@ -174,10 +174,16 @@
                 <i class="fa fa-calendar-o"></i>
               </span>
               <span class="post-meta-item-text">Posted on</span>
-              
 
-              <time title="Created: 2024-11-04 22:27:40 / Modified: 23:23:29" itemprop="dateCreated datePublished" datetime="2024-11-04T22:27:40+08:00">2024-11-04</time>
+              <time title="Created: 2024-11-04 22:27:40" itemprop="dateCreated datePublished" datetime="2024-11-04T22:27:40+08:00">2024-11-04</time>
             </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2024-11-05 22:55:22" itemprop="dateModified" datetime="2024-11-05T22:55:22+08:00">2024-11-05</time>
+              </span>
 
           
 
@@ -338,7 +344,10 @@
     <a href="/2024/11/04/0/" rel="prev" title="Bash运行某个程序一段时间后停止该程序">
       <i class="fa fa-chevron-left"></i> Bash运行某个程序一段时间后停止该程序
     </a></div>
-      <div class="post-nav-item"></div>
+      <div class="post-nav-item">
+    <a href="/2024/11/06/0/" rel="next" title="并发编程三大特性">
+      并发编程三大特性 <i class="fa fa-chevron-right"></i>
+    </a></div>
     </div>
       </footer>
     
@@ -411,12 +420,12 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">34</span>
+          <span class="site-state-item-count">38</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
       <div class="site-state-item site-state-tags">
-        <span class="site-state-item-count">22</span>
+        <span class="site-state-item-count">24</span>
         <span class="site-state-item-name">tags</span>
       </div>
   </nav>

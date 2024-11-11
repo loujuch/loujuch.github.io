@@ -145,6 +145,321 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2024/09/21/2/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Loujuch">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Code Bank">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2024/09/21/2/" class="post-title-link" itemprop="url">Debian安装Hexo环境并托管Github</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+              
+
+              <time title="Created: 2024-09-21 20:44:09 / Modified: 23:50:06" itemprop="dateCreated datePublished" datetime="2024-09-21T20:44:09+08:00">2024-09-21</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="设置GitHub免密登录"><a href="#设置GitHub免密登录" class="headerlink" title="设置GitHub免密登录"></a>设置GitHub免密登录</h2><ol>
+<li><p>安装<code>Git</code>：</p>
+<p> <code>sudo apt install git -y</code></p>
+</li>
+<li><p>配置<code>Git</code>：</p>
+<p> <code>git config --global user.name &lt;你的名称&gt;</code><br> <code>git config --global user.email &lt;你的邮箱&gt;</code></p>
+</li>
+<li><p><code>Git</code>生成密钥，输入以下命令，之后连续按3次回车：</p>
+<p> <code>ssh-keygen -t rsa -C &lt;你的邮箱&gt;</code></p>
+</li>
+<li><p>打印生成的公钥，将输出复制下来：</p>
+<p> <code>cat ~/.ssh/id_rsa.pub</code></p>
+</li>
+<li><p>将复制后的公钥添加到GitHub中：点击页面右上角头像——Setting——SSH And GPG keys——New SSH Keys，填写后添加即可。</p>
+</li>
+<li><p>运行如下命令，输入<code>yes</code>添加服务器，未报错则完成免密设置。</p>
+<p> <code>ssh -T git@github.com</code></p>
+</li>
+</ol>
+<h2 id="安装Hexo"><a href="#安装Hexo" class="headerlink" title="安装Hexo"></a>安装Hexo</h2><p>运行如下命令，运行前请确保能够访问<code>raw.githubusercontent.com</code>，详见我之前写的<code>解决raw.githubusercontent.com无法访问的问题</code>。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">sudo</span> apt install curl -y</span><br><span class="line">curl https://raw.githubusercontent.com/creationix/nvm/master/install.sh | bash</span><br><span class="line"><span class="built_in">export</span> NVM_NPM_ORG_MIRROR=https://npmmirror.com/mirrors/npm/</span><br><span class="line"><span class="built_in">export</span> NVM_NODEJS_ORG_MIRROR=https://npmmirror.com/mirrors/node/</span><br><span class="line">nvm install stable</span><br><span class="line">npm config <span class="built_in">set</span> registry https://registry.npmmirror.com</span><br><span class="line">npm install hexo-cli -g</span><br></pre></td></tr></table></figure>
+
+<h2 id="设置GitHub托管"><a href="#设置GitHub托管" class="headerlink" title="设置GitHub托管"></a>设置GitHub托管</h2><ol>
+<li><p>创建新的博客目录</p>
+<p> <code>hexo init .</code></p>
+</li>
+<li><p>在GitHub新建仓库，并复制下该仓库的Git URL。</p>
+</li>
+<li><p>修改博客根目录下的<code>_config.yml</code>：</p>
+<p> 将其中的<code>deploy</code>部分修改改为如下格式：</p>
+ <figure class="highlight yml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">deploy:</span></span><br><span class="line">    <span class="attr">type:</span> <span class="string">git</span></span><br><span class="line">    <span class="attr">repo:</span> <span class="string">&lt;目标仓库Git</span> <span class="string">URL&gt;</span></span><br><span class="line">    <span class="attr">branch:</span> <span class="string">main</span></span><br></pre></td></tr></table></figure></li>
+</ol>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2024/09/21/1/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Loujuch">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Code Bank">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2024/09/21/1/" class="post-title-link" itemprop="url">Windows 10与WSL的目录映射</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+              
+
+              <time title="Created: 2024-09-21 20:30:37 / Modified: 20:43:33" itemprop="dateCreated datePublished" datetime="2024-09-21T20:30:37+08:00">2024-09-21</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="WSL访问Windows文件"><a href="#WSL访问Windows文件" class="headerlink" title="WSL访问Windows文件"></a>WSL访问Windows文件</h2><p>Window的各个盘符会挂载到<code>WSL</code>的<code>/mnt</code>目录下，即C盘在<code>/mnt/c</code>、D盘在<code>/mnt/d</code>，以此类推。</p>
+<h2 id="Windows访问WSL文件"><a href="#Windows访问WSL文件" class="headerlink" title="Windows访问WSL文件"></a>Windows访问WSL文件</h2><ol>
+<li><p>在<code>WSL</code>的命令行中输入<code>explorer.exe .</code>，将使用windows资源管理器打开WSL当前目录。</p>
+</li>
+<li><p>WSL根目录挂在在<code>\\wsl$\&lt;系统版本&gt;</code>下，例如<code>\\wsl$\Debian</code>。</p>
+</li>
+</ol>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2024/09/21/0/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Loujuch">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Code Bank">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2024/09/21/0/" class="post-title-link" itemprop="url">Windows 10 WSL2安装Debian</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+              
+
+              <time title="Created: 2024-09-21 20:03:56 / Modified: 20:30:28" itemprop="dateCreated datePublished" datetime="2024-09-21T20:03:56+08:00">2024-09-21</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="启用相关特性"><a href="#启用相关特性" class="headerlink" title="启用相关特性"></a>启用相关特性</h2><p>以管理员运行CMD，输入：</p>
+<figure class="highlight bat"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">dism.exe /online /enable-feature /featurename:VirtualMachinePlatform /all /norestart</span><br><span class="line">Enable-WindowsOptionalFeature -Online -FeatureName VirtualMachinePlatform -NoRestart</span><br></pre></td></tr></table></figure>
+
+<p>之后重启Windows</p>
+<h2 id="安装WSL2-Debian"><a href="#安装WSL2-Debian" class="headerlink" title="安装WSL2 Debian"></a>安装WSL2 Debian</h2><p>以管理员运行CMD，先测试网络是否联通：</p>
+<figure class="highlight bat"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">wsl.exe --list --online</span><br></pre></td></tr></table></figure>
+
+<p>若输出<code>无法解析服务器的名称或地址</code>则说明无法访问<code>raw.githubusercontent.com</code>，解决方案详见我之前写的<code>解决raw.githubusercontent.com无法访问的问题</code>。</p>
+<p>确定能够访问后，运行如下命令：</p>
+<figure class="highlight bat"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">wsl.exe --install --no-distribution</span><br></pre></td></tr></table></figure>
+
+<p>之后重启Windows</p>
+<p>以管理员运行CMD，运行如下命令：</p>
+<figure class="highlight bat"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">wsl.exe --<span class="built_in">set</span>-default-version <span class="number">2</span></span><br><span class="line">wsl.exe --<span class="built_in">set</span>-default Debian</span><br><span class="line">wsl.exe --install --distribution Debian</span><br></pre></td></tr></table></figure>
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2024/09/07/1/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Loujuch">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Code Bank">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2024/09/07/1/" class="post-title-link" itemprop="url">Git分支管理</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2024-09-07 14:03:39" itemprop="dateCreated datePublished" datetime="2024-09-07T14:03:39+08:00">2024-09-07</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2024-09-08 17:37:51" itemprop="dateModified" datetime="2024-09-08T17:37:51+08:00">2024-09-08</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="快照管理方式"><a href="#快照管理方式" class="headerlink" title="快照管理方式"></a>快照管理方式</h2><p>在<code>Git本地文件管理</code>一文中，给出了Git如何将修改变为快照的方法。本文将会给出Git管理快照的方式——分支树。</p>
+<p>Git使用链式结构组织提交，并使用hash标识链上的各个节点。但是，为了便于协作，需要一种方式使得Git能够使用一种方式使得多个人能够对项目的不同部分进行修改和提交。Git使用分支的方式提供这一服务。引入分支后，Git中的快照从原本的链型变成了树形：</p>
+<p><img src="/2024/09/07/1/0.png"></p>
+<h2 id="分支"><a href="#分支" class="headerlink" title="分支"></a>分支</h2><h3 id="分支的实质"><a href="#分支的实质" class="headerlink" title="分支的实质"></a>分支的实质</h3><p>一个分支实质上是一条快照链表，其具有一个头指针，其指向当前快照链表的头。多个分支具有共同部分，于是连成树形：</p>
+<p><img src="/2024/09/07/1/2.png"></p>
+<h3 id="创建分支"><a href="#创建分支" class="headerlink" title="创建分支"></a>创建分支</h3><p>创建分支实质上是创建一个分支头指针，该头指针与其他指针相互独立：</p>
+<p><img src="/2024/09/07/1/3.png"></p>
+<p>在两个分支分别完成一笔提交后，Git内部变为下图：</p>
+<p><img src="/2024/09/07/1/4.png"></p>
+<h3 id="切换分支"><a href="#切换分支" class="headerlink" title="切换分支"></a>切换分支</h3><p>切换分支实质上是切换头节点指向的分支，如果上图中切换到<code>b0</code>分支的话，Git内部变为下图：</p>
+<p><img src="/2024/09/07/1/5.png"></p>
+<h3 id="合并分支"><a href="#合并分支" class="headerlink" title="合并分支"></a>合并分支</h3><p>合并分支是Git分支最重要的操作之一。其实质上是将两个分支后新建一个包含两个分支更改的新分支：</p>
+<p><img src="/2024/09/07/1/6.png"></p>
+<p>合并后的新节点包换合并的两个分支的全部修改，其具体计算方式如下：</p>
+<ol>
+<li><p>找到合并的两个节点所在链表的分叉点。</p>
+</li>
+<li><p>通过<code>git diff</code>的方式获得两个节点相对于分叉点的修改。</p>
+</li>
+<li><p>将两份修改进行合并，产生新的镜像。</p>
+</li>
+</ol>
+<p>可以看出，在这一过程中，如果合并节点在同一位置更改存在不同的更改，这将产生冲突。此时需要管理员手动解决该项冲突，之后继续合并即可。</p>
+<h2 id="分支的持久化存储"><a href="#分支的持久化存储" class="headerlink" title="分支的持久化存储"></a>分支的持久化存储</h2><h3 id="分支头指针存储"><a href="#分支头指针存储" class="headerlink" title="分支头指针存储"></a>分支头指针存储</h3><p>各个分支头指针存储在项目路径下的<code>.git/refs/heads</code>中，其中使用分支名作为对应的文件名，存储着该分支头指针指向的节点的标识。</p>
+<h3 id="HEAD存储"><a href="#HEAD存储" class="headerlink" title="HEAD存储"></a>HEAD存储</h3><p><code>HEAD</code>的引用存储在项目路径下的<code>.git/HEAD</code>文件中，其内容为目前其指向的分支头或是其指向的镜像的hash标识符。</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
     <link itemprop="mainEntityOfPage" href="http://example.com/2024/09/07/0/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1105,357 +1420,6 @@
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2024/08/24/1/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="Loujuch">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Code Bank">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2024/08/24/1/" class="post-title-link" itemprop="url">GStreamer学习笔记(1)</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">Posted on</span>
-
-              <time title="Created: 2024-08-24 16:39:10" itemprop="dateCreated datePublished" datetime="2024-08-24T16:39:10+08:00">2024-08-24</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2024-09-05 22:45:05" itemprop="dateModified" datetime="2024-09-05T22:45:05+08:00">2024-09-05</time>
-              </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h2 id="Demo"><a href="#Demo" class="headerlink" title="Demo"></a>Demo</h2><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;gst/gst.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">(<span class="type">int</span> argc, <span class="type">char</span> *argv[])</span> </span>&#123;</span><br><span class="line">	GstElement *pipeline;</span><br><span class="line">	GstBus *bus;</span><br><span class="line">	GstMessage *msg;</span><br><span class="line"></span><br><span class="line">	<span class="comment">/* Initialize GStreamer */</span></span><br><span class="line">	<span class="built_in">gst_init</span>(&amp;argc, &amp;argv);</span><br><span class="line"></span><br><span class="line">	<span class="comment">/* Build the pipeline */</span></span><br><span class="line">	pipeline = <span class="built_in">gst_parse_launch</span>(<span class="string">&quot;playbin uri=file:///root/video.mp4&quot;</span>, <span class="literal">NULL</span>);</span><br><span class="line"></span><br><span class="line">	<span class="comment">/* Start playing */</span></span><br><span class="line">	<span class="built_in">gst_element_set_state</span>(pipeline, GST_STATE_PLAYING);</span><br><span class="line"></span><br><span class="line">	<span class="comment">/* Wait until error or EOS */</span></span><br><span class="line">	bus = <span class="built_in">gst_element_get_bus</span>(pipeline);</span><br><span class="line">	msg = <span class="built_in">gst_bus_timed_pop_filtered</span>(bus, GST_CLOCK_TIME_NONE,</span><br><span class="line">		GST_MESSAGE_ERROR | GST_MESSAGE_EOS);</span><br><span class="line"></span><br><span class="line">	<span class="comment">/* Free resources */</span></span><br><span class="line">	<span class="keyword">if</span>(msg != <span class="literal">NULL</span>)</span><br><span class="line">		<span class="built_in">gst_message_unref</span>(msg);</span><br><span class="line">	<span class="built_in">gst_object_unref</span>(bus);</span><br><span class="line">	<span class="built_in">gst_element_set_state</span>(pipeline, GST_STATE_NULL);</span><br><span class="line">	<span class="built_in">gst_object_unref</span>(pipeline);</span><br><span class="line">	<span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>效果如下图：</p>
-<p><img src="/2024/08/24/1/0.jpg"></p>
-<h2 id="关键代码解析"><a href="#关键代码解析" class="headerlink" title="关键代码解析"></a>关键代码解析</h2><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gst_init(&amp;argc, &amp;argv);</span><br></pre></td></tr></table></figure>
-
-<p><a target="_blank" rel="noopener" href="https://gstreamer.freedesktop.org/documentation/gstreamer/gst.html?gi-language=c#gst_init">gst_init</a>用于初始化，必须在其他GStreamer接口之前被调用，不需要其处理命令行参数时可将参数赋值为NULL。</p>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">GstElement *pipeline = gst_parse_launch(<span class="string">&quot;playbin uri=file:///root/video.mp4&quot;</span>, <span class="literal">NULL</span>);</span><br></pre></td></tr></table></figure>
-
-<p>创建了一个Pipeline，该Pipeline是Playbin类型的。</p>
-<p>GStreamer是一个基于管道机制的多媒体库，一个典型的GStreamer程序包含了一个或多个Pipeline，每个Pipeline通过其拥有的一系列Element完成对多媒体数据的处理。同时，虽然是由C语言实现的，但GStreamer实现了自己的面向对象机制，因此其各类型间具有继承关系。</p>
-<p>本句中涉及了两个类型，<a target="_blank" rel="noopener" href="https://gstreamer.freedesktop.org/documentation/gstreamer/gstpipeline.html?gi-language=c">GstPipeline</a>和<a target="_blank" rel="noopener" href="https://gstreamer.freedesktop.org/documentation/additional/design/playbin.html?gi-language=c">playbin</a>。</p>
-<p>其中，<a target="_blank" rel="noopener" href="https://gstreamer.freedesktop.org/documentation/gstreamer/gstpipeline.html?gi-language=c">GstPipeline</a>是一个在GStreamer当中十分重要的类型，其继承关系如下所示。</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">GObject</span><br><span class="line">    ╰── GInitiallyUnowned</span><br><span class="line">        ╰── GstObject</span><br><span class="line">            ╰── GstElement</span><br><span class="line">                ╰── GstBin</span><br><span class="line">                    ╰──	GstPipeline</span><br></pre></td></tr></table></figure>
-
-<p><a target="_blank" rel="noopener" href="https://gstreamer.freedesktop.org/documentation/gstreamer/gstelement.html?gi-language=c">GstElement</a>是一个抽象基类，定义了Element、Pipeline等的接口，在GStreamer中该接类被广泛的用作基类。</p>
-<p><a target="_blank" rel="noopener" href="https://gstreamer.freedesktop.org/documentation/gstreamer/gstbin.html?gi-language=c">GstBin</a>是一个能够容纳和管理其他<a target="_blank" rel="noopener" href="https://gstreamer.freedesktop.org/documentation/gstreamer/gstelement.html?gi-language=c">GstElement</a>的类型，其能够将用户的操作分发到其管理的多个<a target="_blank" rel="noopener" href="https://gstreamer.freedesktop.org/documentation/gstreamer/gstelement.html?gi-language=c">GstElement</a>中，降低了使用复杂性。同时，<a target="_blank" rel="noopener" href="https://gstreamer.freedesktop.org/documentation/gstreamer/gstbin.html?gi-language=c">GstBin</a>还提供了对<a target="_blank" rel="noopener" href="https://gstreamer.freedesktop.org/documentation/gstreamer/gstmessage.html">GstMessage</a>的拦截功能。</p>
-<p><a target="_blank" rel="noopener" href="https://gstreamer.freedesktop.org/documentation/gstreamer/gstpipeline.html?gi-language=c">GstPipeline</a>通常被用作顶层的容器，其进一步的拓展了<a target="_blank" rel="noopener" href="https://gstreamer.freedesktop.org/documentation/gstreamer/gstbin.html?gi-language=c">GstBin</a>的功能，对内提供了用于多媒体数据同步的全局时钟<a target="_blank" rel="noopener" href="https://gstreamer.freedesktop.org/documentation/gstreamer/gstclock.html?gi-language=c">GstClock</a>，对外提供了统一的消息接口<a target="_blank" rel="noopener" href="https://gstreamer.freedesktop.org/documentation/gstreamer/gstbus.html?gi-language=c">GstBus</a>。</p>
-<p>而<a target="_blank" rel="noopener" href="https://gstreamer.freedesktop.org/documentation/additional/design/playbin.html?gi-language=c">playbin</a>则是扩展了<a target="_blank" rel="noopener" href="https://gstreamer.freedesktop.org/documentation/gstreamer/gstpipeline.html?gi-language=c">GstPipeline</a>的功能，其能够通过有效的Uri获取数据并将其渲染到屏幕上。因为其功能的完整性和高度的集成化，本文不对其进行展开叙述。</p>
-<p><a target="_blank" rel="noopener" href="https://gstreamer.freedesktop.org/documentation/gstreamer/gstparse.html?gi-language=c#gst_parse_launch">gst_parse_launch</a>则通过解析传入字符串来创建指定的<a target="_blank" rel="noopener" href="https://gstreamer.freedesktop.org/documentation/gstreamer/gstpipeline.html?gi-language=c">GstPipeline</a>。</p>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gst_element_set_state(pipeline, GST_STATE_PLAYING);</span><br></pre></td></tr></table></figure>
-
-<p><a target="_blank" rel="noopener" href="https://gstreamer.freedesktop.org/documentation/gstreamer/gstelement.html?gi-language=c#gst_element_set_state">gst_element_set_state</a>用于设置<a target="_blank" rel="noopener" href="https://gstreamer.freedesktop.org/documentation/gstreamer/gstelement.html?gi-language=c">GstElement</a>的状态，该句将pipeline设为了播放状态，使得视频开始能够播放。</p>
-<p>正如上文所说的，<a target="_blank" rel="noopener" href="https://gstreamer.freedesktop.org/documentation/gstreamer/gstbin.html?gi-language=c">GstBin</a>能对其管理的<a target="_blank" rel="noopener" href="https://gstreamer.freedesktop.org/documentation/gstreamer/gstelement.html?gi-language=c">GstElement</a>进行统一操作。实际上在该句之后pipeline中包含的所有<a target="_blank" rel="noopener" href="https://gstreamer.freedesktop.org/documentation/gstreamer/gstelement.html?gi-language=c">GstElement</a>都转变为了播放状态，这才使得多媒体数据顺利播放。</p>
-<p>每一个<a target="_blank" rel="noopener" href="https://gstreamer.freedesktop.org/documentation/gstreamer/gstelement.html?gi-language=c">GstElement</a>都具有内部状态，通常使用的是以下几个：</p>
-<pre><code>1. GST_STATE_NULL：默认状态，该状态下[GstElement](https://gstreamer.freedesktop.org/documentation/gstreamer/gstelement.html?gi-language=c)不会具有任何资源。转入该状态后会释放持有的资源。
-
-2. GST_STATE_READY：在该状态下[GstElement](https://gstreamer.freedesktop.org/documentation/gstreamer/gstelement.html?gi-language=c)将获得全部需要的资源，包括打开的设备、缓冲区等，但流还是会处于关闭状态并被置零。如果在流打开过的情况下转入该状态，将会重置流的配置和位置。
-
-3. GST_STATE_PAUSED：在该状态下[GstElement](https://gstreamer.freedesktop.org/documentation/gstreamer/gstelement.html?gi-language=c)不仅具有GST_STATE_READY分配的全部资源，还会将流打开，使得能够对流进修改。但不会具有运行时钟，流不会随着时钟而发生变化。
-
-4. GST_STATE_PLAYING：在该状态下[GstElement](https://gstreamer.freedesktop.org/documentation/gstreamer/gstelement.html?gi-language=c)的情况与GST_STATE_PAUSED基本相同。但是会具有运行时钟，流会自然地随时钟信号进行处理。
-</code></pre>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">GstBus *bus = gst_element_get_bus(pipeline);</span><br><span class="line">GstMessage *msg = gst_bus_timed_pop_filtered(bus, GST_CLOCK_TIME_NONE,</span><br><span class="line">	GST_MESSAGE_ERROR | GST_MESSAGE_EOS);</span><br></pre></td></tr></table></figure>
-
-<p>这两句分别用于获取消息总线和等待播放程序运行完毕。</p>
-<p><a target="_blank" rel="noopener" href="https://gstreamer.freedesktop.org/documentation/gstreamer/gstelement.html?gi-language=c#gst_element_get_bus">gst_element_get_bus</a>返回传入的<a target="_blank" rel="noopener" href="https://gstreamer.freedesktop.org/documentation/gstreamer/gstelement.html?gi-language=c">GstElement</a>对应的<a target="_blank" rel="noopener" href="https://gstreamer.freedesktop.org/documentation/gstreamer/gstbus.html?gi-language=c">GstBus</a>。</p>
-<p><a target="_blank" rel="noopener" href="https://gstreamer.freedesktop.org/documentation/gstreamer/gstbus.html?gi-language=c">GstBus</a>是一个能够传递<a target="_blank" rel="noopener" href="https://gstreamer.freedesktop.org/documentation/gstreamer/gstmessage.html">GstMessage</a>的类型。<a target="_blank" rel="noopener" href="https://gstreamer.freedesktop.org/documentation/gstreamer/gstbus.html?gi-language=c">GstBus</a>主要用于解决多线程通信的问题。在播放时，GStreamer内部可能会创建多个线程进行处理，这使得GStreamer需要一个统一的消息传递机制来降低应用程序的复杂度。</p>
-<p><a target="_blank" rel="noopener" href="https://gstreamer.freedesktop.org/documentation/gstreamer/gstbus.html?gi-language=c#gst_bus_timed_pop_filtered">gst_bus_timed_pop_filtered</a>则用于监听传入的<a target="_blank" rel="noopener" href="https://gstreamer.freedesktop.org/documentation/gstreamer/gstbus.html?gi-language=c">GstBus</a>，等待目标消息的返回。根据该句的传入参数，程序将会无限等待，直到有发生错误或播放完毕的消息传回。</p>
-<p><a target="_blank" rel="noopener" href="https://gstreamer.freedesktop.org/documentation/gstreamer/gstmessage.html?gi-language=c">GstMessage</a>是GStreamer封装的消息类型。一个常用的读取程序如下：</p>
-<pre><code><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span>(msg != <span class="literal">NULL</span>) &#123;</span><br><span class="line">	GError *err;</span><br><span class="line">	gchar *debug_info;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">switch</span> (GST_MESSAGE_TYPE (msg)) &#123;</span><br><span class="line">	<span class="keyword">case</span> GST_MESSAGE_ERROR:</span><br><span class="line">		gst_message_parse_error (msg, &amp;err, &amp;debug_info);</span><br><span class="line">		g_printerr (<span class="string">&quot;Error received from element %s: %s\n&quot;</span>,</span><br><span class="line">		GST_OBJECT_NAME (msg-&gt;src), err-&gt;message);</span><br><span class="line">		g_printerr (<span class="string">&quot;Debugging information: %s\n&quot;</span>,</span><br><span class="line">		debug_info ? debug_info : <span class="string">&quot;none&quot;</span>);</span><br><span class="line">		g_clear_error (&amp;err);</span><br><span class="line">		g_free (debug_info);</span><br><span class="line">		<span class="keyword">break</span>;</span><br><span class="line">	<span class="keyword">case</span> GST_MESSAGE_EOS:</span><br><span class="line">		g_print (<span class="string">&quot;End-Of-Stream reached.\n&quot;</span>);</span><br><span class="line">		<span class="keyword">break</span>;</span><br><span class="line">	<span class="keyword">default</span>:</span><br><span class="line">		<span class="comment">/* We should not reach here because we only asked for ERRORs and EOS */</span></span><br><span class="line">		g_printerr (<span class="string">&quot;Unexpected message received.\n&quot;</span>);</span><br><span class="line">		<span class="keyword">break</span>;</span><br><span class="line">	&#125;</span><br><span class="line">	gst_message_unref (msg);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-</code></pre>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span>(msg != <span class="literal">NULL</span>)</span><br><span class="line">	gst_message_unref(msg);</span><br><span class="line">gst_object_unref(bus);</span><br><span class="line">gst_element_set_state(pipeline, GST_STATE_NULL);</span><br><span class="line">gst_object_unref(pipeline);</span><br></pre></td></tr></table></figure>
-
-<p>本段进行了资源释放。由于C语言没有析构函数和垃圾回收等资源管理机制，因此仍然需要进行手动管理。</p>
-<p>GStreamer使用引用计数的方式来管理资源。通过在每个类型中放置一个引用数，并在引用数归零是才进行资源释放的方式，能够避免资源的过早释放，因此在使用GStreamer提供的API时，需要着重关注其对引用计数的影响。</p>
-<p><a target="_blank" rel="noopener" href="https://gstreamer.freedesktop.org/documentation/gstreamer/gstobject.html?gi-language=c#gst_object_unref">gst_object_unref</a>能够将输入的变量的引用计数减一，归零时自动释放。</p>
-<p>与之对应的<a target="_blank" rel="noopener" href="https://gstreamer.freedesktop.org/documentation/gstreamer/gstobject.html?gi-language=c#gst_object_ref">gst_object_ref</a>能够将输入的变量的引用计数加一。</p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2024/08/24/0/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="Loujuch">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Code Bank">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2024/08/24/0/" class="post-title-link" itemprop="url">Debian 12搭建GStreamer开发环境</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">Posted on</span>
-
-              <time title="Created: 2024-08-24 12:06:45" itemprop="dateCreated datePublished" datetime="2024-08-24T12:06:45+08:00">2024-08-24</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2024-09-21 20:02:17" itemprop="dateModified" datetime="2024-09-21T20:02:17+08:00">2024-09-21</time>
-              </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h2 id="安装GStreamer"><a href="#安装GStreamer" class="headerlink" title="安装GStreamer"></a>安装<code>GStreamer</code></h2><p>使用以下命令进行安装<code>GStreamer</code>：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">sudo</span> apt-get install libgstreamer* gstreamer1.0-* -y</span><br></pre></td></tr></table></figure>
-
-<h2 id="测试编译环境"><a href="#测试编译环境" class="headerlink" title="测试编译环境"></a>测试编译环境</h2><p>使用如下命令查看<code>GStreamer</code>的编译命令。</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">pkg-config --cflags gstreamer-1.0 <span class="comment"># 获得头文件路径</span></span><br><span class="line">pkg-config --libs gstreamer-1.0   <span class="comment"># 获得库文件路径</span></span><br></pre></td></tr></table></figure>
-
-<p>使用如下<code>demo.c</code>进行测试：</p>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;gst/gst.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="type">int</span> <span class="title function_">main</span><span class="params">(<span class="type">int</span> argc, <span class="type">char</span> *argv[])</span> &#123;</span><br><span class="line">	GstElement *pipeline;</span><br><span class="line">	GstBus *bus;</span><br><span class="line">	GstMessage *msg;</span><br><span class="line"></span><br><span class="line">	<span class="comment">/* Initialize GStreamer */</span></span><br><span class="line">	gst_init(&amp;argc, &amp;argv);</span><br><span class="line"></span><br><span class="line">	<span class="comment">/* Build the pipeline, please change the URI to the correct one */</span></span><br><span class="line">	pipeline = gst_parse_launch(<span class="string">&quot;playbin uri=file:///root/video.mp4&quot;</span>, <span class="literal">NULL</span>);</span><br><span class="line"></span><br><span class="line">	<span class="comment">/* Start playing */</span></span><br><span class="line">	gst_element_set_state(pipeline, GST_STATE_PLAYING);</span><br><span class="line"></span><br><span class="line">	<span class="comment">/* Wait until error or EOS */</span></span><br><span class="line">	bus = gst_element_get_bus(pipeline);</span><br><span class="line">	msg = gst_bus_timed_pop_filtered(bus, GST_CLOCK_TIME_NONE,</span><br><span class="line">		GST_MESSAGE_ERROR | GST_MESSAGE_EOS);</span><br><span class="line"></span><br><span class="line">	<span class="comment">/* Free resources */</span></span><br><span class="line">	<span class="keyword">if</span>(msg != <span class="literal">NULL</span>)</span><br><span class="line">		gst_message_unref(msg);</span><br><span class="line">	gst_object_unref(bus);</span><br><span class="line">	gst_element_set_state(pipeline, GST_STATE_NULL);</span><br><span class="line">	gst_object_unref(pipeline);</span><br><span class="line">	<span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>使用如下命令进行编译：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gcc demo.c -o demo `pkg-config --cflags --libs gstreamer-1.0`</span><br></pre></td></tr></table></figure>
-
-<p>使用如下命令运行：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">./demo</span><br></pre></td></tr></table></figure>
-
-<p>出现一个窗口播放视频，证明安装成功：</p>
-<p><img src="/2024/08/24/0/0.jpg"></p>
-<h2 id="安装桌面环境"><a href="#安装桌面环境" class="headerlink" title="安装桌面环境"></a>安装桌面环境</h2><p>由于之前的开发环境中未安装桌面环境，为了能够看到<code>GStreamer</code>程序执行结果，因此需要安装新的桌面环境。</p>
-<p>使用下列命令最小化安装<code>gnome</code>，并设置<code>startx</code>启动：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">sudo</span> apt install xorg gnome-core</span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;exec gnome-session&quot;</span> &gt; ~/.xinitrc</span><br><span class="line">startx</span><br></pre></td></tr></table></figure>
-
-<p>之后可以看到启动后的<code>gnome</code>桌面。</p>
-<h2 id="设置默认进入命令行"><a href="#设置默认进入命令行" class="headerlink" title="设置默认进入命令行"></a>设置默认进入命令行</h2><p>为了提高开机速度和降低性能损耗，希望开机默认进入命令行，只在需要时进入桌面环境。</p>
-<p>修改<code>/etc/default/grub</code>文件，将<code>GRUB_CMDLINE_LINUX</code>的值从<code>&quot;&quot;</code>改为<code>&quot;text&quot;</code>。</p>
-<p>之后执行以下命令：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">sudo</span> update-grub</span><br><span class="line"><span class="built_in">sudo</span> systemctl set-default multi-user.target</span><br></pre></td></tr></table></figure>
-
-<p>重启后会发现直接进入命令行。</p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2024/08/24/6/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="Loujuch">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Code Bank">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2024/08/24/6/" class="post-title-link" itemprop="url">hexo 的全局`_config.yml`文件的有效配置项</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">Posted on</span>
-              
-
-              <time title="Created: 2024-08-24 11:38:56 / Modified: 12:06:06" itemprop="dateCreated datePublished" datetime="2024-08-24T11:38:56+08:00">2024-08-24</time>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h2 id="post-asset-folder"><a href="#post-asset-folder" class="headerlink" title="post_asset_folder"></a><code>post_asset_folder</code></h2><p>当<code>post_asset_folder</code>为<code>true</code>时，<code>hexo new &lt;title&gt;</code>指令会在对应的文件生成路径下生成一个同名文件夹。可以使用<code>asset_*</code>类的选项该文件夹内的资源，如加载图片是可以使用<code>&#123;% asset_img image.jpg %&#125;</code>进行加载。</p>
-<p>在<code>hexo-renderer-marked 3.1.0</code>后提供了新选项，可以使用<code>![](image.jpg)</code>的方式加载图片，具体打开形式如下：</p>
-<figure class="highlight yml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">post_asset_folder:</span> <span class="literal">true</span></span><br><span class="line"><span class="attr">marked:</span></span><br><span class="line">  <span class="attr">prependRoot:</span> <span class="literal">true</span></span><br><span class="line">  <span class="attr">postAsset:</span> <span class="literal">true</span></span><br></pre></td></tr></table></figure>
-
-<h2 id="permalink"><a href="#permalink" class="headerlink" title="permalink"></a><code>permalink</code></h2><p>表示文章的永久链接格式，通俗来说就是访问该文章是域名后面的部分。通常将其设置为：</p>
-<figure class="highlight yml"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">permalink:</span> <span class="string">:year/:month/:day/:name/</span></span><br></pre></td></tr></table></figure>
-
-<h2 id="new-post-name"><a href="#new-post-name" class="headerlink" title="new_post_name"></a><code>new_post_name</code></h2><p>创建新文章的路径名。通常将其设置为：</p>
-<figure class="highlight yml"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">new_post_name:</span> <span class="string">:year/:month/:day/:title.md</span></span><br></pre></td></tr></table></figure>
-
-<p>这样可以使得不同日期写的文章放置在不同的文件夹下，便于管理。</p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2024/08/17/4/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="Loujuch">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Code Bank">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2024/08/17/4/" class="post-title-link" itemprop="url">GStreamer换GstSample问题分析</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">Posted on</span>
-
-              <time title="Created: 2024-08-17 11:48:12" itemprop="dateCreated datePublished" datetime="2024-08-17T11:48:12+08:00">2024-08-17</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2024-08-24 20:58:10" itemprop="dateModified" datetime="2024-08-24T20:58:10+08:00">2024-08-24</time>
-              </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h2 id="问题"><a href="#问题" class="headerlink" title="问题"></a>问题</h2><p>现存如下GStreamer管道：</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="keyword">struct</span> <span class="title class_">g_pipeline0_style</span> &#123;</span><br><span class="line">	GstElement *pipeline;</span><br><span class="line"></span><br><span class="line">	GstElement *src;</span><br><span class="line">	GstElement *yuy2_filter;</span><br><span class="line">	GstElement *v4l2convert;</span><br><span class="line">	GstElement *rgb_filter;</span><br><span class="line">	GstElement *appsink;</span><br><span class="line">&#125; g_pipeline0_style;</span><br><span class="line"></span><br><span class="line"><span class="keyword">typedef</span> <span class="keyword">struct</span> <span class="title class_">g_pipeline1_style</span> &#123;</span><br><span class="line">	GstElement *pipeline;</span><br><span class="line"></span><br><span class="line">	GstElement *appsrc;</span><br><span class="line">	GstElement *rgb_filter;</span><br><span class="line">	GstElement *waylandsink;</span><br><span class="line">&#125; g_pipeline1_style;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">init_gstreamer</span><span class="params">(g_pipeline0_style *pipeline0, g_pipeline1_style *pipeline1)</span> </span>&#123;</span><br><span class="line">	<span class="built_in">g_assert</span>(pipeline0 &amp;&amp; pipeline1);</span><br><span class="line"></span><br><span class="line">	<span class="comment">// 创建</span></span><br><span class="line">	pipeline0-&gt;pipeline = <span class="built_in">gst_pipeline_new</span>(<span class="string">&quot;pipeline0&quot;</span>);</span><br><span class="line">	pipeline0-&gt;src = <span class="built_in">gst_element_factory_make</span>(GST_SRC, <span class="string">&quot;src&quot;</span>);</span><br><span class="line">	pipeline0-&gt;yuy2_filter = <span class="built_in">gst_element_factory_make</span>(<span class="string">&quot;capsfilter&quot;</span>, <span class="string">&quot;videoconvert&quot;</span>);</span><br><span class="line">	pipeline0-&gt;v4l2convert = <span class="built_in">gst_element_factory_make</span>(<span class="string">&quot;v4l2convert&quot;</span>, <span class="string">&quot;v4l2convert&quot;</span>);</span><br><span class="line">	pipeline0-&gt;rgb_filter = <span class="built_in">gst_element_factory_make</span>(<span class="string">&quot;capsfilter&quot;</span>, <span class="string">&quot;rgb_filter&quot;</span>);</span><br><span class="line">	pipeline0-&gt;appsink = <span class="built_in">gst_element_factory_make</span>(<span class="string">&quot;appsink&quot;</span>, <span class="string">&quot;appsink&quot;</span>);</span><br><span class="line"></span><br><span class="line">	pipeline1-&gt;pipeline = <span class="built_in">gst_pipeline_new</span>(<span class="string">&quot;pipeline1&quot;</span>);</span><br><span class="line">	pipeline1-&gt;appsrc = <span class="built_in">gst_element_factory_make</span>(<span class="string">&quot;appsrc&quot;</span>, <span class="string">&quot;appsrc&quot;</span>);</span><br><span class="line">	pipeline1-&gt;rgb_filter = <span class="built_in">gst_element_factory_make</span>(<span class="string">&quot;capsfilter&quot;</span>, <span class="string">&quot;rgb_filter&quot;</span>);</span><br><span class="line">	pipeline1-&gt;waylandsink = <span class="built_in">gst_element_factory_make</span>(<span class="string">&quot;waylandsink&quot;</span>, <span class="string">&quot;waylandsink&quot;</span>);</span><br><span class="line"></span><br><span class="line">	<span class="built_in">g_assert</span>(pipeline0-&gt;pipeline &amp;&amp; pipeline0-&gt;src &amp;&amp; pipeline0-&gt;yuy2_filter &amp;&amp;</span><br><span class="line">		pipeline0-&gt;v4l2convert &amp;&amp; pipeline0-&gt;rgb_filter &amp;&amp; pipeline0-&gt;appsink &amp;&amp;</span><br><span class="line">		pipeline1-&gt;pipeline &amp;&amp; pipeline1-&gt;appsrc &amp;&amp; pipeline1-&gt;rgb_filter &amp;&amp;</span><br><span class="line">		pipeline1-&gt;waylandsink);</span><br><span class="line"></span><br><span class="line">	<span class="comment">// 设置</span></span><br><span class="line">	GstCaps *caps_yuy2 = <span class="built_in">gst_caps_new_simple</span>(<span class="string">&quot;video/x-raw&quot;</span>,</span><br><span class="line">		<span class="string">&quot;width&quot;</span>, G_TYPE_INT, DEFAULT_WIDTH,</span><br><span class="line">		<span class="string">&quot;height&quot;</span>, G_TYPE_INT, DEFAULT_HEIGHT,</span><br><span class="line">		<span class="string">&quot;format&quot;</span>, G_TYPE_STRING, <span class="string">&quot;YUY2&quot;</span>,</span><br><span class="line">		<span class="string">&quot;framerate&quot;</span>, GST_TYPE_FRACTION, <span class="number">30</span>, <span class="number">1</span>,</span><br><span class="line">		<span class="literal">NULL</span>);</span><br><span class="line">	<span class="built_in">g_assert</span>(caps_yuy2);</span><br><span class="line">	<span class="built_in">g_object_set</span>(<span class="built_in">G_OBJECT</span>(pipeline0-&gt;yuy2_filter), <span class="string">&quot;caps&quot;</span>, caps_yuy2, <span class="literal">NULL</span>);</span><br><span class="line">	<span class="built_in">gst_caps_unref</span>(caps_yuy2);</span><br><span class="line"></span><br><span class="line">	<span class="built_in">g_object_set</span>(pipeline0-&gt;v4l2convert, <span class="string">&quot;disable-passthrough&quot;</span>, TRUE, <span class="literal">NULL</span>);</span><br><span class="line">	<span class="built_in">gst_util_set_object_arg</span>(<span class="built_in">G_OBJECT</span>(pipeline0-&gt;v4l2convert), <span class="string">&quot;output-io-mode&quot;</span>, <span class="string">&quot;dmabuf-import&quot;</span>);</span><br><span class="line">	<span class="built_in">gst_util_set_object_arg</span>(<span class="built_in">G_OBJECT</span>(pipeline0-&gt;v4l2convert), <span class="string">&quot;capture-io-mode&quot;</span>, <span class="string">&quot;dmabuf&quot;</span>);</span><br><span class="line"></span><br><span class="line">	GstCaps *caps_rgb0 = <span class="built_in">gst_caps_new_simple</span>(<span class="string">&quot;video/x-raw&quot;</span>,</span><br><span class="line">		<span class="string">&quot;width&quot;</span>, G_TYPE_INT, DEFAULT_WIDTH,</span><br><span class="line">		<span class="string">&quot;height&quot;</span>, G_TYPE_INT, DEFAULT_HEIGHT,</span><br><span class="line">		<span class="string">&quot;format&quot;</span>, G_TYPE_STRING, <span class="string">&quot;RGB&quot;</span>,</span><br><span class="line">		<span class="string">&quot;framerate&quot;</span>, GST_TYPE_FRACTION, <span class="number">30</span>, <span class="number">1</span>,</span><br><span class="line">		<span class="literal">NULL</span>);</span><br><span class="line">	<span class="built_in">g_assert</span>(caps_rgb0);</span><br><span class="line">	<span class="built_in">g_object_set</span>(<span class="built_in">G_OBJECT</span>(pipeline0-&gt;rgb_filter), <span class="string">&quot;caps&quot;</span>, caps_rgb0, <span class="literal">NULL</span>);</span><br><span class="line">	<span class="built_in">gst_caps_unref</span>(caps_rgb0);</span><br><span class="line"></span><br><span class="line">	GstAppSinkCallbacks app_sink_callback = &#123; <span class="literal">NULL</span>, <span class="literal">NULL</span>, on_new_sample &#125;;</span><br><span class="line">	<span class="built_in">gst_app_sink_set_callbacks</span>(<span class="built_in">GST_APP_SINK</span>(pipeline0-&gt;appsink), &amp;app_sink_callback,</span><br><span class="line">		pipeline1-&gt;appsrc, <span class="literal">NULL</span>);</span><br><span class="line"></span><br><span class="line">	GstCaps *caps_rgb1 = <span class="built_in">gst_caps_new_simple</span>(<span class="string">&quot;video/x-raw&quot;</span>,</span><br><span class="line">		<span class="string">&quot;width&quot;</span>, G_TYPE_INT, DEFAULT_WIDTH,</span><br><span class="line">		<span class="string">&quot;height&quot;</span>, G_TYPE_INT, DEFAULT_HEIGHT,</span><br><span class="line">		<span class="string">&quot;format&quot;</span>, G_TYPE_STRING, <span class="string">&quot;RGB&quot;</span>,</span><br><span class="line">		<span class="string">&quot;framerate&quot;</span>, GST_TYPE_FRACTION, <span class="number">30</span>, <span class="number">1</span>,</span><br><span class="line">		<span class="literal">NULL</span>);</span><br><span class="line">	<span class="built_in">g_assert</span>(caps_rgb1);</span><br><span class="line">	<span class="built_in">g_object_set</span>(<span class="built_in">G_OBJECT</span>(pipeline1-&gt;rgb_filter), <span class="string">&quot;caps&quot;</span>, caps_rgb1, <span class="literal">NULL</span>);</span><br><span class="line">	<span class="built_in">gst_caps_unref</span>(caps_rgb1);</span><br><span class="line"></span><br><span class="line">	<span class="built_in">g_object_set</span>(<span class="built_in">G_OBJECT</span>(pipeline1-&gt;waylandsink), <span class="string">&quot;sync&quot;</span>, FALSE, <span class="literal">NULL</span>);</span><br><span class="line"></span><br><span class="line">	<span class="comment">// 将元素添加到管道中</span></span><br><span class="line">	<span class="built_in">gst_bin_add_many</span>(<span class="built_in">GST_BIN</span>(pipeline0-&gt;pipeline), pipeline0-&gt;src, pipeline0-&gt;yuy2_filter,</span><br><span class="line">		pipeline0-&gt;v4l2convert, pipeline0-&gt;rgb_filter, pipeline0-&gt;appsink, <span class="literal">NULL</span>);</span><br><span class="line">	<span class="built_in">gst_bin_add_many</span>(<span class="built_in">GST_BIN</span>(pipeline1-&gt;pipeline), pipeline1-&gt;appsrc, pipeline1-&gt;rgb_filter,</span><br><span class="line">		pipeline1-&gt;waylandsink, <span class="literal">NULL</span>);</span><br><span class="line"></span><br><span class="line">	<span class="comment">// 连接元素</span></span><br><span class="line">	<span class="built_in">gst_bin_link_many</span>(pipeline0-&gt;src, pipeline0-&gt;yuy2_filter, pipeline0-&gt;v4l2convert,</span><br><span class="line">		pipeline0-&gt;rgb_filter, pipeline0-&gt;appsink, <span class="literal">NULL</span>);</span><br><span class="line">	<span class="built_in">gst_bin_link_many</span>(pipeline1-&gt;appsrc, pipeline1-&gt;rgb_filter, pipeline1-&gt;waylandsink, <span class="literal">NULL</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>两个管道间使用如下函数进行链接：</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">GstFlowReturn <span class="title">on_new_sample</span><span class="params">(GstAppSink *sink, gpointer user_data)</span> </span>&#123;</span><br><span class="line">	GstFlowReturn ret = GST_FLOW_ERROR;</span><br><span class="line"></span><br><span class="line">	GstSample *sample = <span class="built_in">gst_app_sink_pull_sample</span>(sink);</span><br><span class="line">	GstAppSrc *app_src = (GstAppSrc *)user_data;</span><br><span class="line">	<span class="built_in">g_assert</span>(sample &amp;&amp; app_src);</span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span>(!<span class="built_in">gst_sample_is_writable</span>(sample)) &#123;</span><br><span class="line">		sample = <span class="built_in">gst_sample_make_writable</span>(sample);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="built_in">g_assert</span>(<span class="built_in">gst_sample_is_writable</span>(sample));</span><br><span class="line"></span><br><span class="line">	GstBuffer *buffer = <span class="built_in">gst_sample_get_buffer</span>(sample);</span><br><span class="line">	<span class="built_in">g_assert</span>(buffer);</span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span>(!<span class="built_in">gst_buffer_is_writable</span>(buffer)) &#123;</span><br><span class="line">		buffer = <span class="built_in">gst_buffer_make_writable</span>(buffer);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="built_in">g_assert</span>(<span class="built_in">gst_buffer_is_writable</span>(buffer));</span><br><span class="line"></span><br><span class="line">	gboolean ok;</span><br><span class="line">	GstMapInfo info;</span><br><span class="line">	ok = <span class="built_in">gst_buffer_map</span>(buffer, &amp;info, GST_MAP_READWRITE);</span><br><span class="line">	<span class="built_in">g_assert</span>(ok);</span><br><span class="line"></span><br><span class="line">	GstCaps *caps = <span class="built_in">gst_sample_get_caps</span>(sample);</span><br><span class="line">	gint width, height;</span><br><span class="line">	GstStructure *structure = <span class="built_in">gst_caps_get_structure</span>(caps, <span class="number">0</span>);</span><br><span class="line">	<span class="built_in">gst_structure_get_int</span>(structure, <span class="string">&quot;width&quot;</span>, &amp;width);</span><br><span class="line">	<span class="built_in">gst_structure_get_int</span>(structure, <span class="string">&quot;height&quot;</span>, &amp;height);</span><br><span class="line"></span><br><span class="line">	<span class="built_in">do_something</span>(info.data, height, width);</span><br><span class="line"></span><br><span class="line">	<span class="built_in">gst_buffer_unmap</span>(buffer, &amp;info);</span><br><span class="line"></span><br><span class="line">	<span class="built_in">gst_sample_set_buffer</span>(sample, buffer);</span><br><span class="line"></span><br><span class="line">	ret = <span class="built_in">gst_app_src_push_sample</span>(<span class="built_in">GST_APP_SRC</span>(app_src), sample);</span><br><span class="line">	<span class="built_in">gst_sample_unref</span>(sample);</span><br><span class="line">	<span class="keyword">return</span> ret;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>但在运行时报错：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">GStreamer-Wayland:ERROR:../gst-plugins-bad-1.22.0/gst-libs/gst/wayland/gstwlbuffer.c:178:gstmemory_disposed: assertion failed: (!priv-&gt;used_by_compositor)</span><br><span class="line">Bail out! GStreamer-Wayland:ERROR:../gst-plugins-bad-1.22.0/gst-libs/gst/wayland/gstwlbuffer.c:178:gstmemory_disposed: assertion failed: (!priv-&gt;used_by_compositor)</span><br><span class="line">Aborted (core dumped)</span><br></pre></td></tr></table></figure>
-
-<p>查看日志，发现第一条错误如下：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ERROR waylandsink gstwaylandsink.c:1181:gst_wayland_sink_show_frame:&lt;waylandsink&gt; buffer buffer: 0x55a234bbf0, pts 0:00:00.000000000, dts 0:00:00.000000000, dur 0:00:00.033333333, size 3072000, offset none, offset_end none, flags 0x40 cannot have a wl_buffer</span><br></pre></td></tr></table></figure>
-
-<h2 id="原因"><a href="#原因" class="headerlink" title="原因"></a>原因</h2><p>主要是因为缓冲区类型和数据类型不匹配导致的。<code>WaylandSink</code>仅支持<code>DMA Buffer</code>携带的<code>RGB</code>数据，但在复制后，<code>Buffer</code>类型变成了<code>Share Memory Buffer</code>，这是<code>WaylandSink</code>不支持的，因此报错。</p>
-<h2 id="解决"><a href="#解决" class="headerlink" title="解决"></a>解决</h2><p>虽然从理论上来说将复制出的<code>Buffer</code>转换为<code>DMA Buffer</code>就可以解决该问题。但笔者工作较忙没有进行论证。</p>
-<p>还有一种妥协性的解决方法，就是去除<code>pipeline0-&gt;v4l2convert</code>和<code>pipeline0-&gt;rgb_filter</code>，将<code>pipeline1-&gt;rgb_filter</code>类型转换为<code>YUY2</code>，这样到达<code>WaylandSink</code>的就是<code>YUY2</code>，而<code>WaylandSink</code>支持携带<code>YUY2</code>数据的<code>Share Memory Buffer</code>。</p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
@@ -1525,12 +1489,12 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">34</span>
+          <span class="site-state-item-count">38</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
       <div class="site-state-item site-state-tags">
-        <span class="site-state-item-count">22</span>
+        <span class="site-state-item-count">24</span>
         <span class="site-state-item-name">tags</span>
       </div>
   </nav>
