@@ -145,6 +145,233 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2024/08/30/1/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Loujuch">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Code Bank">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2024/08/30/1/" class="post-title-link" itemprop="url">CSAPP Data Lab</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2024-08-30 22:35:30" itemprop="dateCreated datePublished" datetime="2024-08-30T22:35:30+08:00">2024-08-30</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2024-08-31 18:11:56" itemprop="dateModified" datetime="2024-08-31T18:11:56+08:00">2024-08-31</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="bitXor"><a href="#bitXor" class="headerlink" title="bitXor"></a>bitXor</h2><h3 id="题目"><a href="#题目" class="headerlink" title="题目"></a>题目</h3><p>描述：仅使用<code>~</code>和<code>&amp;</code>实现<code>^</code>操作。</p>
+<p>允许使用的操作符：<code>~</code> <code>&amp;</code></p>
+<p>允许使用的操作符最大数量：14</p>
+<h3 id="实现"><a href="#实现" class="headerlink" title="实现"></a>实现</h3><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">int</span> <span class="title">bitXor</span><span class="params">(<span class="type">int</span> x, <span class="type">int</span> y)</span> </span>&#123;</span><br><span class="line">	<span class="keyword">return</span> (~((~x) &amp; (~y))) &amp; (~(x &amp; y));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="解析"><a href="#解析" class="headerlink" title="解析"></a>解析</h3><p>有：</p>
+<ol>
+<li><p><code>x ^ y = (x | y) &amp; (~(x &amp; y))</code></p>
+</li>
+<li><p><code>x | y = ~((~x) &amp; (~y))</code></p>
+</li>
+</ol>
+<p>故：</p>
+<p><code>x ^ y = (~((~x) &amp; (~y))) &amp; (~(x &amp; y))</code></p>
+<h2 id="tmin"><a href="#tmin" class="headerlink" title="tmin"></a>tmin</h2><h3 id="题目-1"><a href="#题目-1" class="headerlink" title="题目"></a>题目</h3><p>描述：返回二进制补码整数的最小值。</p>
+<p>允许使用的操作符：<code>！</code> <code>~</code> <code>&amp;</code> <code>^</code> <code>|</code> <code>+</code> <code>&lt;&lt;</code> <code>&gt;&gt;</code></p>
+<p>允许使用的操作符最大数量：4</p>
+<h3 id="实现-1"><a href="#实现-1" class="headerlink" title="实现"></a>实现</h3><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">int</span> <span class="title">tmin</span><span class="params">(<span class="type">void</span>)</span> </span>&#123;</span><br><span class="line">	<span class="keyword">return</span> (<span class="number">1</span> &lt;&lt; <span class="number">31</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="解析-1"><a href="#解析-1" class="headerlink" title="解析"></a>解析</h3><p><code>INT_MIN</code>为<code>0b10[31]</code>，故将<code>1</code>左移31位即可</p>
+<h2 id="isTmax"><a href="#isTmax" class="headerlink" title="isTmax"></a>isTmax</h2><h3 id="题目-2"><a href="#题目-2" class="headerlink" title="题目"></a>题目</h3><p>描述：判断输入参数是否是二进制补码整数所能表示的最大值，是则返回1，否则返回0。</p>
+<p>允许使用的操作符：<code>！</code> <code>~</code> <code>&amp;</code> <code>^</code> <code>|</code> <code>+</code></p>
+<p>允许使用的操作符最大数量：10</p>
+<h3 id="实现-2"><a href="#实现-2" class="headerlink" title="实现"></a>实现</h3><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">int</span> <span class="title">isTmax</span><span class="params">(<span class="type">int</span> x)</span> </span>&#123;</span><br><span class="line">	<span class="keyword">return</span> !(((x + <span class="number">1</span>) ^ (~x)) | !(~x));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="解析-2"><a href="#解析-2" class="headerlink" title="解析"></a>解析</h3><p><code>INT_MAX</code>为<code>0b01[31]</code>，可知<code>~INT_MAX = INT_MAX + 1</code>。下面证明除了<code>INT_MAX</code>和<code>0b1[32]</code>外无其他数使得<code>~x = x + 1</code>：</p>
+<blockquote>
+<p>对于任何<code>a</code>，除了<code>0b1[32]</code>外，均有<code>a = A01[n]</code>。此时<code>~a = ~A10[n]</code>，<code>a + 1 = A10[n]</code>，若希望<code>~a = a + 1</code>，要求<code>A = ~A</code>，这只有当A为空的情况下成立。</p>
+<p>同时，<code>~0b1[32] = 0b0[32]</code>，<code>0b1[32] + 1 = 0b0[32]</code>，同样成立。</p>
+</blockquote>
+<p>因此，本题实质上进行如下判断：</p>
+<ol>
+<li><p><code>x + 1 == ~x</code>，当<code>(x + 1) ^ ~x</code>为零时成立</p>
+</li>
+<li><p><code>x != 0b0[32]</code>，当<code>~x</code>不为零时成立。</p>
+</li>
+</ol>
+<h2 id="allOddBits"><a href="#allOddBits" class="headerlink" title="allOddBits"></a>allOddBits</h2><h3 id="题目-3"><a href="#题目-3" class="headerlink" title="题目"></a>题目</h3><p>描述：判断输入参数的所有奇数位上的数值是否为1，下标从0开始。是则返回1，否则返回0。</p>
+<p>允许使用的操作符：<code>！</code> <code>~</code> <code>&amp;</code> <code>^</code> <code>|</code> <code>+</code> <code>&lt;&lt;</code> <code>&gt;&gt;</code></p>
+<p>允许使用的操作符最大数量：12</p>
+<h3 id="实现-3"><a href="#实现-3" class="headerlink" title="实现"></a>实现</h3><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">int</span> <span class="title">allOddBits</span><span class="params">(<span class="type">int</span> x)</span> </span>&#123;</span><br><span class="line">	x = x &gt;&gt; <span class="number">1</span>;</span><br><span class="line">	x = x &amp; (x &gt;&gt; <span class="number">2</span>);</span><br><span class="line">	x = x &amp; (x &gt;&gt; <span class="number">4</span>);</span><br><span class="line">	x = x &amp; (x &gt;&gt; <span class="number">8</span>);</span><br><span class="line">	x = x &amp; (x &gt;&gt; <span class="number">16</span>);</span><br><span class="line">	<span class="keyword">return</span> x &amp; <span class="number">1</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="解析-3"><a href="#解析-3" class="headerlink" title="解析"></a>解析</h3><p>其实本题最简单的思路是构造<code>mask = 0xAAAAAAAA</code>，判断<code>x &amp; mask</code>是否等于<code>mask</code>即可。</p>
+<p>目前采用的思路是遍历。利用<code>&amp;</code>操作符的<code>x &amp; (y &amp; z) = x &amp; y &amp; z</code>的性质逐层计算，最终获得结果。原理示意图如下图：</p>
+<p><img src="/2024/08/30/1/0.bmp"></p>
+<h2 id="negate"><a href="#negate" class="headerlink" title="negate"></a>negate</h2><h3 id="题目-4"><a href="#题目-4" class="headerlink" title="题目"></a>题目</h3><p>描述：返回输入参数的相反数。</p>
+<p>允许使用的操作符：<code>！</code> <code>~</code> <code>&amp;</code> <code>^</code> <code>|</code> <code>+</code> <code>&lt;&lt;</code> <code>&gt;&gt;</code></p>
+<p>允许使用的操作符最大数量：5</p>
+<h3 id="实现-4"><a href="#实现-4" class="headerlink" title="实现"></a>实现</h3><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">int</span> <span class="title">negate</span><span class="params">(<span class="type">int</span> x)</span> </span>&#123;</span><br><span class="line">	<span class="keyword">return</span> (~x) + <span class="number">1</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="解析-4"><a href="#解析-4" class="headerlink" title="解析"></a>解析</h3><p><code>x + (-x) = 0b0[32] = 0b1[32] + 0b1</code></p>
+<p>所以有：</p>
+<p><code>(-x) = 0b1[32] + 0b1 - x = (~x) + 0b1</code></p>
+<h2 id="isAsciiDigit"><a href="#isAsciiDigit" class="headerlink" title="isAsciiDigit"></a>isAsciiDigit</h2><h3 id="题目-5"><a href="#题目-5" class="headerlink" title="题目"></a>题目</h3><p>描述：返回输入参数的值是否在[0x30, 0x39]区间内，是则返回1，否则返回0。</p>
+<p>允许使用的操作符：<code>！</code> <code>~</code> <code>&amp;</code> <code>^</code> <code>|</code> <code>+</code> <code>&lt;&lt;</code> <code>&gt;&gt;</code></p>
+<p>允许使用的操作符最大数量：15</p>
+<h3 id="实现-5"><a href="#实现-5" class="headerlink" title="实现"></a>实现</h3><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">int</span> <span class="title">isAsciiDigit</span><span class="params">(<span class="type">int</span> x)</span> </span>&#123;</span><br><span class="line">	<span class="keyword">return</span> !((x &amp; (~<span class="number">0x3f</span>)) | ((x &amp; <span class="number">0x30</span>) ^ <span class="number">0x30</span>) |</span><br><span class="line">		((!!(x &amp; <span class="number">0x8</span>)) &amp; (!!((x &amp; <span class="number">0xe</span>) ^ <span class="number">0x8</span>))));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="解析-5"><a href="#解析-5" class="headerlink" title="解析"></a>解析</h3><p>经分析，有如下条件：</p>
+<ol>
+<li><p><code>x &lt;= 0x3f</code>，故有<code>x &amp; (~0x3f)</code>为0</p>
+</li>
+<li><p><code>x &gt;= 0x30</code>，故有<code>(x &amp; 0x30) ^ 0x30</code>为0</p>
+</li>
+<li><p><code>x &lt;= 0x39</code>，根据其对应二进制特征，可分为以下两类：</p>
+<ul>
+<li><p><code>0x30 &lt;= x &lt;= 0x37</code>，其特征为后4个比特为<code>0b0xxx</code>，故有<code>x &amp; 0x8</code>为0</p>
+</li>
+<li><p><code>0x38 &lt;= x &lt;= 0x39</code>，其特征为后4个比特为<code>0b100x</code>，故有<code>(x &amp; 0xe) ^ 0x8</code>为0</p>
+</li>
+</ul>
+<p> 上述两项只要有一项为0即可，故采用<code>&amp;</code>进行连接。为了保证二者均不为0时结果也不为0，使用<code>!!</code>对剩下的位数进行对齐。</p>
+</li>
+</ol>
+<h2 id="conditional"><a href="#conditional" class="headerlink" title="conditional"></a>conditional</h2><h3 id="题目-6"><a href="#题目-6" class="headerlink" title="题目"></a>题目</h3><p>描述：要求函数行为与<code>x ? y : z</code>一致。</p>
+<p>允许使用的操作符：<code>！</code> <code>~</code> <code>&amp;</code> <code>^</code> <code>|</code> <code>+</code> <code>&lt;&lt;</code> <code>&gt;&gt;</code></p>
+<p>允许使用的操作符最大数量：16</p>
+<h3 id="实现-6"><a href="#实现-6" class="headerlink" title="实现"></a>实现</h3><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">int</span> <span class="title">conditional</span><span class="params">(<span class="type">int</span> x, <span class="type">int</span> y, <span class="type">int</span> z)</span> </span>&#123;</span><br><span class="line">	x = !x;</span><br><span class="line">	x = x | (x &lt;&lt; <span class="number">1</span>);</span><br><span class="line">	x = x | (x &lt;&lt; <span class="number">2</span>);</span><br><span class="line">	x = x | (x &lt;&lt; <span class="number">4</span>);</span><br><span class="line">	x = x | (x &lt;&lt; <span class="number">8</span>);</span><br><span class="line">	x = x | (x &lt;&lt; <span class="number">16</span>);</span><br><span class="line">	<span class="keyword">return</span> ((~x) &amp; y) | (x &amp; z);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="解析-6"><a href="#解析-6" class="headerlink" title="解析"></a>解析</h3><p>做出如下<code>mask</code>，当<code>x = 0</code>时，<code>mask = 0b1[32]</code>；当<code>x != 0</code>时，<code>mask = 0b0[32]</code>。之后对输入进行<code>&amp;</code>操作即可。</p>
+<h2 id="isLessOrEqual"><a href="#isLessOrEqual" class="headerlink" title="isLessOrEqual"></a>isLessOrEqual</h2><h3 id="题目-7"><a href="#题目-7" class="headerlink" title="题目"></a>题目</h3><p>描述：判断是否有<code>x &lt;= y</code>，是则返回1，否则返回0。</p>
+<p>允许使用的操作符：<code>！</code> <code>~</code> <code>&amp;</code> <code>^</code> <code>|</code> <code>+</code> <code>&lt;&lt;</code> <code>&gt;&gt;</code></p>
+<p>允许使用的操作符最大数量：24</p>
+<h3 id="实现-7"><a href="#实现-7" class="headerlink" title="实现"></a>实现</h3><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">int</span> <span class="title">isLessOrEqual</span><span class="params">(<span class="type">int</span> x, <span class="type">int</span> y)</span> </span>&#123;</span><br><span class="line">	<span class="keyword">return</span> !((((~x) + <span class="number">1</span> + y) &amp; (<span class="number">1</span> &lt;&lt; <span class="number">31</span>)));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="解析-7"><a href="#解析-7" class="headerlink" title="解析"></a>解析</h3><p>进行如下判断：<code>(-x) + y &gt;= 0</code>。又有<code>(-x) = ~x + 0b1</code>。故进行计算后判断符号位即可。</p>
+<h2 id="logicalNeg"><a href="#logicalNeg" class="headerlink" title="logicalNeg"></a>logicalNeg</h2><h3 id="题目-8"><a href="#题目-8" class="headerlink" title="题目"></a>题目</h3><p>描述：行为应与<code>!x</code>相同。</p>
+<p>允许使用的操作符：<code>~</code> <code>&amp;</code> <code>^</code> <code>|</code> <code>+</code> <code>&lt;&lt;</code> <code>&gt;&gt;</code></p>
+<p>允许使用的操作符最大数量：12</p>
+<h3 id="实现-8"><a href="#实现-8" class="headerlink" title="实现"></a>实现</h3><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">int</span> <span class="title">logicalNeg</span><span class="params">(<span class="type">int</span> x)</span> </span>&#123;</span><br><span class="line">	x = x | (x &gt;&gt; <span class="number">1</span>);</span><br><span class="line">	x = x | (x &gt;&gt; <span class="number">2</span>);</span><br><span class="line">	x = x | (x &gt;&gt; <span class="number">4</span>);</span><br><span class="line">	x = x | (x &gt;&gt; <span class="number">8</span>);</span><br><span class="line">	x = x | (x &gt;&gt; <span class="number">16</span>);</span><br><span class="line">	<span class="keyword">return</span> (~x) &amp; <span class="number">1</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="解析-8"><a href="#解析-8" class="headerlink" title="解析"></a>解析</h3><p>制作如下<code>mask</code>：<code>x = 0</code>时，<code>mask = 0b0[32]</code>，<code>x != 0</code>时，<code>mask = 0b1[32]</code>。最后按位取反并取最后一位即可。</p>
+<h2 id="howManyBits"><a href="#howManyBits" class="headerlink" title="howManyBits"></a>howManyBits</h2><h3 id="题目-9"><a href="#题目-9" class="headerlink" title="题目"></a>题目</h3><p>描述：返回表示<code>x</code>需要的最少位数。</p>
+<p>允许使用的操作符：<code>!</code> <code>~</code> <code>&amp;</code> <code>^</code> <code>|</code> <code>+</code> <code>&lt;&lt;</code> <code>&gt;&gt;</code></p>
+<p>允许使用的操作符最大数量：90</p>
+<h3 id="实现-9"><a href="#实现-9" class="headerlink" title="实现"></a>实现</h3><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">int</span> <span class="title">howManyBits</span><span class="params">(<span class="type">int</span> x)</span> </span>&#123;</span><br><span class="line">	<span class="type">int</span> mark2;</span><br><span class="line">	<span class="type">int</span> mark4;</span><br><span class="line">	<span class="type">int</span> mark8;</span><br><span class="line">	<span class="type">int</span> mark16;</span><br><span class="line">	<span class="type">int</span> mark32;</span><br><span class="line"></span><br><span class="line">	mark2 = <span class="number">0x55</span>;</span><br><span class="line">	mark2 |= mark2 &lt;&lt; <span class="number">8</span>;</span><br><span class="line">	mark2 |= mark2 &lt;&lt; <span class="number">16</span>;</span><br><span class="line"></span><br><span class="line">	mark4 = <span class="number">0x33</span>;</span><br><span class="line">	mark4 |= mark4 &lt;&lt; <span class="number">8</span>;</span><br><span class="line">	mark4 |= mark4 &lt;&lt; <span class="number">16</span>;</span><br><span class="line"></span><br><span class="line">	mark8 = <span class="number">0xf</span>;</span><br><span class="line">	mark8 |= mark8 &lt;&lt; <span class="number">8</span>;</span><br><span class="line">	mark8 |= mark8 &lt;&lt; <span class="number">16</span>;</span><br><span class="line"></span><br><span class="line">	mark16 = <span class="number">0xff</span>;</span><br><span class="line">	mark16 |= mark16 &lt;&lt; <span class="number">16</span>;</span><br><span class="line"></span><br><span class="line">	mark32 = <span class="number">0xff</span>;</span><br><span class="line">	mark32 |= mark32 &lt;&lt; <span class="number">8</span>;</span><br><span class="line"></span><br><span class="line">	<span class="comment">// 将负数取反，正数不变</span></span><br><span class="line">	x = x ^ (x &gt;&gt; <span class="number">31</span>);</span><br><span class="line"></span><br><span class="line">	<span class="comment">// 将x转化为0b0[n]1[32-n]的形式</span></span><br><span class="line">	x = x | (x &gt;&gt; <span class="number">1</span>);</span><br><span class="line">	x = x | (x &gt;&gt; <span class="number">2</span>);</span><br><span class="line">	x = x | (x &gt;&gt; <span class="number">4</span>);</span><br><span class="line">	x = x | (x &gt;&gt; <span class="number">8</span>);</span><br><span class="line">	x = x | (x &gt;&gt; <span class="number">16</span>);</span><br><span class="line"></span><br><span class="line">	<span class="comment">// 对1的个数进行求和</span></span><br><span class="line">	x = (x &amp; mark2) + ((x &gt;&gt; <span class="number">1</span>) &amp; mark2);</span><br><span class="line">	x = (x &amp; mark4) + ((x &gt;&gt; <span class="number">2</span>) &amp; mark4);</span><br><span class="line">	x = (x &amp; mark8) + ((x &gt;&gt; <span class="number">4</span>) &amp; mark8);</span><br><span class="line">	x = (x &amp; mark16) + ((x &gt;&gt; <span class="number">8</span>) &amp; mark16);</span><br><span class="line">	x = (x &amp; mark32) + ((x &gt;&gt; <span class="number">16</span>) &amp; mark32);</span><br><span class="line"></span><br><span class="line">	<span class="comment">// 加上符号位</span></span><br><span class="line">	<span class="keyword">return</span> x + <span class="number">1</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="解析-9"><a href="#解析-9" class="headerlink" title="解析"></a>解析</h3><p>本次实验中最难的题，根据题意，其实际上是在找去除多余符号位后的整数补码表示位数。</p>
+<p>首先，为了简化情况，观察到<code>howManyBits(x) = howManyBits(~x)</code>，于是选择将负数取反。这一步中涉及一些位运算技巧：</p>
+<pre><code>1. 对0的`^`相当于取反，对1的`^`则保持原值。
+
+2. `int`的右移为算数右移，右移31位的结果相当于获得一个由符号位填充的`mask`。
+</code></pre>
+<p>之后，为了便于计算，将x转化为<code>0b0[n]1[32-n]</code>的形式（之前的负数要取反也是为了统一该步的操作）。</p>
+<p>接下来，使用<code>mask</code>和移位操作，统计x中1的个数，其过程示意图如下图：</p>
+<p><img src="/2024/08/30/1/1.bmp"></p>
+<p>将得到的x加上一位符号位获得最终结果。</p>
+<h2 id="floatScale2"><a href="#floatScale2" class="headerlink" title="floatScale2"></a>floatScale2</h2><h3 id="题目-10"><a href="#题目-10" class="headerlink" title="题目"></a>题目</h3><p>描述：返回<code>2 * x</code>的二进制表示，对于<code>INF</code>和<code>NaN</code>原样返回。</p>
+<p>允许使用的操作符：任意<code>int/unsigned</code>的算数运算符、<code>||</code>、<code>&amp;&amp;</code>运算符和<code>if</code>、<code>while</code>关键字。</p>
+<p>允许使用的操作符最大数量：30</p>
+<h3 id="实现-10"><a href="#实现-10" class="headerlink" title="实现"></a>实现</h3><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">unsigned</span> <span class="title">floatScale2</span><span class="params">(<span class="type">unsigned</span> uf)</span> </span>&#123;</span><br><span class="line">	<span class="type">unsigned</span> s = uf &gt;&gt; <span class="number">31</span>;</span><br><span class="line">	<span class="type">unsigned</span> exp = (uf &gt;&gt; <span class="number">23</span>) &amp; <span class="number">0xff</span>;</span><br><span class="line">	<span class="type">unsigned</span> frac = uf &amp; <span class="number">0x7fffff</span>;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span>(exp == <span class="number">0xff</span>) &#123;</span><br><span class="line">		<span class="keyword">return</span> uf;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span>(exp == <span class="number">0</span>) &#123;</span><br><span class="line">		frac &lt;&lt;= <span class="number">1</span>;</span><br><span class="line">	&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">		exp += <span class="number">1</span>;</span><br><span class="line"></span><br><span class="line">		<span class="keyword">if</span>(exp == <span class="number">0xff</span>) &#123;</span><br><span class="line">			frac = <span class="number">0</span>;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> (s &lt;&lt; <span class="number">31</span>) | (exp &lt;&lt; <span class="number">23</span>) | frac;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="解析-10"><a href="#解析-10" class="headerlink" title="解析"></a>解析</h3><p>根据浮点数的结构，将其拆分成<code>s</code>、<code>exp</code>和<code>frac</code>。</p>
+<ol>
+<li><p>对于<code>NaN</code>和<code>INF</code>，直接返回原数据。</p>
+</li>
+<li><p>对于非规格化数，将<code>frac</code>右移一位即可。注意，此时非规格化数可能会转化成规格化数，但转化后的结果为<code>exp = 1</code>和<code>frac &amp; ~0x800000</code>，在组装成为浮点数后的结果与直接进行组装相同，故不需要进行特殊处理。</p>
+</li>
+<li><p>对于规格化数，需要将<code>exp</code>加1。但在操作后有可能导致溢出，故需要将<code>frac</code>置0，将结果设为<code>INF</code>而不是<code>NaN</code>。</p>
+</li>
+</ol>
+<h2 id="floatFloat2Int"><a href="#floatFloat2Int" class="headerlink" title="floatFloat2Int"></a>floatFloat2Int</h2><h3 id="题目-11"><a href="#题目-11" class="headerlink" title="题目"></a>题目</h3><p>描述：返回<code>(int)x</code>的返回值，对于<code>INF</code>和<code>NaN</code>和溢出值返回<code>0x80000000</code>。</p>
+<p>允许使用的操作符：任意<code>int/unsigned</code>的算数运算符、<code>||</code>、<code>&amp;&amp;</code>运算符和<code>if</code>、<code>while</code>关键字。</p>
+<p>允许使用的操作符最大数量：30</p>
+<h3 id="实现-11"><a href="#实现-11" class="headerlink" title="实现"></a>实现</h3><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">int</span> <span class="title">floatFloat2Int</span><span class="params">(<span class="type">unsigned</span> uf)</span> </span>&#123;</span><br><span class="line">	<span class="type">unsigned</span> s = uf &gt;&gt; <span class="number">31</span>;</span><br><span class="line">	<span class="type">unsigned</span> exp = (uf &gt;&gt; <span class="number">23</span>) &amp; <span class="number">0xff</span>;</span><br><span class="line">	<span class="type">unsigned</span> frac = uf &amp; <span class="number">0x7fffff</span>;</span><br><span class="line"></span><br><span class="line">	frac |= <span class="number">0x800000</span>;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span>(exp &lt;= <span class="number">0x96</span>) &#123;</span><br><span class="line">		<span class="keyword">if</span>(exp &lt; <span class="number">0x7f</span>) &#123;</span><br><span class="line">			<span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">		frac &gt;&gt;= <span class="number">0x96</span> - exp;</span><br><span class="line">	&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">		<span class="keyword">if</span>(exp &gt;= <span class="number">0x9e</span>) &#123;</span><br><span class="line">			<span class="keyword">return</span> <span class="number">0x80000000</span>;</span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">		frac &lt;&lt;= exp - <span class="number">0x96</span>;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> s ? (~frac) + <span class="number">1</span> : frac;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="解析-11"><a href="#解析-11" class="headerlink" title="解析"></a>解析</h3><p>根据浮点数的结构，将其拆分成<code>s</code>、<code>exp</code>和<code>frac</code>。</p>
+<ol>
+<li><p>对于<code>INF</code>和<code>NaN</code>，直接返回<code>0x80000000</code>。</p>
+</li>
+<li><p>对于非规格化数，直接返回<code>0</code>。</p>
+</li>
+<li><p>对于规格化数，需要现根据<code>exp</code>判断其是否溢出或为0。注意，由于我们将目前的计算视为正数，故原则上需要特别<code>INT_MIN</code>，但应为本次溢出返回值即为<code>INT_MIN</code>，因此可以两者进行合并处理，只要发生正数溢出便返回<code>INT_MIN</code>。</p>
+</li>
+<li><p>根据符号位将其转化成为补码。</p>
+</li>
+</ol>
+<blockquote>
+<p>代码中各个数值的出现的原因：</p>
+<ol>
+<li><p>0x7f：即加上偏置值后<code>exp</code>实际为0时的<code>exp</code>值。若<code>exp</code>小于该值，则该浮点数不存在整数部分。</p>
+</li>
+<li><p>0x96：因为在取<code>frac</code>的时候是整数形式，因此实际上暗中给其加上了一层偏置，大小为<code>frac</code>小数部分位数<code>23</code>。故有<code>0x7f + 0x17 = 0x96</code>。若<code>exp</code>小于该值，则<code>frac</code>需要右移，否则需要左移。</p>
+</li>
+<li><p>0x9e：对于规格化整数，在其<code>frac</code>中的整数部分的1到达符号位时发生溢出，此时右移位数为31。固有<code>0x7f + 0x1f = 0x9e</code>。若<code>exp</code>小于该值，则规格化数不会溢出，否则发生溢出。</p>
+</li>
+</ol>
+</blockquote>
+<h2 id="floatFloat2Int-1"><a href="#floatFloat2Int-1" class="headerlink" title="floatFloat2Int"></a>floatFloat2Int</h2><h3 id="题目-12"><a href="#题目-12" class="headerlink" title="题目"></a>题目</h3><p>描述：返回<code>2.0 ^ x</code>的二进制表示，如果结果过大则返回<code>+INF</code></p>
+<p>允许使用的操作符：任意<code>int/unsigned</code>的算数运算符、<code>||</code>、<code>&amp;&amp;</code>运算符和<code>if</code>、<code>while</code>关键字。</p>
+<p>允许使用的操作符最大数量：30</p>
+<h3 id="实现-12"><a href="#实现-12" class="headerlink" title="实现"></a>实现</h3><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">unsigned</span> <span class="title">floatPower2</span><span class="params">(<span class="type">int</span> x)</span> </span>&#123;</span><br><span class="line">	<span class="keyword">if</span>(x &gt;= <span class="number">128</span>) &#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="number">0x7f800000</span>;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span>(x &gt; <span class="number">-127</span>) &#123;</span><br><span class="line">		<span class="keyword">return</span> (<span class="number">0x7f</span> + x) &lt;&lt; <span class="number">23</span>;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span>(x &lt; <span class="number">-150</span>) &#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> <span class="number">0x800000</span> &gt;&gt; (-x - <span class="number">126</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="解析-12"><a href="#解析-12" class="headerlink" title="解析"></a>解析</h3><ol>
+<li><p>当<code>x</code>大于等于128时，超过浮点数最大值，发生溢出，返回<code>+INF</code>。</p>
+</li>
+<li><p>当<code>x</code>大于-127小于128时，是规格化数，只需要处理<code>exp</code>部分。</p>
+</li>
+<li><p>当<code>x</code>小于-150时（-150 &#x3D; -127 + -23），超出浮点数精度，返回0。</p>
+</li>
+<li><p>否则，为非规格化数，只需要处理<code>frac</code>部分。</p>
+</li>
+</ol>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
     <link itemprop="mainEntityOfPage" href="http://example.com/2024/08/24/1/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -840,12 +1067,12 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">38</span>
+          <span class="site-state-item-count">39</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
       <div class="site-state-item site-state-tags">
-        <span class="site-state-item-count">24</span>
+        <span class="site-state-item-count">25</span>
         <span class="site-state-item-name">tags</span>
       </div>
   </nav>

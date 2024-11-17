@@ -145,6 +145,79 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2024/11/17/0/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Loujuch">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Code Bank">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2024/11/17/0/" class="post-title-link" itemprop="url">WSL任何操作都报错（退出代码 1603，错误码：Wsl/CallMsi/Install/ERROR_INSTALL_FAILURE）</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+              
+
+              <time title="Created: 2024-11-17 18:35:53 / Modified: 18:51:05" itemprop="dateCreated datePublished" datetime="2024-11-17T18:35:53+08:00">2024-11-17</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="具体错误信息"><a href="#具体错误信息" class="headerlink" title="具体错误信息"></a>具体错误信息</h2><p>在<code>PowerShell</code>中运行<code>wsl</code>命令：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">WSL 正在完成升级...</span><br><span class="line">Warning 1946.Property &#x27;System.AppUserModel.ID&#x27; for shortcut &#x27;WSL.lnk&#x27; could not be set.</span><br><span class="line">Warning 1946.Property &#x27;System.AppUserModel.ToastActivatorCLSID&#x27; for shortcut &#x27;WSL.lnk&#x27; could not be set.</span><br><span class="line">Could not write value  to key \SOFTWARE\Classes\Directory\shell\WSL.   Verify that you have sufficient access to that key, or contact your support personnel.</span><br><span class="line">更新失败(退出代码: 1603)。</span><br><span class="line">Error code: Wsl/CallMsi/Install/ERROR_INSTALL_FAILURE</span><br></pre></td></tr></table></figure>
+
+<h2 id="解决方法"><a href="#解决方法" class="headerlink" title="解决方法"></a>解决方法</h2><ol>
+<li><p>开启依赖项：</p>
+<p> 在管理员权限的<code>PowerShell</code>，运行：</p>
+ <figure class="highlight ps1"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">dism.exe /online /<span class="built_in">enable-feature</span> /featurename:VirtualMachinePlatform /all /norestart</span><br><span class="line"><span class="built_in">Enable-WindowsOptionalFeature</span> <span class="literal">-Online</span> <span class="literal">-FeatureName</span> VirtualMachinePlatform <span class="literal">-NoRestart</span></span><br></pre></td></tr></table></figure>
+
+<p> 重启<code>Windows 10</code>。</p>
+</li>
+<li><p>修改注册表：</p>
+<p> 键入<code>win+r</code>，打开<code>运行</code>面板，输入<code>regedit</code>，打开注册表编辑器。</p>
+<p> 在注册表编辑器中将下述键重命名（最好操作前进行备份）：</p>
+ <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 将下列键</span></span><br><span class="line">计算机\HKEY_LOCAL_MACHINE\SOFTWARE\Classes\Drive\shell\WSL</span><br><span class="line">计算机\HKEY_LOCAL_MACHINE\SOFTWARE\Classes\Directory\background\shell\WSL</span><br><span class="line">计算机\HKEY_LOCAL_MACHINE\SOFTWARE\Classes\Directory\shell\WSL</span><br><span class="line"></span><br><span class="line"><span class="comment">// 重命名为</span></span><br><span class="line">计算机\HKEY_LOCAL_MACHINE\SOFTWARE\Classes\Drive\shell\WSL_bak</span><br><span class="line">计算机\HKEY_LOCAL_MACHINE\SOFTWARE\Classes\Directory\background\shell\WSL_bak</span><br><span class="line">计算机\HKEY_LOCAL_MACHINE\SOFTWARE\Classes\Directory\shell\WSL_bak</span><br></pre></td></tr></table></figure></li>
+</ol>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
     <link itemprop="mainEntityOfPage" href="http://example.com/2024/11/11/2/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -484,7 +557,7 @@
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2024-11-11 23:30:35" itemprop="dateModified" datetime="2024-11-11T23:30:35+08:00">2024-11-11</time>
+                <time title="Modified: 2024-11-13 22:55:52" itemprop="dateModified" datetime="2024-11-13T22:55:52+08:00">2024-11-13</time>
               </span>
 
           
@@ -666,7 +739,8 @@
 </li>
 </ol>
 <p>目前主流计算机系统普遍采用回写法作为内存修改方法，下面的全部讨论均以此为基础。</p>
-<h3 id="情况4-冗余的代价——多控制流下的Cache同步"><a href="#情况4-冗余的代价——多控制流下的Cache同步" class="headerlink" title="情况4: 冗余的代价——多控制流下的Cache同步"></a>情况4: 冗余的代价——多控制流下的Cache同步</h3><h4 id="改进措施-3"><a href="#改进措施-3" class="headerlink" title="改进措施"></a>改进措施</h4><p>目前计算机系统通常将Cache分为3层——L1、L2和L3，其中L1离CPU最近，L3最远。这3层的情况如下：</p>
+<h3 id="情况4-冗余的代价——多控制流下的Cache同步"><a href="#情况4-冗余的代价——多控制流下的Cache同步" class="headerlink" title="情况4: 冗余的代价——多控制流下的Cache同步"></a>情况4: 冗余的代价——多控制流下的Cache同步</h3><h4 id="改进措施-3"><a href="#改进措施-3" class="headerlink" title="改进措施"></a>改进措施</h4><p>通过在具有Cache的单核系统中引入多核——或者说在多核系统中加入Cache，我们可以进一步的提升性能。</p>
+<p>为了更好的提高Cache的并发能力，Cache将被分为3层——L1、L2和L3，其中L1离CPU最近，L3最远。这3层的情况如下：</p>
 <ol>
 <li><p>L3在三层中最大，内部存储内存的数据子集，通常情况下由所有CPU共享。</p>
 </li>
@@ -675,7 +749,29 @@
 <li><p>L1最小，内部存储L2的数据子集，每个CPU核心都有自己的L1，并且在L1中会分为指令缓存和数据缓存。</p>
 </li>
 </ol>
-<h3 id="情况5-更极致地性能追求——指令乱序"><a href="#情况5-更极致地性能追求——指令乱序" class="headerlink" title="情况5: 更极致地性能追求——指令乱序"></a>情况5: 更极致地性能追求——指令乱序</h3>
+<p><img src="/2024/11/06/0/10.png"></p>
+<h4 id="引入的新问题-2"><a href="#引入的新问题-2" class="headerlink" title="引入的新问题"></a>引入的新问题</h4><p>多处理器下Cache的引入会造成较为严重的并发问题，主要可以总结为以下两个方面：</p>
+<ol>
+<li><p>对共享部分（L3 Cache）的并发读写问题，这影响了操作的原子性。</p>
+</li>
+<li><p>各个独享部分的数据不一致问题，这影响了操作的可见性。</p>
+</li>
+</ol>
+<h4 id="问题的解决-2"><a href="#问题的解决-2" class="headerlink" title="问题的解决"></a>问题的解决</h4><p>参照并发内存读写的解决方法，可以使用缓存锁对共享的缓存进行锁定。当访问的内存区域已经缓存在处理器的缓存行中时，处理单元对缓存中的缓存行进行锁定。在锁定期间，其它单元不能同时缓存此数据。通过该方式，能够保证缓存修改操作的原子性。</p>
+<blockquote>
+<p>缓存锁与总线锁十分相似，其都是通过阻塞并发处理操作的方式将目标操作序列化的。</p>
+<p>在锁定范围大小方面，总线锁锁住整个处理器的总线，使得其他处理单元完全无法访问共享资源；缓存锁仅锁住目标缓存行，各处理器仍然能访问独占Cache和未被锁定的缓存行。因此，在使用缓存锁时，其他处理单元能够访问更大范围的数据，其对系统性能影响更小。</p>
+<p>因此，通常系统会更希望使用缓存锁而不是总线锁，但在许多情况下，只能使用总线锁而不能使用缓存锁，例如：</p>
+<ol>
+<li><p>访问的内存不在Cache当中。</p>
+</li>
+<li><p>访问的数据跨行了，其数据不完全在同一个缓存行中。</p>
+</li>
+</ol>
+</blockquote>
+<p>缓存锁只能保证缓存修改操作的原子性，但无法处理核间Cache数据同步，因此其实际上并没有解决可见性问题。为了解决这种情况下的可见性问题，缓存一致性协议被提出。</p>
+<p>缓存一致性协议用于保证多核情况下的并发操作的一致性，常见的有MSI、MESI、MOSI等。其中MESI应用较为广泛，下面将对其进行介绍</p>
+<h4 id="MESI缓存一致性协议"><a href="#MESI缓存一致性协议" class="headerlink" title="MESI缓存一致性协议"></a>MESI缓存一致性协议</h4><h3 id="情况5-更极致地性能追求——指令乱序"><a href="#情况5-更极致地性能追求——指令乱序" class="headerlink" title="情况5: 更极致地性能追求——指令乱序"></a>情况5: 更极致地性能追求——指令乱序</h3>
       
     </div>
 
@@ -1316,77 +1412,6 @@
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2024/11/03/1/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="Loujuch">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Code Bank">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2024/11/03/1/" class="post-title-link" itemprop="url">关于GStreamer未关闭Pipeline流输出导致的内存泄露</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">Posted on</span>
-              
-
-              <time title="Created: 2024-11-03 17:30:04 / Modified: 17:43:02" itemprop="dateCreated datePublished" datetime="2024-11-03T17:30:04+08:00">2024-11-03</time>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h2 id="GStreamer引用计数查看方法"><a href="#GStreamer引用计数查看方法" class="headerlink" title="GStreamer引用计数查看方法"></a>GStreamer引用计数查看方法</h2><p>GStreamer提供了<code>GST_OBJECT_REFCOUNT_VALUE</code>宏用于查询引用计数，其要求输入一个<code>GstElement*</code>类型的变量，并返回<code>gint</code>类型的该变量引用计数值。</p>
-<p>注意，当输入变量未被分配或已释放（输入变量的引用计数降为0）时，该宏的行为未定义。</p>
-<h2 id="Pipeline释放前未设置状态为NULL时可能导致的内存泄露"><a href="#Pipeline释放前未设置状态为NULL时可能导致的内存泄露" class="headerlink" title="Pipeline释放前未设置状态为NULL时可能导致的内存泄露"></a>Pipeline释放前未设置状态为NULL时可能导致的内存泄露</h2><p>当Pipeline释放前未设置状态为NULL时，其具有许多外部的引用计数，此时即使将其<code>unref</code>，也不会使得管道被释放，这将可能导致内存泄露。</p>
-<p>使用如下代码进行测试：</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;gst/gst.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function">gboolean <span class="title">stop</span><span class="params">(gpointer data)</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">(<span class="type">int</span> argc, <span class="type">char</span>* argv[])</span> </span>&#123;</span><br><span class="line">	<span class="built_in">gst_init</span>(&amp;argc, &amp;argv);</span><br><span class="line"></span><br><span class="line">	GstElement* pipeline = <span class="built_in">gst_parse_launch</span>(<span class="string">&quot;playbin uri=https://gstreamer.freedesktop.org/data/media/sintel_trailer-480p.webm&quot;</span>, <span class="literal">NULL</span>);</span><br><span class="line">	GMainLoop* main_loop = <span class="built_in">g_main_loop_new</span>(<span class="literal">NULL</span>, FALSE);</span><br><span class="line"></span><br><span class="line">	<span class="built_in">g_timeout_add</span>(<span class="number">5000</span>, stop, main_loop);</span><br><span class="line"></span><br><span class="line">	<span class="built_in">g_print</span>(<span class="string">&quot;pipeline ref on a: %d\n&quot;</span>, <span class="built_in">GST_OBJECT_REFCOUNT_VALUE</span>(pipeline));</span><br><span class="line"></span><br><span class="line">	<span class="built_in">gst_element_set_state</span>(pipeline, GST_STATE_PLAYING);</span><br><span class="line">	<span class="built_in">g_print</span>(<span class="string">&quot;pipeline ref on b: %d\n&quot;</span>, <span class="built_in">GST_OBJECT_REFCOUNT_VALUE</span>(pipeline));</span><br><span class="line">	<span class="built_in">g_main_loop_run</span>(main_loop);</span><br><span class="line">	<span class="built_in">g_print</span>(<span class="string">&quot;pipeline ref on c: %d\n&quot;</span>, <span class="built_in">GST_OBJECT_REFCOUNT_VALUE</span>(pipeline));</span><br><span class="line"></span><br><span class="line">	<span class="comment">//gst_element_set_state(pipeline, GST_STATE_NULL);</span></span><br><span class="line">	<span class="built_in">g_print</span>(<span class="string">&quot;pipeline ref on d: %d\n&quot;</span>, <span class="built_in">GST_OBJECT_REFCOUNT_VALUE</span>(pipeline));</span><br><span class="line"></span><br><span class="line">	<span class="built_in">gst_object_unref</span>(pipeline);</span><br><span class="line">	<span class="built_in">g_print</span>(<span class="string">&quot;pipeline ref on e: %d\n&quot;</span>, <span class="built_in">GST_OBJECT_REFCOUNT_VALUE</span>(pipeline));</span><br><span class="line">	<span class="built_in">g_main_loop_unref</span>(main_loop);</span><br><span class="line">	<span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function">gboolean <span class="title">stop</span><span class="params">(gpointer data)</span> </span>&#123;</span><br><span class="line">	GMainLoop* loop = (GMainLoop*)data;</span><br><span class="line">	<span class="built_in">g_print</span>(<span class="string">&quot;STOP\n&quot;</span>);</span><br><span class="line">	<span class="built_in">g_main_loop_quit</span>(loop);</span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> FALSE;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>运行后，控制台打印结果为：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">pipeline ref on a: 1</span><br><span class="line">pipeline ref on b: 3</span><br><span class="line">STOP</span><br><span class="line">pipeline ref on c: 7</span><br><span class="line">pipeline ref on d: 7</span><br><span class="line">pipeline ref on e: 6</span><br></pre></td></tr></table></figure>
-
-<p>当正确设置状态为NULL时可避免该问题：</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">pipeline ref on a: <span class="number">1</span></span><br><span class="line">pipeline ref on b: <span class="number">3</span></span><br><span class="line">STOP</span><br><span class="line">pipeline ref on c: <span class="number">7</span></span><br><span class="line">pipeline ref on d: <span class="number">1</span></span><br></pre></td></tr></table></figure>
-
-<p>运行后，控制台打印结果为：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">pipeline ref on a: 1</span><br><span class="line">pipeline ref on b: 3</span><br><span class="line">STOP</span><br><span class="line">pipeline ref on c: 7</span><br><span class="line">pipeline ref on d: 1</span><br></pre></td></tr></table></figure>
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
@@ -1456,12 +1481,12 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">38</span>
+          <span class="site-state-item-count">39</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
       <div class="site-state-item site-state-tags">
-        <span class="site-state-item-count">24</span>
+        <span class="site-state-item-count">25</span>
         <span class="site-state-item-name">tags</span>
       </div>
   </nav>
