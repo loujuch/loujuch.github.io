@@ -81,7 +81,7 @@
     <header class="header" itemscope itemtype="http://schema.org/WPHeader">
       <div class="header-inner"><div class="site-brand-container">
   <div class="site-nav-toggle">
-    <div class="toggle" aria-label="Toggle navigation bar">
+    <div class="toggle" aria-label="تشغيل شريط التصفح">
       <span class="toggle-line toggle-line-first"></span>
       <span class="toggle-line toggle-line-middle"></span>
       <span class="toggle-line toggle-line-last"></span>
@@ -115,7 +115,7 @@
   </li>
         <li class="menu-item menu-item-archives">
 
-    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>Archives</a>
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>الأرشيفات</a>
 
   </li>
   </ul>
@@ -145,6 +145,256 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2024/12/03/0/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Loujuch">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Code Bank">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2024/12/03/0/" class="post-title-link" itemprop="url">Linux Socket TCP Connect概述</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">نُشر في</span>
+              
+
+              <time title="أُنشأ: 2024-12-03 20:05:44 / عُدل: 21:17:24" itemprop="dateCreated datePublished" datetime="2024-12-03T20:05:44+08:00">2024-12-03</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h2><p>在使用Linux的Socket进行TCP连接时，需要使用Connect进行3次握手以完成连接。其函数原型如下：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;sys/socket.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">connect</span><span class="params">(<span class="type">int</span> sockfd, <span class="type">const</span> <span class="keyword">struct</span> sockaddr *addr, <span class="type">socklen_t</span> addrlen)</span></span>;</span><br></pre></td></tr></table></figure>
+
+<h2 id="阻塞状态"><a href="#阻塞状态" class="headerlink" title="阻塞状态"></a>阻塞状态</h2><p>当socket处于阻塞状态时，调用Connect将进入阻塞状态，自到三次握手成功或连接失败。</p>
+<p>Socket判断连接失败的方式是设置单次握手的超时时间+设置允许超时的次数，Linux通常情况下超时时间呈2的指数次方增长，超时次数设为6次，可以使用<code>sysctl net.ipv4.tcp_syn_retries</code>查看允许超时次数。因此当连接失败时需要等待<code>1s + 2s + 4s + 8s + 16s + 32s + 64s = 127s</code>。该时间明显过长。</p>
+<p>当connect连接成功时，将会返回0；当连接失败是，返回-1并设置errno。</p>
+<h2 id="非阻塞状态"><a href="#非阻塞状态" class="headerlink" title="非阻塞状态"></a>非阻塞状态</h2><p>当socket处于阻塞状态时，调用Connect将立即返回，同时尝试进行三次握手，这使得程序能够在进行握手的同时异步的进行其他事务的处理。</p>
+<p>通常情况下，当连接目标非本机时，将会立即返回-1，并设置<code>errno</code>为<code>EINPROGRESS</code>；当连接目标为本机时，立即能够获得连接结果并进行处理。</p>
+<p>当进入异步连接状态时，可以通过判断soeket描述符是否可写来判断是否完成连接处理判断。这可以使用<code>select</code>等方式进行处理。</p>
+<p>当判断连接完成时，还需要判断连接是否成功。通常情况下，可以通过将<code>getsockopt</code>获取soeket描述符上的错误。</p>
+<p>一个简单的非阻塞socket connect demo如下：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">int</span> <span class="title">socket_connect</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">while</span>(<span class="literal">true</span>) &#123;</span><br><span class="line">        <span class="type">int</span> sock = <span class="built_in">socket</span>(AF_INET, SOCK_STREAM, <span class="number">0</span>);</span><br><span class="line">        <span class="built_in">assert</span>(<span class="number">-1</span> != sock);</span><br><span class="line"></span><br><span class="line">        <span class="type">int</span> flag=<span class="built_in">fcntl</span>(sock, F_GETFL);</span><br><span class="line">        <span class="built_in">assert</span>(<span class="number">-1</span> != flag);</span><br><span class="line">        flag = <span class="built_in">fcntl</span>(fd,F_SETFL,flag | O_NONBLOCK);</span><br><span class="line">        <span class="built_in">assert</span>(<span class="number">-1</span> != flag);</span><br><span class="line">        </span><br><span class="line">        <span class="keyword">struct</span> <span class="title class_">sockaddr_in</span> addr;</span><br><span class="line">        <span class="type">socklen_t</span> addrlen;</span><br><span class="line"></span><br><span class="line">        <span class="built_in">bzero</span>(&amp;addr, <span class="built_in">sizeof</span>(addr));</span><br><span class="line">        addr.sin_family=AF_INET;</span><br><span class="line">        addr.sin_port=<span class="built_in">htons</span>(<span class="built_in">atoi</span>(port));</span><br><span class="line">        flag = <span class="built_in">inet_pton</span>(AF_INET,ip,&amp;addr.sin_addr.s_addr);</span><br><span class="line">        <span class="built_in">assert</span>(<span class="number">-1</span> != flag);</span><br><span class="line"></span><br><span class="line">        <span class="type">int</span> ret = <span class="built_in">connect</span>(sock, (<span class="keyword">struct</span> sockaddr *)&amp;addr, <span class="built_in">sizeof</span>(addr));</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span>(<span class="number">0</span> == ret) &#123;</span><br><span class="line">            <span class="keyword">return</span> sock;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span>(errno != EINPROGRESS) &#123;</span><br><span class="line">            <span class="built_in">close</span>(sock);</span><br><span class="line">            <span class="keyword">continue</span>;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        fd_set writefds;</span><br><span class="line">        <span class="keyword">struct</span> <span class="title class_">timeval</span> timeout;</span><br><span class="line"></span><br><span class="line">        timeout.tv_sec = s;</span><br><span class="line">        timeout.tv_usec = us;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">while</span>(<span class="literal">true</span>) &#123;</span><br><span class="line">            <span class="built_in">FD_ZERO</span>(&amp;writefds);</span><br><span class="line">            <span class="built_in">FD_SET</span>(sock, &amp;writefds);</span><br><span class="line"></span><br><span class="line">            <span class="type">int</span> ret = <span class="built_in">select</span>(sock + <span class="number">1</span>, <span class="literal">NULL</span>, &amp;writefds, <span class="literal">NULL</span>, &amp;timeout);</span><br><span class="line"></span><br><span class="line">            <span class="keyword">if</span>(<span class="number">0</span> == ret) &#123;</span><br><span class="line">                <span class="built_in">onTimeout</span>();</span><br><span class="line">            &#125; <span class="keyword">else</span> <span class="keyword">if</span>(<span class="number">-1</span> == ret) &#123;</span><br><span class="line">                <span class="keyword">if</span>(EINTR == errno) &#123;</span><br><span class="line">                    <span class="built_in">onTimeout</span>();</span><br><span class="line">                &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                    <span class="built_in">close</span>(sock);</span><br><span class="line">                    <span class="keyword">break</span>;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125; <span class="keyword">else</span> <span class="keyword">if</span>(<span class="number">1</span> == ret) &#123;</span><br><span class="line">                <span class="keyword">if</span>(!<span class="built_in">FD_ISSET</span>(sock, &amp;writefds)) &#123;</span><br><span class="line">                    <span class="built_in">close</span>(sock);</span><br><span class="line">                    <span class="keyword">break</span>;</span><br><span class="line">                &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                    <span class="type">int</span> error = <span class="number">0</span>;</span><br><span class="line">                    <span class="type">socklen_t</span> length=<span class="built_in">sizeof</span>(error);</span><br><span class="line">                    ret = <span class="built_in">getsockopt</span>(sock, SOL_SOCKET, SO_ERROR, &amp;error, &amp;length);</span><br><span class="line">                    <span class="keyword">if</span>(<span class="number">-1</span> == ret || <span class="number">0</span> != error) &#123;</span><br><span class="line">                        <span class="built_in">close</span>(sock);</span><br><span class="line">                        <span class="keyword">break</span>;</span><br><span class="line">                    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                        <span class="keyword">return</span> sock;</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                <span class="built_in">close</span>(sock);</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2024/12/01/0/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Loujuch">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Code Bank">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2024/12/01/0/" class="post-title-link" itemprop="url">Debian重装后设置</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">نُشر في</span>
+
+              <time title="أُنشأ: 2024-12-01 14:06:54" itemprop="dateCreated datePublished" datetime="2024-12-01T14:06:54+08:00">2024-12-01</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">عُدل في</span>
+                <time title="عُدل: 2024-12-03 21:07:52" itemprop="dateModified" datetime="2024-12-03T21:07:52+08:00">2024-12-03</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="为当前用户添加sudo权限"><a href="#为当前用户添加sudo权限" class="headerlink" title="为当前用户添加sudo权限"></a>为当前用户添加sudo权限</h2><p>在<code>root</code>下编辑<code>/etc/sudoers</code>文件，在文件末尾追加，其中&lt;user&gt;表示要添加用户的标识符：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;user&gt;     ALL=(ALL:ALL) ALL</span><br></pre></td></tr></table></figure>
+
+<h2 id="修改apt下载镜像"><a href="#修改apt下载镜像" class="headerlink" title="修改apt下载镜像"></a>修改apt下载镜像</h2><p>修改<code>/etc/apt/sources.list</code>文件，将其改为如下内容：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">deb https://mirrors.aliyun.com/debian/ bookworm main non-free non-free-firmware contrib</span><br><span class="line">deb-src https://mirrors.aliyun.com/debian/ bookworm main non-free non-free-firmware contrib</span><br><span class="line"></span><br><span class="line">deb https://mirrors.aliyun.com/debian-security/ bookworm-security main</span><br><span class="line">deb-src https://mirrors.aliyun.com/debian-security/ bookworm-security main</span><br><span class="line"></span><br><span class="line">deb https://mirrors.aliyun.com/debian/ bookworm-updates main non-free non-free-firmware contrib</span><br><span class="line">deb-src https://mirrors.aliyun.com/debian/ bookworm-updates main non-free non-free-firmware contrib</span><br><span class="line"></span><br><span class="line">deb https://mirrors.aliyun.com/debian/ bookworm-backports main non-free non-free-firmware contrib</span><br><span class="line">deb-src https://mirrors.aliyun.com/debian/ bookworm-backports main non-free non-free-firmware contrib</span><br></pre></td></tr></table></figure>
+
+<p>运行<code>sudo apt update</code>刷新缓存。</p>
+<h2 id="修改系统语言为中文并添加中文输入法"><a href="#修改系统语言为中文并添加中文输入法" class="headerlink" title="修改系统语言为中文并添加中文输入法"></a>修改系统语言为中文并添加中文输入法</h2><p>运行<code>sudo dpkg-reconfigure locales</code>命令，并选择<code>zh_CN.UTF-8</code>作为默认区域设置。</p>
+<p>运行如下命令：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">sudo</span> apt-get install ibus ibus-clutter ibus-gtk ibus-gtk3 ibus-qt4 -y</span><br><span class="line"></span><br><span class="line"><span class="built_in">sudo</span> apt install ibus-libpinyin -y</span><br></pre></td></tr></table></figure>
+
+<p>重启后在设置中设置中文输入：</p>
+<p><img src="/2024/12/01/0/image.png"></p>
+<h2 id="安装相关应用"><a href="#安装相关应用" class="headerlink" title="安装相关应用"></a>安装相关应用</h2><p>运行如下命令：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">sudo</span> apt install build-essential manpages-dev git cmake make vim gdb adb valgrind -y</span><br><span class="line"></span><br><span class="line">wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb </span><br><span class="line"><span class="built_in">sudo</span> apt install ./google-chrome-stable_current_amd64.deb</span><br><span class="line"></span><br><span class="line">wget -q https://packages.microsoft.com/keys/microsoft.asc -O- | <span class="built_in">sudo</span> apt-key add -</span><br><span class="line"><span class="built_in">sudo</span> apt install software-properties-common apt-transport-https wget</span><br><span class="line"><span class="built_in">sudo</span> add-apt-repository <span class="string">&quot;deb [arch=amd64] https://packages.microsoft.com/repos/vscode stable main&quot;</span></span><br><span class="line"><span class="built_in">sudo</span> apt update </span><br><span class="line"><span class="built_in">sudo</span> apt install code</span><br></pre></td></tr></table></figure>
+
+<h2 id="挂载Win共享磁盘分区"><a href="#挂载Win共享磁盘分区" class="headerlink" title="挂载Win共享磁盘分区"></a>挂载Win共享磁盘分区</h2><p>首先保证在win下创建了一个可用于共享的分区。</p>
+<p>运行如下命令，获得对应的分区UUID和目标用户的id和对应组id：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">lsblk</span><br><span class="line"><span class="built_in">id</span> &lt;user&gt;</span><br></pre></td></tr></table></figure>
+
+<p>在<code>/etc/fstab</code>下添加：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">UUID=&lt;UUID&gt; &lt;mount_point&gt; exfat defaults,utf8,uid=&lt;user_id&gt;,gid=&lt;user_group_id&gt;,dmask=022,fmask=133 0 0</span><br></pre></td></tr></table></figure>
+
+<p>于是便完成了开机自动挂载设置。</p>
+<h2 id="设置vim禁用鼠标"><a href="#设置vim禁用鼠标" class="headerlink" title="设置vim禁用鼠标"></a>设置vim禁用鼠标</h2><p>在vim中输入<code>scriptnames</code>命令查看配置文件列表，并在其中查找包含<code>set mouse</code>命令的文件，在该文件末尾添加：<code>set mouse=</code>。</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2024/11/25/0/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Loujuch">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Code Bank">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2024/11/25/0/" class="post-title-link" itemprop="url">Win10安装Debian双系统</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">نُشر في</span>
+
+              <time title="أُنشأ: 2024-11-25 22:54:42" itemprop="dateCreated datePublished" datetime="2024-11-25T22:54:42+08:00">2024-11-25</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">عُدل في</span>
+                <time title="عُدل: 2024-11-26 12:56:57" itemprop="dateModified" datetime="2024-11-26T12:56:57+08:00">2024-11-26</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="制作系统盘"><a href="#制作系统盘" class="headerlink" title="制作系统盘"></a>制作系统盘</h2><h3 id="下载镜像"><a href="#下载镜像" class="headerlink" title="下载镜像"></a>下载镜像</h3><p>在<a target="_blank" rel="noopener" href="https://www.debian.org/distrib/index.zh-cn.html">Debian官网</a>下载系统进行，推荐下载完整镜像。</p>
+<p><img src="/2024/11/25/0/0.png"></p>
+<h3 id="下载UltralSO"><a href="#下载UltralSO" class="headerlink" title="下载UltralSO"></a>下载UltralSO</h3><p>在<a target="_blank" rel="noopener" href="https://ultraiso.net/xiazai.html">UltraISO官网</a>下载安装包并进行安装。</p>
+<h3 id="制作系统镜像"><a href="#制作系统镜像" class="headerlink" title="制作系统镜像"></a>制作系统镜像</h3><p>首先插入U盘，打开UltralSO并打开下载好的系统镜像。</p>
+<p>之后点击“启动”下的“写入磁盘映像”。</p>
+<p><img src="/2024/11/25/0/1.png"></p>
+<p>最后，先进行格式化，后进行写入。写入完成后便完成系统盘制作。</p>
+<p><img src="/2024/11/25/0/3.png"></p>
+<h2 id="划分磁盘空间"><a href="#划分磁盘空间" class="headerlink" title="划分磁盘空间"></a>划分磁盘空间</h2><ol>
+<li><p>点击“Win+X”，选择磁盘管理：</p>
+<p> <img src="/2024/11/25/0/4.png"></p>
+</li>
+<li><p>右键目标磁盘，选择压缩卷：</p>
+<p> <img src="/2024/11/25/0/5.png"></p>
+</li>
+<li><p>填写压缩量，获得一块连续的未分配空间：</p>
+<p> <img src="/2024/11/25/0/6.png"></p>
+</li>
+</ol>
+<h2 id="使用系统盘安装系统"><a href="#使用系统盘安装系统" class="headerlink" title="使用系统盘安装系统"></a>使用系统盘安装系统</h2><ol>
+<li><p>在“设置-安全与更新-恢复-高级启动”处点击“立即重启”：</p>
+<p> <img src="/2024/11/25/0/2.png"></p>
+</li>
+<li><p>在重启的蓝色页面中找到从U盘启动（如果失败则进入bios关闭安全启动）。</p>
+</li>
+<li><p>之后按照系统提示操作即可。</p>
+</li>
+</ol>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
     <link itemprop="mainEntityOfPage" href="http://example.com/2024/11/17/0/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -167,10 +417,10 @@
               <span class="post-meta-item-icon">
                 <i class="fa fa-calendar-o"></i>
               </span>
-              <span class="post-meta-item-text">Posted on</span>
+              <span class="post-meta-item-text">نُشر في</span>
               
 
-              <time title="Created: 2024-11-17 18:35:53 / Modified: 18:51:05" itemprop="dateCreated datePublished" datetime="2024-11-17T18:35:53+08:00">2024-11-17</time>
+              <time title="أُنشأ: 2024-11-17 18:35:53 / عُدل: 18:51:05" itemprop="dateCreated datePublished" datetime="2024-11-17T18:35:53+08:00">2024-11-17</time>
             </span>
 
           
@@ -240,10 +490,10 @@
               <span class="post-meta-item-icon">
                 <i class="fa fa-calendar-o"></i>
               </span>
-              <span class="post-meta-item-text">Posted on</span>
+              <span class="post-meta-item-text">نُشر في</span>
               
 
-              <time title="Created: 2024-11-11 23:49:51 / Modified: 23:52:35" itemprop="dateCreated datePublished" datetime="2024-11-11T23:49:51+08:00">2024-11-11</time>
+              <time title="أُنشأ: 2024-11-11 23:49:51 / عُدل: 23:52:35" itemprop="dateCreated datePublished" datetime="2024-11-11T23:49:51+08:00">2024-11-11</time>
             </span>
 
           
@@ -323,10 +573,10 @@
               <span class="post-meta-item-icon">
                 <i class="fa fa-calendar-o"></i>
               </span>
-              <span class="post-meta-item-text">Posted on</span>
+              <span class="post-meta-item-text">نُشر في</span>
               
 
-              <time title="Created: 2024-11-11 23:39:09 / Modified: 23:54:35" itemprop="dateCreated datePublished" datetime="2024-11-11T23:39:09+08:00">2024-11-11</time>
+              <time title="أُنشأ: 2024-11-11 23:39:09 / عُدل: 23:54:35" itemprop="dateCreated datePublished" datetime="2024-11-11T23:39:09+08:00">2024-11-11</time>
             </span>
 
           
@@ -453,10 +703,10 @@
               <span class="post-meta-item-icon">
                 <i class="fa fa-calendar-o"></i>
               </span>
-              <span class="post-meta-item-text">Posted on</span>
+              <span class="post-meta-item-text">نُشر في</span>
               
 
-              <time title="Created: 2024-11-11 23:31:22 / Modified: 23:39:05" itemprop="dateCreated datePublished" datetime="2024-11-11T23:31:22+08:00">2024-11-11</time>
+              <time title="أُنشأ: 2024-11-11 23:31:22 / عُدل: 23:39:05" itemprop="dateCreated datePublished" datetime="2024-11-11T23:31:22+08:00">2024-11-11</time>
             </span>
 
           
@@ -526,270 +776,6 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2024/11/06/0/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="Loujuch">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Code Bank">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2024/11/06/0/" class="post-title-link" itemprop="url">并发编程三大特性</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">Posted on</span>
-
-              <time title="Created: 2024-11-06 22:34:49" itemprop="dateCreated datePublished" datetime="2024-11-06T22:34:49+08:00">2024-11-06</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2024-11-13 22:55:52" itemprop="dateModified" datetime="2024-11-13T22:55:52+08:00">2024-11-13</time>
-              </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h2 id="并发编程三大特性"><a href="#并发编程三大特性" class="headerlink" title="并发编程三大特性"></a>并发编程三大特性</h2><p>为了确保在多线程环境下内存操作的线程安全，通常要求操作具有如下特性：</p>
-<ol>
-<li><p>原子性：对一个或多个操作，要么全部完成执行，要么全部不完成执行，不能处于完成一半的状态。</p>
-</li>
-<li><p>可见性：在一个控制流完成操作后，要求其他控制流能够立即获得该操作的修改。</p>
-</li>
-<li><p>有序性：在一个控制流眼中，其他控制流的行为应该与其代码序一致。</p>
-</li>
-</ol>
-<h2 id="三特征的破坏和保证"><a href="#三特征的破坏和保证" class="headerlink" title="三特征的破坏和保证"></a>三特征的破坏和保证</h2><p>直觉上，并发编程三大特性是机器里说应当进行保证的。然而，为了加强性能，计算机内部做了许多优化，使得机器无法自动的的保证上述多线程环境下程序满足上述三项性质，这需要程序员手动对其的进行控制。</p>
-<p>下面将详细叙述相关优化和对应优化带来的优势、应该优化导致无法保证的特性和程序员保存对应特性的方法控制方法。</p>
-<h3 id="情况0-基础情况——单控制流独占设备"><a href="#情况0-基础情况——单控制流独占设备" class="headerlink" title="情况0: 基础情况——单控制流独占设备"></a>情况0: 基础情况——单控制流独占设备</h3><p>现在想象一个最简单的情况，在这种情况中计算机系统只允许一个控制流运行，并且直到这个控制流运行完全结束前不会被打断，也就是该控制流完全独占该机器。</p>
-<p><img src="/2024/11/06/0/0.png"></p>
-<p>这十分符合人类直觉，计算机系统也将保证该情况下的程序操作具有全部三个特性。因此可以将其视为判断标准，当多线程环境下控制流的执行结果与该情况相同，则为正确，否则则为错误。</p>
-<blockquote>
-<p>该情况其实在计算机蛮荒时期出现过，被称为单道批处理系统。</p>
-<p>其可以一次性多个作业（控制流），机器将会自动的依次串行执行作业，在上一个作业执行完毕前不会执行下一个作业。</p>
-</blockquote>
-<h3 id="情况1-中断的出现——多控制流共享设备"><a href="#情况1-中断的出现——多控制流共享设备" class="headerlink" title="情况1: 中断的出现——多控制流共享设备"></a>情况1: 中断的出现——多控制流共享设备</h3><h4 id="优化点的引入"><a href="#优化点的引入" class="headerlink" title="优化点的引入"></a>优化点的引入</h4><p>虽然情况0很符合人类直觉，但具有如下问题：</p>
-<ol>
-<li><p>资源利用率低：当与慢速设备进行交互时，当前控制流需要等待交互完成，因此处理器将处于等待状态，这将导致处理器的利用率降低。</p>
-</li>
-<li><p>响应时间长：一个作业需要等待之前的作业完成才会开始执行，因此无法保证作业的响应时间。</p>
-</li>
-</ol>
-<h4 id="改进措施"><a href="#改进措施" class="headerlink" title="改进措施"></a>改进措施</h4><p>随着硬件的发展，DMA、中断等技术的出现，使得计算机系统能够使得多个控制流轮流共享设备，这解决了上述的两个问题：</p>
-<ol>
-<li><p>当进行与慢速设备的交互或大块内存的复制等操作时，可以使用DMA机制进行数据传输，处理器则执行下一个控制流；数据传输完毕时会引发中断，通知处理器处理之前未完成的控制流。通过该方式，计算机系统极大地提高了系统的资源利用率。</p>
-</li>
-<li><p>为了降低作业的响应时间，计算机系统将设置时钟，使得每隔指定时间便能够产生中断。在接收到中断后，处理器将会更换处理的控制流，这使得提交的作业将在合理的时间内开始处理。</p>
-</li>
-</ol>
-<p><img src="/2024/11/06/0/1.png"></p>
-<blockquote>
-<p>改进后的系统被称为多道批处理系统（只进行了优化点1）和分时系统（进行了优化点1和优化点2）。</p>
-<p>这种逻辑上实现多任务、实际上进行串行执行的多任务运行方式被称为并行。</p>
-<p>本次改进是由DMA和中断技术的产生而发生的：</p>
-<ol>
-<li><p>DMA技术：在主板上引入专门用于数据传输的DMA芯片，当需要进行大规模数据传输时，处理器能够将传输任务交给DMA芯片，从而空出宝贵的处理器时间处理其他高价值任务。</p>
-</li>
-<li><p>中断技术：向计算机系统引入了异步通信方式，中断信号的发送方可能为外设或处理器，接收方则为处理器。当处理器接收到中断信号时，将会暂停当前处理的程序，并执行指定的程序。</p>
-</li>
-</ol>
-<p>在DMA和中断技术出现前，处理器只能通过轮询的方式处理数据传输和错误信号，这便是单道批处理系统出现的原因。</p>
-</blockquote>
-<h4 id="引入的新问题"><a href="#引入的新问题" class="headerlink" title="引入的新问题"></a>引入的新问题</h4><p>尽管上述改进措施能够提升计算机系统的性能，但控制流的并行处理方式打破了之前的串行处理假设，这直接导致了原子性的破坏。</p>
-<p>具体而言，该破坏包含两个层次：</p>
-<ol>
-<li><p>语句级别的破坏：在高级语言中，一条语句有时对应着数条的机器语句。例如对数据的修改语句通常会涉及<code>访存-修改-写回</code>等步骤，在这些步骤执行的过程中将有可能被中断打断，使得该条语句的操作将会失去原子性。</p>
-<p> 例如，如下C语言代码：</p>
- <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> a = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line"><span class="type">int</span> <span class="title function_">main</span><span class="params">(<span class="type">int</span> argc, <span class="type">char</span> *argv[])</span> &#123;</span><br><span class="line">    ++a;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p> 编译出的对应X64汇编语言如下（未开启编译优化并去除预处理器指令）：</p>
- <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">main:</span><br><span class="line">    pushq %rbp</span><br><span class="line">    movq  %rsp, %rbp</span><br><span class="line">    movl  %edi, -4(%rbp)</span><br><span class="line">    movq  %rsi, -16(%rbp)</span><br><span class="line">    movl  a(%rip), %eax</span><br><span class="line">    addl  $1, %eax</span><br><span class="line">    movl  %eax, a(%rip)</span><br><span class="line">    movl  $0, %eax</span><br><span class="line">    popq  %rbp</span><br><span class="line">    ret</span><br></pre></td></tr></table></figure>
-
-<p> 可以看到<code>++a;</code>语句被编译为了<code>movl  a(%rip), %eax</code>、<code>addl  $1, %eax</code>、<code>movl  %eax, a(%rip)</code>三条汇编语句，这些汇编语句在执行间可能被中断打断，因此该条C语句不具有原子性。</p>
-<p> <img src="/2024/11/06/0/2.png"></p>
-</li>
-<li><p>逻辑级别的破坏：当一个逻辑上需要多条语句原子性的执行时，语句执行间可能会被中断打断，使得该操作失去原子性。</p>
-<p> 例如，转账时逻辑上需要进行两个变量的同时修改，模拟的C语言语句如下：</p>
- <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">my_money += <span class="number">7827798</span>;</span><br><span class="line">other_person_money -= <span class="number">7827798</span>;</span><br></pre></td></tr></table></figure>
-
-<p> 此时两条语句间的执行可能会被中断打断，使得其他线程获得<code>my_money</code>增加7827798但<code>other_person_money</code>不变的结果，因此这些C语句不具有原子性。</p>
-<p> <img src="/2024/11/06/0/3.png"></p>
-</li>
-</ol>
-<h4 id="问题的解决"><a href="#问题的解决" class="headerlink" title="问题的解决"></a>问题的解决</h4><p>针对该情况，计算机硬件系统给出了两个方向的解决方案：</p>
-<ol>
-<li><p>在需要原子性的地方暂时关闭中断，这样使得该控制流不会被换出，这在物理上保证了操作的原子性。</p>
-<p> 控制流的转换依赖于中断信号的通知，通过关闭中断响应，处理器能够保证执行的操作不会被打断，保证了操作的原子性。</p>
-<p> <img src="/2024/11/06/0/4.png"></p>
-<p> 通常各种类型的处理器都会提供相应的关&#x2F;开中断机制，操作系统也会提供对应的封装。因为其平台相关性较强且在软件开发过程中几乎不会用上，故此处不再延申。</p>
-</li>
-<li><p>在每次写回时查看当前值是否被修改了，如果发生修改则重做之前的操作，这在逻辑上保证了操作的原子性。</p>
-<p> 从逻辑上来说，只要各个控制流处理在写回前保证之前的处理操作的输入未被修改，就能够保证该次处理的串行性：</p>
- <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> a = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line"><span class="type">int</span> <span class="title function_">main</span><span class="params">(<span class="type">int</span> argc, <span class="type">char</span> *argv[])</span> &#123;</span><br><span class="line">    <span class="keyword">while</span>(<span class="literal">true</span>) &#123;</span><br><span class="line">        <span class="type">int</span> tmp = a;</span><br><span class="line">        <span class="type">int</span> tmpa = tmp + <span class="number">1</span>;</span><br><span class="line">        <span class="keyword">if</span>(tmp == a) &#123;</span><br><span class="line">            a = tmpa;</span><br><span class="line">            <span class="keyword">break</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p> 很明显上述代码相比起之前更为复杂且仍然线程不安全，因此处理器通常会给出CAS原子指令，该指令类似于<code>原子性</code>的执行下列操作：</p>
- <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> <span class="title function_">CAS</span><span class="params">(<span class="type">int</span> V, <span class="type">int</span> A, <span class="type">int</span> B)</span> &#123;</span><br><span class="line">    <span class="keyword">if</span>(V == A) &#123;</span><br><span class="line">        V = B;</span><br><span class="line">        <span class="keyword">return</span> <span class="number">1</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p> 使用CAS改写后，原代码变为：</p>
- <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> a = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line"><span class="type">int</span> <span class="title function_">main</span><span class="params">(<span class="type">int</span> argc, <span class="type">char</span> *argv[])</span> &#123;</span><br><span class="line">    <span class="type">int</span> tmp;</span><br><span class="line">    <span class="keyword">do</span> &#123;</span><br><span class="line">        tmp = a;</span><br><span class="line">    &#125; <span class="keyword">while</span>(<span class="number">0</span> == CAS(a, tmp, tmp + <span class="number">1</span>));</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p> 此时，当其他控制流的操作影响了a的值时，当前控制流都能够检测出，并且根据新值重新进行处理，从逻辑上保证了操作的原子性。</p>
-<p> <img src="/2024/11/06/0/5.png"></p>
-</li>
-</ol>
-<h3 id="情况2-多个执行核心——同时运行多个控制流"><a href="#情况2-多个执行核心——同时运行多个控制流" class="headerlink" title="情况2: 多个执行核心——同时运行多个控制流"></a>情况2: 多个执行核心——同时运行多个控制流</h3><h4 id="优化点的引入-1"><a href="#优化点的引入-1" class="headerlink" title="优化点的引入"></a>优化点的引入</h4><p>在实际计算机系统中，计算的速度与时钟频率和指令完成执行所需时钟数量有关，当指令所需时钟数量一定时，时钟频率越高，计算速度越快；当时钟频率一定时，指令所需时钟数量越低，计算速度越快。</p>
-<p>但受限于物理器件和指令系统，时钟频率和指令所需时钟数量方面的提升十分困难且有限，这限制了单核处理器的性能。</p>
-<h4 id="改进措施-1"><a href="#改进措施-1" class="headerlink" title="改进措施"></a>改进措施</h4><p>基于当前多任务的处理方式，通过在处理器上添加多个相互独立的处理单元，计算机系统能够同时运行多个任务（控制流），这极大地提高了计算机系统的处理能力。</p>
-<p>这些处理单元在计算时相互独立，但共享着同一套内存、外设等。</p>
-<p><img src="/2024/11/06/0/6.png"></p>
-<blockquote>
-<p>这种在物理上同时执行多任务的运行方式被称为并发。</p>
-<p>通常情况下，在一个支持多核并发的系统中，往往也会支持并行操作。</p>
-</blockquote>
-<h4 id="引入的新问题-1"><a href="#引入的新问题-1" class="headerlink" title="引入的新问题"></a>引入的新问题</h4><p>尽管上述改进措施能够提升计算机系统的性能，但并发的控制流将有可能导致访存的冲突，同时多个处理单元内将有多个寄存器组，这导致了以下问题：</p>
-<ol>
-<li><p>共享资源的并发访问：在多个控制流同时运行时，有可能或导致在同一时刻多个控制流同时访问同一个共享资源，这破坏了操作的原子性。</p>
-<p> <img src="/2024/11/06/0/7.png"></p>
-</li>
-<li><p>冗余的数据副本：在多个处理单元中存在多组相互独立的寄存器组，这些寄存器组中可能会存在指向相同变量的数据。当其中一方修改相应数据时，另一方可能仍然使用之前存储在寄存器中的数据，这破坏了操作的可见性。</p>
-<p> 例如，如下C语言代码：</p>
- <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> a = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line"><span class="type">void</span> <span class="title function_">wait</span><span class="params">()</span> &#123;</span><br><span class="line">    <span class="keyword">while</span> (<span class="number">0</span> == a);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="type">void</span> <span class="title function_">notify</span><span class="params">()</span> &#123;</span><br><span class="line">    a = <span class="number">1</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p> 编译出的对应X64汇编语言如下（开启O1编译优化并去除预处理器指令）：</p>
- <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">_Z4waitv:</span><br><span class="line">    movl  a(%rip), %eax</span><br><span class="line">.L2:</span><br><span class="line">    testl %eax, %eax</span><br><span class="line">    je	.L2</span><br><span class="line">    ret</span><br><span class="line"></span><br><span class="line">_Z6notifyv:</span><br><span class="line">    movl $1, a(%rip)</span><br><span class="line">    ret</span><br></pre></td></tr></table></figure>
-
-<p> 当一个执行流中调用<code>notify</code>修改<code>a</code>的值时，调用<code>wait</code>的线程仍然会读取寄存器中的副本，这表明其出现了可见性的破坏。</p>
-</li>
-</ol>
-<h4 id="问题的解决-1"><a href="#问题的解决-1" class="headerlink" title="问题的解决"></a>问题的解决</h4><p>针对上述问题，计算机系统依次给出了相应的解决方案：</p>
-<ol>
-<li><p>针对并发访问冲突问题，计算机系统提供了总线锁进行解决。在总线锁定期间，处理单元将会在总线上发送LOCK信号，这将阻止其他处理单元通过总线访问资源。</p>
-<p> 总线锁的具体实现与对应的处理器平台有关，通常情况下，当一个处理单元获得总线锁后，便独占了全部共享资源。这从硬件层面解决了操作原子性的问题。</p>
-<p> <img src="/2024/11/06/0/8.png"></p>
-<p> 通常情况下总线锁通过在对应汇编语言指令前添加LOCK前缀进行获取，但在部分平台中也可能会对未显示声明的语句添加总线锁。因为其平台相关性较强且在软件开发过程中几乎不会用上，故此处不再延申。</p>
-</li>
-<li><p>针对可见性问题，该问题在当前形态下可以在编译期进行解决，C语言提供了<code>volatile</code>关键字来保证每次对变量的访问均来自内存。</p>
-<p> 例如，如下C语言代码：</p>
- <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">volatile</span> <span class="type">int</span> a = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line"><span class="type">void</span> <span class="title function_">wait</span><span class="params">()</span> &#123;</span><br><span class="line">    <span class="keyword">while</span> (<span class="number">0</span> == a);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="type">void</span> <span class="title function_">notify</span><span class="params">()</span> &#123;</span><br><span class="line">    a = <span class="number">1</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p> 编译出的对应X64汇编语言如下（开启O3编译优化并去除预处理器指令）：</p>
- <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">_Z4waitv:</span><br><span class="line">.L2:</span><br><span class="line">    movl  a(%rip), %eax</span><br><span class="line">    testl %eax, %eax</span><br><span class="line">    je	.L2</span><br><span class="line">    ret</span><br><span class="line"></span><br><span class="line">_Z6notifyv:</span><br><span class="line">    movl $1, a(%rip)</span><br><span class="line">    ret</span><br></pre></td></tr></table></figure>
-
-<p> 由汇编代码中可以看出，当访问对应变量时，控制流总会去访问对应的内存，这便解决了寄存器变量不更新导致的可见性问题。</p>
-</li>
-</ol>
-<h3 id="情况3-更快的访存——单控制流下的Cache"><a href="#情况3-更快的访存——单控制流下的Cache" class="headerlink" title="情况3: 更快的访存——单控制流下的Cache"></a>情况3: 更快的访存——单控制流下的Cache</h3><h4 id="优化点的引入-2"><a href="#优化点的引入-2" class="headerlink" title="优化点的引入"></a>优化点的引入</h4><p>本情况实际上是对情况1的优化，与情况2基本无关。</p>
-<p>在之前的构想中，处理器都是直接与内存进行交互的。随着技术的发展，处理器的速度不断加快，与内存的读写速度间的差异逐渐变大，如果每条指令和数据都需要进行访存操作，这将严重降低计算机性能。</p>
-<p>目前使用的内存基本均由DRAM组成，在使用中其表现出了如下问题：</p>
-<ol>
-<li><p>DRAM基于电容机制存储数据，使得其需要定期刷新以保持内部数据，这降低了其的信息存取速度。</p>
-</li>
-<li><p>通常而言，内存只能一次性进行有限数量的操作（具体由通道数而定），同时CPU、GPU、DMA等都存在内存访问需求，这制约了内存的并发处理能力。</p>
-</li>
-</ol>
-<p>这些问题都制约了内存的处理能力。</p>
-<h4 id="改进措施-2"><a href="#改进措施-2" class="headerlink" title="改进措施"></a>改进措施</h4><p>在对计算机程序进行统计时会发现，计算机程序的运行具有浓厚的局部性特征，这使得将当前内存的子集放置到一个更快的物理存储结构成为提高系统性能的方案，这些用于存放内存子集数据的物理存储结构被称为Cache。</p>
-<p><img src="/2024/11/06/0/9.png"></p>
-<blockquote>
-<p>局部性包含了时间局部性和空间局部性，其中时间局部性指在某个时间点访问的内存，在相邻的时间点更有可能被访问；空间局部性指在当某个地址空间被访问时，其相邻的地址空间更有可能被访问。</p>
-<p>局部性表示了循环结构在程序运行中的重要地位，同时也因为数组结构的广泛使用、局部变量在栈上连续分布等原因而出现。</p>
-<p>例如：</p>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">void</span> <span class="title function_">set</span><span class="params">(<span class="type">int</span> *num, <span class="type">unsigned</span> len, <span class="type">int</span> val)</span> &#123;</span><br><span class="line">   <span class="keyword">for</span> (<span class="type">unsigned</span> i = <span class="number">0</span>; i &lt; len; ++i) &#123; <span class="comment">// 循环结构使得指令被反复使用</span></span><br><span class="line">       num[i] = val; <span class="comment">// 数组结构和局部变量的连续排布使得相邻存储空间被使用</span></span><br><span class="line">   &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-</blockquote>
-<p>Cache进行了如下优化，使得其相对于内存而言具有更快的速度：</p>
-<ol>
-<li><p>使用基于锁存器结构的SRAM组成，这种结构在物理结构上具有更快的速度。</p>
-</li>
-<li><p>通过缓存分区、私有缓存等方式，使得Cache具有较好的并发处理能力。</p>
-</li>
-<li><p>仅有CPU占用，不涉及与其他物理元件的争用。</p>
-</li>
-<li><p>排线上更接近CPU，数据传输延时少。</p>
-</li>
-</ol>
-<h4 id="带Cache的内存写入"><a href="#带Cache的内存写入" class="headerlink" title="带Cache的内存写入"></a>带Cache的内存写入</h4><p>在该情况下，显然这不会导致并发三特性的破坏，但在该情况下如何进行数据写入方面仍具有一些值得讨论的问题。</p>
-<p>目前，在包含Cache的计算机系统中，对数据进行写入操作有两种常用方法：</p>
-<ol>
-<li><p>直写法：处理器同时修改Cache和对应内存地址的数据。</p>
-<p> 直写法需要处理器直接与内存进行交互，这将会降低系统的执行效率。</p>
-</li>
-<li><p>回写法：处理器只修改Cache的值，在对应的Cache换出时才写入对应内存。</p>
-<p> 回写法减少了处理器与内存的交互，提高了执行效率。但由于回写过程的存在，使得需要更复杂的硬件，并且存在潜在的一致性问题。</p>
-</li>
-</ol>
-<p>目前主流计算机系统普遍采用回写法作为内存修改方法，下面的全部讨论均以此为基础。</p>
-<h3 id="情况4-冗余的代价——多控制流下的Cache同步"><a href="#情况4-冗余的代价——多控制流下的Cache同步" class="headerlink" title="情况4: 冗余的代价——多控制流下的Cache同步"></a>情况4: 冗余的代价——多控制流下的Cache同步</h3><h4 id="改进措施-3"><a href="#改进措施-3" class="headerlink" title="改进措施"></a>改进措施</h4><p>通过在具有Cache的单核系统中引入多核——或者说在多核系统中加入Cache，我们可以进一步的提升性能。</p>
-<p>为了更好的提高Cache的并发能力，Cache将被分为3层——L1、L2和L3，其中L1离CPU最近，L3最远。这3层的情况如下：</p>
-<ol>
-<li><p>L3在三层中最大，内部存储内存的数据子集，通常情况下由所有CPU共享。</p>
-</li>
-<li><p>L2第二大，内部存储L3的数据子集，通常情况每个CPU核心都有自己的L2。</p>
-</li>
-<li><p>L1最小，内部存储L2的数据子集，每个CPU核心都有自己的L1，并且在L1中会分为指令缓存和数据缓存。</p>
-</li>
-</ol>
-<p><img src="/2024/11/06/0/10.png"></p>
-<h4 id="引入的新问题-2"><a href="#引入的新问题-2" class="headerlink" title="引入的新问题"></a>引入的新问题</h4><p>多处理器下Cache的引入会造成较为严重的并发问题，主要可以总结为以下两个方面：</p>
-<ol>
-<li><p>对共享部分（L3 Cache）的并发读写问题，这影响了操作的原子性。</p>
-</li>
-<li><p>各个独享部分的数据不一致问题，这影响了操作的可见性。</p>
-</li>
-</ol>
-<h4 id="问题的解决-2"><a href="#问题的解决-2" class="headerlink" title="问题的解决"></a>问题的解决</h4><p>参照并发内存读写的解决方法，可以使用缓存锁对共享的缓存进行锁定。当访问的内存区域已经缓存在处理器的缓存行中时，处理单元对缓存中的缓存行进行锁定。在锁定期间，其它单元不能同时缓存此数据。通过该方式，能够保证缓存修改操作的原子性。</p>
-<blockquote>
-<p>缓存锁与总线锁十分相似，其都是通过阻塞并发处理操作的方式将目标操作序列化的。</p>
-<p>在锁定范围大小方面，总线锁锁住整个处理器的总线，使得其他处理单元完全无法访问共享资源；缓存锁仅锁住目标缓存行，各处理器仍然能访问独占Cache和未被锁定的缓存行。因此，在使用缓存锁时，其他处理单元能够访问更大范围的数据，其对系统性能影响更小。</p>
-<p>因此，通常系统会更希望使用缓存锁而不是总线锁，但在许多情况下，只能使用总线锁而不能使用缓存锁，例如：</p>
-<ol>
-<li><p>访问的内存不在Cache当中。</p>
-</li>
-<li><p>访问的数据跨行了，其数据不完全在同一个缓存行中。</p>
-</li>
-</ol>
-</blockquote>
-<p>缓存锁只能保证缓存修改操作的原子性，但无法处理核间Cache数据同步，因此其实际上并没有解决可见性问题。为了解决这种情况下的可见性问题，缓存一致性协议被提出。</p>
-<p>缓存一致性协议用于保证多核情况下的并发操作的一致性，常见的有MSI、MESI、MOSI等。其中MESI应用较为广泛，下面将对其进行介绍</p>
-<h4 id="MESI缓存一致性协议"><a href="#MESI缓存一致性协议" class="headerlink" title="MESI缓存一致性协议"></a>MESI缓存一致性协议</h4><h3 id="情况5-更极致地性能追求——指令乱序"><a href="#情况5-更极致地性能追求——指令乱序" class="headerlink" title="情况5: 更极致地性能追求——指令乱序"></a>情况5: 更极致地性能追求——指令乱序</h3>
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
     <link itemprop="mainEntityOfPage" href="http://example.com/2024/11/04/1/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -812,16 +798,16 @@
               <span class="post-meta-item-icon">
                 <i class="fa fa-calendar-o"></i>
               </span>
-              <span class="post-meta-item-text">Posted on</span>
+              <span class="post-meta-item-text">نُشر في</span>
 
-              <time title="Created: 2024-11-04 22:27:40" itemprop="dateCreated datePublished" datetime="2024-11-04T22:27:40+08:00">2024-11-04</time>
+              <time title="أُنشأ: 2024-11-04 22:27:40" itemprop="dateCreated datePublished" datetime="2024-11-04T22:27:40+08:00">2024-11-04</time>
             </span>
               <span class="post-meta-item">
                 <span class="post-meta-item-icon">
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
-                <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2024-11-05 22:55:22" itemprop="dateModified" datetime="2024-11-05T22:55:22+08:00">2024-11-05</time>
+                <span class="post-meta-item-text">عُدل في</span>
+                <time title="عُدل: 2024-11-05 22:55:22" itemprop="dateModified" datetime="2024-11-05T22:55:22+08:00">2024-11-05</time>
               </span>
 
           
@@ -1002,10 +988,10 @@
               <span class="post-meta-item-icon">
                 <i class="fa fa-calendar-o"></i>
               </span>
-              <span class="post-meta-item-text">Posted on</span>
+              <span class="post-meta-item-text">نُشر في</span>
               
 
-              <time title="Created: 2024-11-04 22:09:02 / Modified: 22:19:39" itemprop="dateCreated datePublished" datetime="2024-11-04T22:09:02+08:00">2024-11-04</time>
+              <time title="أُنشأ: 2024-11-04 22:09:02 / عُدل: 22:19:39" itemprop="dateCreated datePublished" datetime="2024-11-04T22:09:02+08:00">2024-11-04</time>
             </span>
 
           
@@ -1061,10 +1047,10 @@
               <span class="post-meta-item-icon">
                 <i class="fa fa-calendar-o"></i>
               </span>
-              <span class="post-meta-item-text">Posted on</span>
+              <span class="post-meta-item-text">نُشر في</span>
               
 
-              <time title="Created: 2024-11-03 21:58:05 / Modified: 22:14:19" itemprop="dateCreated datePublished" datetime="2024-11-03T21:58:05+08:00">2024-11-03</time>
+              <time title="أُنشأ: 2024-11-03 21:58:05 / عُدل: 22:14:19" itemprop="dateCreated datePublished" datetime="2024-11-03T21:58:05+08:00">2024-11-03</time>
             </span>
 
           
@@ -1116,306 +1102,10 @@
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2024/11/03/3/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="Loujuch">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Code Bank">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2024/11/03/3/" class="post-title-link" itemprop="url">Android Camera device HAL 3.6文档翻译——S2：启动和操作顺序</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">Posted on</span>
-
-              <time title="Created: 2024-11-03 17:57:46" itemprop="dateCreated datePublished" datetime="2024-11-03T17:57:46+08:00">2024-11-03</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2024-11-06 22:41:07" itemprop="dateModified" datetime="2024-11-06T22:41:07+08:00">2024-11-06</time>
-              </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <ol>
-<li><p>框架层调用<code>camera_module_t-&gt;common.open()</code>，之后HAL返回一个<code>hardware_device_t</code>结构。</p>
-<blockquote>
-<p><em>Framework calls camera_module_t-&gt;common.open(), which returns a hardware_device_t structure.</em></p>
-</blockquote>
-</li>
-<li><p>框架层检查<code>hardware_device_t-&gt;version</code>，并根据相机硬件设备的版本创建相应的处理程序。如果版本为<code>CAMERA_DEVICE_API_VERSION_3_0</code>，设备实例将会被转化为<code>camera3_device_t</code>。</p>
-<blockquote>
-<p><em>Framework inspects the hardware_device_t-&gt;version field, and instantiates the appropriate handler for that version of the camera hardware device. In case the version is CAMERA_DEVICE_API_VERSION_3_0, the device is cast to a camera3_device_t.</em></p>
-</blockquote>
-</li>
-<li><p>框架层调用<code>camera3_device_t-&gt;ops-&gt;initialize()</code>并将框架层回调函数指针传入。该函数只会在<code>open()</code>函数被调用后和在ops结构的任何其他函数被调用前的时间间隔中被调用一次。</p>
-<blockquote>
-<p><em>Framework calls camera3_device_t-&gt;ops-&gt;initialize() with the framework callback function pointers. This will only be called this one time after open(), before any other functions in the ops structure are called.</em></p>
-</blockquote>
-</li>
-<li><p>框架层调用<code>camera3_device_t-&gt;ops-&gt;configure_streams()</code>，将一个输入&#x2F;输出流列表传递到HAL设备中。</p>
-<blockquote>
-<p><em>The framework calls camera3_device_t-&gt;ops-&gt;configure_streams() with a list of input&#x2F;output streams to the HAL device.</em></p>
-</blockquote>
-</li>
-<li><p>根据设备版本进行不同的处理</p>
-<p> 版本低于或等于<code>CAMERA_DEVICE_API_VERSION_3_1</code>时，框架层分配图形缓冲区并为configure_streams中的至少一个输出流调用<code>camera3_device_t-&gt;ops-&gt;register_stream_buffers()</code>。相同的流只会被注册一次。</p>
-<blockquote>
-<p><em>&lt;&#x3D; CAMERA_DEVICE_API_VERSION_3_1: The framework allocates gralloc buffers and calls camera3_device_t-&gt;ops-&gt;register_stream_buffers() for at least one of the output streams listed in configure_streams. The same stream is registered only once.</em></p>
-</blockquote>
-<p> 版本低于或等于<code>CAMERA_DEVICE_API_VERSION_3_2</code>时，<code>camera3_device_t-&gt;ops-&gt;register_stream_buffers()</code>不会被调用，其必须为<code>NULL</code>。</p>
-<blockquote>
-<p><em>CAMERA_DEVICE_API_VERSION_3_2:camera3_device_t-&gt;ops-&gt;register_stream_buffers() is not called and must be NULL.</em></p>
-</blockquote>
-</li>
-<li><p>框架层调用<code>camera3_device_t-&gt;ops-&gt;construct_default_request_settings()</code>请求一些使用用例的默认设置。这可能发生在步骤3之后的任何时间。</p>
-<blockquote>
-<p>The framework requests default settings for some number of use cases with calls to camera3_device_t-&gt;ops-&gt;construct_default_request_settings(). This may occur any time after step 3.</p>
-</blockquote>
-</li>
-<li><p>框架层构造并向HAL发送第一个捕获请求。该请求携带着基于默认设置集合中的某一个默认设置的设置项，并且关联着不少于一个之前框架层完成注册的输出流。请求被<code>camera3_device_t-&gt;ops-&gt;process_capture_request()</code>方法传送到HAL。HAL将会阻塞该方法的返回，直到下一个请求将被发送。</p>
-<blockquote>
-<p><em>The framework constructs and sends the first capture request to the HAL, with settings based on one of the sets of default settings, and with at least one output stream, which has been registered earlier by the framework. This is sent to the HAL with camera3_device_t-&gt;ops-&gt;process_capture_request(). The HAL must block the return of this call until it is ready for the next request to be sent.</em></p>
-</blockquote>
-<p> 版本为<code>CAMERA_DEVICE_API_VERSION_3_2</code>或更高时，在<code>camera3_capture_request_t</code>中的<code>camera3_stream_buffer_t</code>数组中的<code>buffer_handle_t</code>可能是新的，HAL从未在任何新的请求中见过。</p>
-<blockquote>
-<p><em>&gt;&#x3D; CAMERA_DEVICE_API_VERSION_3_2: The buffer_handle_t provided in the camera3_stream_buffer_t array in the camera3_capture_request_t may be new and never-before-seen by the HAL on any given new request.</em></p>
-</blockquote>
-</li>
-<li><p>框架层不断地提交请求，并调用<code>construct_default_request_settings</code>以获得其他使用用例的默认设置缓冲区。</p>
-<blockquote>
-<p><em>The framework continues to submit requests, and call construct_default_request_settings to get default settings buffers for other use cases.</em></p>
-</blockquote>
-<p> 当版本为<code>CAMERA_DEVICE_API_VERSION_3_1</code>或更低时，框架层可能会为那些还未注册的流调用register_stream_buffers()方法。</p>
-<blockquote>
-<p><em>&lt;&#x3D; CAMERA_DEVICE_API_VERSION_3_1: The framework may call register_stream_buffers() at this time for not-yet-registered streams.</em></p>
-</blockquote>
-</li>
-<li><p>当捕获请求开始处理（传感器开始为捕获图像进行曝光）或当再处理请求开始被处理时，HAL将调用<code>camera3_callback_ops_t-&gt;notify()</code>，该次调用将以<code>SHUTTER</code>事件作为参数，这包括帧序号和曝光开始时间戳。对于再处理请求，时间戳必须是输入图像的曝光开始时间，在<code>process_capture_request()</code>调用时，可以从<code>camera3_capture_request_t.settings</code>的<code>android.sensor.timestamp</code>获得该时间。</p>
-<blockquote>
-<p><em>When the capture of a request begins (sensor starts exposing for thecapture) or processing a reprocess request begins, the HAL calls camera3_callback_ops_t-&gt;notify() with the SHUTTER event, including the frame number and the timestamp for start of exposure. For a reprocess request, the timestamp must be the start of exposure of the input image which can be looked up with android.sensor.timestamp from camera3_capture_request_t.settings when process_capture_request() is called.</em></p>
-</blockquote>
-<p> 当版本低于或等于<code>CAMERA_DEVICE_API_VERSION_3_1</code>时，这个通知必须在<code>process_capture_result()</code>第一次为处理该帧的调用前完成。</p>
-<blockquote>
-<p><em>&lt;&#x3D; CAMERA_DEVICE_API_VERSION_3_1: This notify call must be made before the first call to process_capture_result() for that frame number.</em></p>
-</blockquote>
-<p> 当版本高于或等于<code>CAMERA_DEVICE_API_VERSION_3_2</code>时，携带<code>SHUTTER</code>事件的<code>camera3_callback_ops_t-&gt;notify()</code>应该被尽可能早的完成，因为在接收到一个有效的曝光开始时间戳（对于再处理请求则是输入图像的开始曝光时间戳）前框架层不能将（该帧的）图形缓冲区传递到应用层。</p>
-<blockquote>
-<p><em>&gt;&#x3D; CAMERA_DEVICE_API_VERSION_3_2: The camera3_callback_ops_t-&gt;notify() call with the SHUTTER event should be made as early as possible since the framework will be unable to deliver gralloc buffers to the application layer (for that frame) until it has a valid timestamp for the start of exposure (or the input image’s start of exposure for a reprocess request).</em></p>
-</blockquote>
-<p> 部分元数据和图形缓冲区可能在<code>SHUTTER</code>时间发生前或后的任何时间返回。</p>
-<blockquote>
-<p><em>Both partial metadata results and the gralloc buffers may be sent to the framework at any time before or after the SHUTTER event.</em></p>
-</blockquote>
-</li>
-<li><p>部分流水线阻塞等待一段时间后，HAL将调用<code>camera3_callback_ops_t-&gt;process_capture_result()</code>将完成的捕获结果返回框架层。结果的返回顺序将和请求提交的顺序一致。多个请求可以被同时处理，这取决于相机HAL设备的流水线深度。</p>
-<p>After some pipeline delay, the HAL begins to return completed captures to the framework with camera3_callback_ops_t-&gt;process_capture_result(). These are returned in the same order as the requests were submitted. Multiple requests can be in flight at once, depending on the pipeline depth of the camera HAL device.</p>
-<p>当版本高于或等于<code>CAMERA_DEVICE_API_VERSION_3_2</code>时，一旦<code>process_capture_result</code>将缓冲区作为<code>camera3_stream_buffer_t</code>数组的一部分返回且<code>release_fence</code>指定的栅栏发出信号（对于-1栅栏而言是无操作），该缓冲区的所有权将被视为转移给框架层。之后，HAL将不会保留该缓冲区，框架层能够立即清理其占用的内存。</p>
-<blockquote>
-<p>&gt;&#x3D; CAMERA_DEVICE_API_VERSION_3_2: Once a buffer is returned by process_capture_result as part of the camera3_stream_buffer_t array, and the fence specified by release_fence has been signaled (this is a no-op for -1 fences), the ownership of that buffer is considered to be transferred back to the framework. After that, the HAL must no longer retain that particular buffer, and the framework may clean up the memory for it immediately.</p>
-</blockquote>
-<p>对于同一帧，<code>process_capture_result</code>可能会被多次调用，每一次都携带一个新的不相交的元数据碎片和&#x2F;或设置图形缓冲区。框架层将合并这些分块的元数据到一个结构中。</p>
-<blockquote>
-<p>process_capture_result may be called multiple times for a single frame, each time with a new disjoint piece of metadata and&#x2F;or set of gralloc buffers. The framework will accumulate these partial metadata results into one result.</p>
-</blockquote>
-<p>特别的，只要上述规则适用于图形缓冲区（不论输入或输出），同时为第N帧和第N+1帧调用<code>process_capture_result</code>是合法的。</p>
-<blockquote>
-<p>In particular, it is legal for a process_capture_result to be called simultaneously for both a frame N and a frame N+1 as long as the above rule holds for gralloc buffers (both input and output).</p>
-</blockquote>
-</li>
-<li><p>一段时间后，框架层可能停止提交新的请求，并等待现有的捕获完成（所有的缓冲区完成填充且所有的请求返回），然后再次调用<code>configure_streams()</code>。这将为一组新的输入&#x2F;输出流重置相机硬件和流水线。某些之前的流可以被复用，如果这些流的缓冲区已经被注册到HAL中了则不需要再次注册。如果至少有一个完成注册的输出流被保留，则框架层从步骤7开始（否则从步骤5开始）。</p>
-<blockquote>
-<p>After some time, the framework may stop submitting new requests, wait for the existing captures to complete (all buffers filled, all results returned), and then call configure_streams() again. This resets the camera hardware and pipeline for a new set of input&#x2F;output streams. Some streams may be reused from the previous configuration; if these streams’ buffers had already been registered with the HAL, they will not be registered again. The framework then continues from step 7, if at least one registered output stream remains (otherwise, step 5 is required first).</p>
-</blockquote>
-</li>
-<li><p>同时，框架层可能调用<code>camera3_device_t-&gt;common-&gt;close()</code>终止相机会话。这可能在没有其他任何来自框架层的请求活动的任何时候被调用，但该调用将会被阻塞直到所有正在处理的捕获完成（所有结果返回且所有缓冲区被填充）。在<code>close</code>调用返回后，不允许从HAL调用<code>camera3_callback_ops_t</code>函数。一旦<code>close()</code>的调用开始运行，框架层不能调用任何其他HAL设备函数。</p>
-<blockquote>
-<p>Alternatively, the framework may call camera3_device_t-&gt;common-&gt;close() to end the camera session. This may be called at any time when no other calls from the framework are active, although the call may block until all in-flight captures have completed (all results returned, all buffers filled). After the close call returns, no more calls to the camera3_callback_ops_t functions are allowed from the HAL. Once the close() call is underway, the framework may not call any other HAL device functions.</p>
-</blockquote>
-</li>
-<li><p>当有错误或其他异步事件发生时，HAL必须调用<code>camera3_callback_ops_t-&gt;notify()</code>传递恰当的错误&#x2F;事件信息。在从一个设备范围的致命的错误通知返回后，HAL应该表现的像对其完成<code>close()</code>调用一样。同时，在调用<code>notify()</code>前HAL必须放弃或完成所有未解决的捕获，因此一旦调用<code>notify()</code>发送致命错误信息，框架层将不会从设备中接收到进一步的回调。此外，在发送错误信息的<code>notify()</code>方法返回后，<code>close()</code>应该返回<code>-ENODEV</code>或<code>NULL</code>。</p>
-<blockquote>
-<p>In case of an error or other asynchronous event, the HAL must call camera3_callback_ops_t-&gt;notify() with the appropriate error&#x2F;event message. After returning from a fatal device-wide error notification, the HAL should act as if close() had been called on it. However, the HAL must either cancel or complete all outstanding captures before calling notify(), so that once notify() is called with a fatal error, the framework will not receive further callbacks from the device. Methods besides close() should return -ENODEV or NULL after the notify() method returns from a fatal error message.</p>
-</blockquote>
-</li>
-</ol>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2024/11/03/2/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="Loujuch">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Code Bank">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2024/11/03/2/" class="post-title-link" itemprop="url">Android Camera device HAL 3.6文档翻译</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">Posted on</span>
-              
-
-              <time title="Created: 2024-11-03 17:48:26 / Modified: 17:57:30" itemprop="dateCreated datePublished" datetime="2024-11-03T17:48:26+08:00">2024-11-03</time>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>这（Camera device HAL 3.6）是当前推荐使用的HAL版本。</p>
-<blockquote>
-<p><em>This is the current recommended version of the camera device HAL.</em></p>
-</blockquote>
-<p>其支持android.hardware.CameraAPI，但自从v3.2版本以来，android.hardware.camera2 API被设置为LIMITED或above hardware level状态。</p>
-<blockquote>
-<p><em>Supports the android.hardware.Camera API, and as of v3.2, the android.hardware.camera2 API as LIMITED or above hardware level.</em></p>
-</blockquote>
-<p>支持该版本的相机设备必须在camera_device_t.common.version和camera_info_t.device_version（由camera_module_t.get_camera_info获得）中返回CAMERA_DEVICE_API_VERSION_3_6。</p>
-<blockquote>
-<p><em>Camera devices that support this version of the HAL must return CAMERA_DEVICE_API_VERSION_3_6 in camera_device_t.common.version and in camera_info_t.device_version (from camera_module_t.get_camera_info).</em></p>
-</blockquote>
-<p>CAMERA_DEVICE_API_VERSION_3_3<br>或更高版本：包含3.3或更高版本的设备的相机模块至少需要支持2.2版本的相机模块接口（在camera_module_t.common.module_api_version中定义）。</p>
-<blockquote>
-<p><em>CAMERA_DEVICE_API_VERSION_3_3 and above: Camera modules that may contain version 3.3 or above devices must implement at least version 2.2 of the camera module interface (as defined by camera_module_t.common.module_api_version).</em></p>
-</blockquote>
-<p>CAMERA_DEVICE_API_VERSION_3_2<br>：包含3.2版本的设备的相机模块至少需要支持2.2版本的相机模块接口（如camera_module_t.common.module_api_version所定义的）。</p>
-<blockquote>
-<p><em>CAMERA_DEVICE_API_VERSION_3_2: Camera modules that may contain version 3.2 devices must implement at least version 2.2 of the camera module interface (as defined by camera_module_t.common.module_api_version).</em></p>
-</blockquote>
-<p>CAMERA_DEVICE_API_VERSION_3_1<br>或更低版本：包含3.1或更低版本的设备的相机模块至少需要支持2.0版本的相机模块接口（如camera_module_t.common.module_api_version所定义的）。</p>
-<blockquote>
-<p><em>&lt;&#x3D; CAMERA_DEVICE_API_VERSION_3_1: Camera modules that may contain version 3.1 (or 3.0) devices must implement at least version 2.0 of the camera module interface (as defined by camera_module_t.common.module_api_version).</em></p>
-</blockquote>
-<p>更多与版本相关的细节可参考camera_common.h。</p>
-<blockquote>
-<p><em>See camera_common.h for more versioning details.</em></p>
-</blockquote>
-<p>文档目录</p>
-<blockquote>
-<p><em>Documentation index:</em></p>
-</blockquote>
-<p>S1：版本历史(未开始)</p>
-<blockquote>
-<p><em>S1. Version history</em></p>
-</blockquote>
-<p>S2：启动和操作顺序</p>
-<blockquote>
-<p><em>S2. Startup and operation sequencing</em></p>
-</blockquote>
-<p>S3：操作模式(未开始)</p>
-<blockquote>
-<p><em>S3. Operational modes</em></p>
-</blockquote>
-<p>S4：3A模式和状态机(未开始)</p>
-<blockquote>
-<p><em>S4. 3A modes and state machines</em></p>
-</blockquote>
-<p>S5. 裁剪(未开始)</p>
-<blockquote>
-<p><em>S5. Cropping</em></p>
-</blockquote>
-<p>S6. 错误管理(未开始)</p>
-<blockquote>
-<p><em>S6. Error management</em></p>
-</blockquote>
-<p>S7. 关键性能指标（KPI）术语表(未开始)</p>
-<blockquote>
-<p><em>S7. Key Performance Indicator (KPI) glossary</em></p>
-</blockquote>
-<p>S8. 使用示例(未开始)</p>
-<blockquote>
-<p><em>S8. Sample Use Cases</em></p>
-</blockquote>
-<p>S9. 关于控件和元数据的说明(未开始)</p>
-<blockquote>
-<p><em>S9. Notes on Controls and Metadata</em></p>
-</blockquote>
-<p>S10. 再处理流程和控制(未开始)</p>
-<blockquote>
-<p><em>S10. Reprocessing flow and controls</em></p>
-</blockquote>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
-    <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><span class="space">&hellip;</span><a class="page-number" href="/page/4/">4</a><a class="extend next" rel="next" href="/page/2/"><i class="fa fa-angle-right" aria-label="Next page"></i></a>
+    <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><span class="space">&hellip;</span><a class="page-number" href="/page/5/">5</a><a class="extend next" rel="next" href="/page/2/"><i class="fa fa-angle-right" aria-label="الصفحة التالية"></i></a>
   </nav>
 
 
@@ -1459,10 +1149,10 @@
 
       <ul class="sidebar-nav motion-element">
         <li class="sidebar-nav-toc">
-          Table of Contents
+          المحتويات
         </li>
         <li class="sidebar-nav-overview">
-          Overview
+          عام
         </li>
       </ul>
 
@@ -1481,13 +1171,13 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">39</span>
-          <span class="site-state-item-name">posts</span>
+          <span class="site-state-item-count">41</span>
+          <span class="site-state-item-name">المقالات</span>
         </a>
       </div>
       <div class="site-state-item site-state-tags">
-        <span class="site-state-item-count">25</span>
-        <span class="site-state-item-name">tags</span>
+        <span class="site-state-item-count">26</span>
+        <span class="site-state-item-name">الوسوم</span>
       </div>
   </nav>
 </div>
@@ -1519,7 +1209,7 @@
   </span>
   <span class="author" itemprop="copyrightHolder">Loujuch</span>
 </div>
-  <div class="powered-by">Powered by <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://mist.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a>
+  <div class="powered-by">تطبيق الموقع <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://mist.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a>
   </div>
 
         

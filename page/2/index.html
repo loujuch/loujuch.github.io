@@ -81,7 +81,7 @@
     <header class="header" itemscope itemtype="http://schema.org/WPHeader">
       <div class="header-inner"><div class="site-brand-container">
   <div class="site-nav-toggle">
-    <div class="toggle" aria-label="Toggle navigation bar">
+    <div class="toggle" aria-label="تشغيل شريط التصفح">
       <span class="toggle-line toggle-line-first"></span>
       <span class="toggle-line toggle-line-middle"></span>
       <span class="toggle-line toggle-line-last"></span>
@@ -115,7 +115,7 @@
   </li>
         <li class="menu-item menu-item-archives">
 
-    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>Archives</a>
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>الأرشيفات</a>
 
   </li>
   </ul>
@@ -145,6 +145,302 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2024/11/03/3/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Loujuch">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Code Bank">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2024/11/03/3/" class="post-title-link" itemprop="url">Android Camera device HAL 3.6文档翻译——S2：启动和操作顺序</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">نُشر في</span>
+
+              <time title="أُنشأ: 2024-11-03 17:57:46" itemprop="dateCreated datePublished" datetime="2024-11-03T17:57:46+08:00">2024-11-03</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">عُدل في</span>
+                <time title="عُدل: 2024-11-06 22:41:07" itemprop="dateModified" datetime="2024-11-06T22:41:07+08:00">2024-11-06</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <ol>
+<li><p>框架层调用<code>camera_module_t-&gt;common.open()</code>，之后HAL返回一个<code>hardware_device_t</code>结构。</p>
+<blockquote>
+<p><em>Framework calls camera_module_t-&gt;common.open(), which returns a hardware_device_t structure.</em></p>
+</blockquote>
+</li>
+<li><p>框架层检查<code>hardware_device_t-&gt;version</code>，并根据相机硬件设备的版本创建相应的处理程序。如果版本为<code>CAMERA_DEVICE_API_VERSION_3_0</code>，设备实例将会被转化为<code>camera3_device_t</code>。</p>
+<blockquote>
+<p><em>Framework inspects the hardware_device_t-&gt;version field, and instantiates the appropriate handler for that version of the camera hardware device. In case the version is CAMERA_DEVICE_API_VERSION_3_0, the device is cast to a camera3_device_t.</em></p>
+</blockquote>
+</li>
+<li><p>框架层调用<code>camera3_device_t-&gt;ops-&gt;initialize()</code>并将框架层回调函数指针传入。该函数只会在<code>open()</code>函数被调用后和在ops结构的任何其他函数被调用前的时间间隔中被调用一次。</p>
+<blockquote>
+<p><em>Framework calls camera3_device_t-&gt;ops-&gt;initialize() with the framework callback function pointers. This will only be called this one time after open(), before any other functions in the ops structure are called.</em></p>
+</blockquote>
+</li>
+<li><p>框架层调用<code>camera3_device_t-&gt;ops-&gt;configure_streams()</code>，将一个输入&#x2F;输出流列表传递到HAL设备中。</p>
+<blockquote>
+<p><em>The framework calls camera3_device_t-&gt;ops-&gt;configure_streams() with a list of input&#x2F;output streams to the HAL device.</em></p>
+</blockquote>
+</li>
+<li><p>根据设备版本进行不同的处理</p>
+<p> 版本低于或等于<code>CAMERA_DEVICE_API_VERSION_3_1</code>时，框架层分配图形缓冲区并为configure_streams中的至少一个输出流调用<code>camera3_device_t-&gt;ops-&gt;register_stream_buffers()</code>。相同的流只会被注册一次。</p>
+<blockquote>
+<p><em>&lt;&#x3D; CAMERA_DEVICE_API_VERSION_3_1: The framework allocates gralloc buffers and calls camera3_device_t-&gt;ops-&gt;register_stream_buffers() for at least one of the output streams listed in configure_streams. The same stream is registered only once.</em></p>
+</blockquote>
+<p> 版本低于或等于<code>CAMERA_DEVICE_API_VERSION_3_2</code>时，<code>camera3_device_t-&gt;ops-&gt;register_stream_buffers()</code>不会被调用，其必须为<code>NULL</code>。</p>
+<blockquote>
+<p><em>CAMERA_DEVICE_API_VERSION_3_2:camera3_device_t-&gt;ops-&gt;register_stream_buffers() is not called and must be NULL.</em></p>
+</blockquote>
+</li>
+<li><p>框架层调用<code>camera3_device_t-&gt;ops-&gt;construct_default_request_settings()</code>请求一些使用用例的默认设置。这可能发生在步骤3之后的任何时间。</p>
+<blockquote>
+<p>The framework requests default settings for some number of use cases with calls to camera3_device_t-&gt;ops-&gt;construct_default_request_settings(). This may occur any time after step 3.</p>
+</blockquote>
+</li>
+<li><p>框架层构造并向HAL发送第一个捕获请求。该请求携带着基于默认设置集合中的某一个默认设置的设置项，并且关联着不少于一个之前框架层完成注册的输出流。请求被<code>camera3_device_t-&gt;ops-&gt;process_capture_request()</code>方法传送到HAL。HAL将会阻塞该方法的返回，直到下一个请求将被发送。</p>
+<blockquote>
+<p><em>The framework constructs and sends the first capture request to the HAL, with settings based on one of the sets of default settings, and with at least one output stream, which has been registered earlier by the framework. This is sent to the HAL with camera3_device_t-&gt;ops-&gt;process_capture_request(). The HAL must block the return of this call until it is ready for the next request to be sent.</em></p>
+</blockquote>
+<p> 版本为<code>CAMERA_DEVICE_API_VERSION_3_2</code>或更高时，在<code>camera3_capture_request_t</code>中的<code>camera3_stream_buffer_t</code>数组中的<code>buffer_handle_t</code>可能是新的，HAL从未在任何新的请求中见过。</p>
+<blockquote>
+<p><em>&gt;&#x3D; CAMERA_DEVICE_API_VERSION_3_2: The buffer_handle_t provided in the camera3_stream_buffer_t array in the camera3_capture_request_t may be new and never-before-seen by the HAL on any given new request.</em></p>
+</blockquote>
+</li>
+<li><p>框架层不断地提交请求，并调用<code>construct_default_request_settings</code>以获得其他使用用例的默认设置缓冲区。</p>
+<blockquote>
+<p><em>The framework continues to submit requests, and call construct_default_request_settings to get default settings buffers for other use cases.</em></p>
+</blockquote>
+<p> 当版本为<code>CAMERA_DEVICE_API_VERSION_3_1</code>或更低时，框架层可能会为那些还未注册的流调用register_stream_buffers()方法。</p>
+<blockquote>
+<p><em>&lt;&#x3D; CAMERA_DEVICE_API_VERSION_3_1: The framework may call register_stream_buffers() at this time for not-yet-registered streams.</em></p>
+</blockquote>
+</li>
+<li><p>当捕获请求开始处理（传感器开始为捕获图像进行曝光）或当再处理请求开始被处理时，HAL将调用<code>camera3_callback_ops_t-&gt;notify()</code>，该次调用将以<code>SHUTTER</code>事件作为参数，这包括帧序号和曝光开始时间戳。对于再处理请求，时间戳必须是输入图像的曝光开始时间，在<code>process_capture_request()</code>调用时，可以从<code>camera3_capture_request_t.settings</code>的<code>android.sensor.timestamp</code>获得该时间。</p>
+<blockquote>
+<p><em>When the capture of a request begins (sensor starts exposing for thecapture) or processing a reprocess request begins, the HAL calls camera3_callback_ops_t-&gt;notify() with the SHUTTER event, including the frame number and the timestamp for start of exposure. For a reprocess request, the timestamp must be the start of exposure of the input image which can be looked up with android.sensor.timestamp from camera3_capture_request_t.settings when process_capture_request() is called.</em></p>
+</blockquote>
+<p> 当版本低于或等于<code>CAMERA_DEVICE_API_VERSION_3_1</code>时，这个通知必须在<code>process_capture_result()</code>第一次为处理该帧的调用前完成。</p>
+<blockquote>
+<p><em>&lt;&#x3D; CAMERA_DEVICE_API_VERSION_3_1: This notify call must be made before the first call to process_capture_result() for that frame number.</em></p>
+</blockquote>
+<p> 当版本高于或等于<code>CAMERA_DEVICE_API_VERSION_3_2</code>时，携带<code>SHUTTER</code>事件的<code>camera3_callback_ops_t-&gt;notify()</code>应该被尽可能早的完成，因为在接收到一个有效的曝光开始时间戳（对于再处理请求则是输入图像的开始曝光时间戳）前框架层不能将（该帧的）图形缓冲区传递到应用层。</p>
+<blockquote>
+<p><em>&gt;&#x3D; CAMERA_DEVICE_API_VERSION_3_2: The camera3_callback_ops_t-&gt;notify() call with the SHUTTER event should be made as early as possible since the framework will be unable to deliver gralloc buffers to the application layer (for that frame) until it has a valid timestamp for the start of exposure (or the input image’s start of exposure for a reprocess request).</em></p>
+</blockquote>
+<p> 部分元数据和图形缓冲区可能在<code>SHUTTER</code>时间发生前或后的任何时间返回。</p>
+<blockquote>
+<p><em>Both partial metadata results and the gralloc buffers may be sent to the framework at any time before or after the SHUTTER event.</em></p>
+</blockquote>
+</li>
+<li><p>部分流水线阻塞等待一段时间后，HAL将调用<code>camera3_callback_ops_t-&gt;process_capture_result()</code>将完成的捕获结果返回框架层。结果的返回顺序将和请求提交的顺序一致。多个请求可以被同时处理，这取决于相机HAL设备的流水线深度。</p>
+<p>After some pipeline delay, the HAL begins to return completed captures to the framework with camera3_callback_ops_t-&gt;process_capture_result(). These are returned in the same order as the requests were submitted. Multiple requests can be in flight at once, depending on the pipeline depth of the camera HAL device.</p>
+<p>当版本高于或等于<code>CAMERA_DEVICE_API_VERSION_3_2</code>时，一旦<code>process_capture_result</code>将缓冲区作为<code>camera3_stream_buffer_t</code>数组的一部分返回且<code>release_fence</code>指定的栅栏发出信号（对于-1栅栏而言是无操作），该缓冲区的所有权将被视为转移给框架层。之后，HAL将不会保留该缓冲区，框架层能够立即清理其占用的内存。</p>
+<blockquote>
+<p>&gt;&#x3D; CAMERA_DEVICE_API_VERSION_3_2: Once a buffer is returned by process_capture_result as part of the camera3_stream_buffer_t array, and the fence specified by release_fence has been signaled (this is a no-op for -1 fences), the ownership of that buffer is considered to be transferred back to the framework. After that, the HAL must no longer retain that particular buffer, and the framework may clean up the memory for it immediately.</p>
+</blockquote>
+<p>对于同一帧，<code>process_capture_result</code>可能会被多次调用，每一次都携带一个新的不相交的元数据碎片和&#x2F;或设置图形缓冲区。框架层将合并这些分块的元数据到一个结构中。</p>
+<blockquote>
+<p>process_capture_result may be called multiple times for a single frame, each time with a new disjoint piece of metadata and&#x2F;or set of gralloc buffers. The framework will accumulate these partial metadata results into one result.</p>
+</blockquote>
+<p>特别的，只要上述规则适用于图形缓冲区（不论输入或输出），同时为第N帧和第N+1帧调用<code>process_capture_result</code>是合法的。</p>
+<blockquote>
+<p>In particular, it is legal for a process_capture_result to be called simultaneously for both a frame N and a frame N+1 as long as the above rule holds for gralloc buffers (both input and output).</p>
+</blockquote>
+</li>
+<li><p>一段时间后，框架层可能停止提交新的请求，并等待现有的捕获完成（所有的缓冲区完成填充且所有的请求返回），然后再次调用<code>configure_streams()</code>。这将为一组新的输入&#x2F;输出流重置相机硬件和流水线。某些之前的流可以被复用，如果这些流的缓冲区已经被注册到HAL中了则不需要再次注册。如果至少有一个完成注册的输出流被保留，则框架层从步骤7开始（否则从步骤5开始）。</p>
+<blockquote>
+<p>After some time, the framework may stop submitting new requests, wait for the existing captures to complete (all buffers filled, all results returned), and then call configure_streams() again. This resets the camera hardware and pipeline for a new set of input&#x2F;output streams. Some streams may be reused from the previous configuration; if these streams’ buffers had already been registered with the HAL, they will not be registered again. The framework then continues from step 7, if at least one registered output stream remains (otherwise, step 5 is required first).</p>
+</blockquote>
+</li>
+<li><p>同时，框架层可能调用<code>camera3_device_t-&gt;common-&gt;close()</code>终止相机会话。这可能在没有其他任何来自框架层的请求活动的任何时候被调用，但该调用将会被阻塞直到所有正在处理的捕获完成（所有结果返回且所有缓冲区被填充）。在<code>close</code>调用返回后，不允许从HAL调用<code>camera3_callback_ops_t</code>函数。一旦<code>close()</code>的调用开始运行，框架层不能调用任何其他HAL设备函数。</p>
+<blockquote>
+<p>Alternatively, the framework may call camera3_device_t-&gt;common-&gt;close() to end the camera session. This may be called at any time when no other calls from the framework are active, although the call may block until all in-flight captures have completed (all results returned, all buffers filled). After the close call returns, no more calls to the camera3_callback_ops_t functions are allowed from the HAL. Once the close() call is underway, the framework may not call any other HAL device functions.</p>
+</blockquote>
+</li>
+<li><p>当有错误或其他异步事件发生时，HAL必须调用<code>camera3_callback_ops_t-&gt;notify()</code>传递恰当的错误&#x2F;事件信息。在从一个设备范围的致命的错误通知返回后，HAL应该表现的像对其完成<code>close()</code>调用一样。同时，在调用<code>notify()</code>前HAL必须放弃或完成所有未解决的捕获，因此一旦调用<code>notify()</code>发送致命错误信息，框架层将不会从设备中接收到进一步的回调。此外，在发送错误信息的<code>notify()</code>方法返回后，<code>close()</code>应该返回<code>-ENODEV</code>或<code>NULL</code>。</p>
+<blockquote>
+<p>In case of an error or other asynchronous event, the HAL must call camera3_callback_ops_t-&gt;notify() with the appropriate error&#x2F;event message. After returning from a fatal device-wide error notification, the HAL should act as if close() had been called on it. However, the HAL must either cancel or complete all outstanding captures before calling notify(), so that once notify() is called with a fatal error, the framework will not receive further callbacks from the device. Methods besides close() should return -ENODEV or NULL after the notify() method returns from a fatal error message.</p>
+</blockquote>
+</li>
+</ol>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2024/11/03/2/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Loujuch">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Code Bank">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2024/11/03/2/" class="post-title-link" itemprop="url">Android Camera device HAL 3.6文档翻译</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">نُشر في</span>
+              
+
+              <time title="أُنشأ: 2024-11-03 17:48:26 / عُدل: 17:57:30" itemprop="dateCreated datePublished" datetime="2024-11-03T17:48:26+08:00">2024-11-03</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>这（Camera device HAL 3.6）是当前推荐使用的HAL版本。</p>
+<blockquote>
+<p><em>This is the current recommended version of the camera device HAL.</em></p>
+</blockquote>
+<p>其支持android.hardware.CameraAPI，但自从v3.2版本以来，android.hardware.camera2 API被设置为LIMITED或above hardware level状态。</p>
+<blockquote>
+<p><em>Supports the android.hardware.Camera API, and as of v3.2, the android.hardware.camera2 API as LIMITED or above hardware level.</em></p>
+</blockquote>
+<p>支持该版本的相机设备必须在camera_device_t.common.version和camera_info_t.device_version（由camera_module_t.get_camera_info获得）中返回CAMERA_DEVICE_API_VERSION_3_6。</p>
+<blockquote>
+<p><em>Camera devices that support this version of the HAL must return CAMERA_DEVICE_API_VERSION_3_6 in camera_device_t.common.version and in camera_info_t.device_version (from camera_module_t.get_camera_info).</em></p>
+</blockquote>
+<p>CAMERA_DEVICE_API_VERSION_3_3<br>或更高版本：包含3.3或更高版本的设备的相机模块至少需要支持2.2版本的相机模块接口（在camera_module_t.common.module_api_version中定义）。</p>
+<blockquote>
+<p><em>CAMERA_DEVICE_API_VERSION_3_3 and above: Camera modules that may contain version 3.3 or above devices must implement at least version 2.2 of the camera module interface (as defined by camera_module_t.common.module_api_version).</em></p>
+</blockquote>
+<p>CAMERA_DEVICE_API_VERSION_3_2<br>：包含3.2版本的设备的相机模块至少需要支持2.2版本的相机模块接口（如camera_module_t.common.module_api_version所定义的）。</p>
+<blockquote>
+<p><em>CAMERA_DEVICE_API_VERSION_3_2: Camera modules that may contain version 3.2 devices must implement at least version 2.2 of the camera module interface (as defined by camera_module_t.common.module_api_version).</em></p>
+</blockquote>
+<p>CAMERA_DEVICE_API_VERSION_3_1<br>或更低版本：包含3.1或更低版本的设备的相机模块至少需要支持2.0版本的相机模块接口（如camera_module_t.common.module_api_version所定义的）。</p>
+<blockquote>
+<p><em>&lt;&#x3D; CAMERA_DEVICE_API_VERSION_3_1: Camera modules that may contain version 3.1 (or 3.0) devices must implement at least version 2.0 of the camera module interface (as defined by camera_module_t.common.module_api_version).</em></p>
+</blockquote>
+<p>更多与版本相关的细节可参考camera_common.h。</p>
+<blockquote>
+<p><em>See camera_common.h for more versioning details.</em></p>
+</blockquote>
+<p>文档目录</p>
+<blockquote>
+<p><em>Documentation index:</em></p>
+</blockquote>
+<p>S1：版本历史(未开始)</p>
+<blockquote>
+<p><em>S1. Version history</em></p>
+</blockquote>
+<p>S2：启动和操作顺序</p>
+<blockquote>
+<p><em>S2. Startup and operation sequencing</em></p>
+</blockquote>
+<p>S3：操作模式(未开始)</p>
+<blockquote>
+<p><em>S3. Operational modes</em></p>
+</blockquote>
+<p>S4：3A模式和状态机(未开始)</p>
+<blockquote>
+<p><em>S4. 3A modes and state machines</em></p>
+</blockquote>
+<p>S5. 裁剪(未开始)</p>
+<blockquote>
+<p><em>S5. Cropping</em></p>
+</blockquote>
+<p>S6. 错误管理(未开始)</p>
+<blockquote>
+<p><em>S6. Error management</em></p>
+</blockquote>
+<p>S7. 关键性能指标（KPI）术语表(未开始)</p>
+<blockquote>
+<p><em>S7. Key Performance Indicator (KPI) glossary</em></p>
+</blockquote>
+<p>S8. 使用示例(未开始)</p>
+<blockquote>
+<p><em>S8. Sample Use Cases</em></p>
+</blockquote>
+<p>S9. 关于控件和元数据的说明(未开始)</p>
+<blockquote>
+<p><em>S9. Notes on Controls and Metadata</em></p>
+</blockquote>
+<p>S10. 再处理流程和控制(未开始)</p>
+<blockquote>
+<p><em>S10. Reprocessing flow and controls</em></p>
+</blockquote>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
     <link itemprop="mainEntityOfPage" href="http://example.com/2024/11/03/1/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -167,10 +463,10 @@
               <span class="post-meta-item-icon">
                 <i class="fa fa-calendar-o"></i>
               </span>
-              <span class="post-meta-item-text">Posted on</span>
+              <span class="post-meta-item-text">نُشر في</span>
               
 
-              <time title="Created: 2024-11-03 17:30:04 / Modified: 17:43:02" itemprop="dateCreated datePublished" datetime="2024-11-03T17:30:04+08:00">2024-11-03</time>
+              <time title="أُنشأ: 2024-11-03 17:30:04 / عُدل: 17:43:02" itemprop="dateCreated datePublished" datetime="2024-11-03T17:30:04+08:00">2024-11-03</time>
             </span>
 
           
@@ -238,10 +534,10 @@
               <span class="post-meta-item-icon">
                 <i class="fa fa-calendar-o"></i>
               </span>
-              <span class="post-meta-item-text">Posted on</span>
+              <span class="post-meta-item-text">نُشر في</span>
               
 
-              <time title="Created: 2024-11-03 11:02:44 / Modified: 11:21:34" itemprop="dateCreated datePublished" datetime="2024-11-03T11:02:44+08:00">2024-11-03</time>
+              <time title="أُنشأ: 2024-11-03 11:02:44 / عُدل: 11:21:34" itemprop="dateCreated datePublished" datetime="2024-11-03T11:02:44+08:00">2024-11-03</time>
             </span>
 
           
@@ -300,10 +596,10 @@
               <span class="post-meta-item-icon">
                 <i class="fa fa-calendar-o"></i>
               </span>
-              <span class="post-meta-item-text">Posted on</span>
+              <span class="post-meta-item-text">نُشر في</span>
               
 
-              <time title="Created: 2024-11-02 15:22:07 / Modified: 22:02:52" itemprop="dateCreated datePublished" datetime="2024-11-02T15:22:07+08:00">2024-11-02</time>
+              <time title="أُنشأ: 2024-11-02 15:22:07 / عُدل: 22:02:52" itemprop="dateCreated datePublished" datetime="2024-11-02T15:22:07+08:00">2024-11-02</time>
             </span>
 
           
@@ -675,10 +971,10 @@
               <span class="post-meta-item-icon">
                 <i class="fa fa-calendar-o"></i>
               </span>
-              <span class="post-meta-item-text">Posted on</span>
+              <span class="post-meta-item-text">نُشر في</span>
               
 
-              <time title="Created: 2024-11-02 12:48:42 / Modified: 13:56:51" itemprop="dateCreated datePublished" datetime="2024-11-02T12:48:42+08:00">2024-11-02</time>
+              <time title="أُنشأ: 2024-11-02 12:48:42 / عُدل: 13:56:51" itemprop="dateCreated datePublished" datetime="2024-11-02T12:48:42+08:00">2024-11-02</time>
             </span>
 
           
@@ -983,10 +1279,10 @@
               <span class="post-meta-item-icon">
                 <i class="fa fa-calendar-o"></i>
               </span>
-              <span class="post-meta-item-text">Posted on</span>
+              <span class="post-meta-item-text">نُشر في</span>
               
 
-              <time title="Created: 2024-11-02 10:21:54 / Modified: 12:44:17" itemprop="dateCreated datePublished" datetime="2024-11-02T10:21:54+08:00">2024-11-02</time>
+              <time title="أُنشأ: 2024-11-02 10:21:54 / عُدل: 12:44:17" itemprop="dateCreated datePublished" datetime="2024-11-02T10:21:54+08:00">2024-11-02</time>
             </span>
 
           
@@ -1062,16 +1358,16 @@
               <span class="post-meta-item-icon">
                 <i class="fa fa-calendar-o"></i>
               </span>
-              <span class="post-meta-item-text">Posted on</span>
+              <span class="post-meta-item-text">نُشر في</span>
 
-              <time title="Created: 2024-10-27 22:07:27" itemprop="dateCreated datePublished" datetime="2024-10-27T22:07:27+08:00">2024-10-27</time>
+              <time title="أُنشأ: 2024-10-27 22:07:27" itemprop="dateCreated datePublished" datetime="2024-10-27T22:07:27+08:00">2024-10-27</time>
             </span>
               <span class="post-meta-item">
                 <span class="post-meta-item-icon">
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
-                <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2024-10-30 23:01:53" itemprop="dateModified" datetime="2024-10-30T23:01:53+08:00">2024-10-30</time>
+                <span class="post-meta-item-text">عُدل في</span>
+                <time title="عُدل: 2024-11-25 22:27:45" itemprop="dateModified" datetime="2024-11-25T22:27:45+08:00">2024-11-25</time>
               </span>
 
           
@@ -1252,7 +1548,7 @@
 </li>
 <li><p>仅设置<code>std::launch::deferred</code>：总是进行延迟调用。</p>
 </li>
-<li><p>未设置<code>std::launch::async</code>和<code>std::launch::deferred</code>：行为未定义，</p>
+<li><p>未设置<code>std::launch::async</code>和<code>std::launch::deferred</code>：行为未定义。</p>
 </li>
 </ol>
 
@@ -1296,10 +1592,10 @@
               <span class="post-meta-item-icon">
                 <i class="fa fa-calendar-o"></i>
               </span>
-              <span class="post-meta-item-text">Posted on</span>
+              <span class="post-meta-item-text">نُشر في</span>
               
 
-              <time title="Created: 2024-10-27 21:39:13 / Modified: 21:55:56" itemprop="dateCreated datePublished" datetime="2024-10-27T21:39:13+08:00">2024-10-27</time>
+              <time title="أُنشأ: 2024-10-27 21:39:13 / عُدل: 21:55:56" itemprop="dateCreated datePublished" datetime="2024-10-27T21:39:13+08:00">2024-10-27</time>
             </span>
 
           
@@ -1368,10 +1664,10 @@
               <span class="post-meta-item-icon">
                 <i class="fa fa-calendar-o"></i>
               </span>
-              <span class="post-meta-item-text">Posted on</span>
+              <span class="post-meta-item-text">نُشر في</span>
               
 
-              <time title="Created: 2024-10-21 22:28:48 / Modified: 22:33:40" itemprop="dateCreated datePublished" datetime="2024-10-21T22:28:48+08:00">2024-10-21</time>
+              <time title="أُنشأ: 2024-10-21 22:28:48 / عُدل: 22:33:40" itemprop="dateCreated datePublished" datetime="2024-10-21T22:28:48+08:00">2024-10-21</time>
             </span>
 
           
@@ -1408,353 +1704,10 @@
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2024/10/20/0/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="Loujuch">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Code Bank">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2024/10/20/0/" class="post-title-link" itemprop="url">C++多线程基础</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">Posted on</span>
-
-              <time title="Created: 2024-10-20 17:59:24" itemprop="dateCreated datePublished" datetime="2024-10-20T17:59:24+08:00">2024-10-20</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2024-10-27 22:05:46" itemprop="dateModified" datetime="2024-10-27T22:05:46+08:00">2024-10-27</time>
-              </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h2 id="线程"><a href="#线程" class="headerlink" title="线程"></a>线程</h2><h3 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h3><p>线程（内核线程）是操作系统进行任务调度的基本单位，一般来说，操作系统以线程为单位进行处理机调度。</p>
-<p>通常一个线程只具有控制流、处理机和栈等少量运行中必不可少资源，因此必须依靠进程提供相应的系统资源等才能正常运行。因此线程必须与进程绑定，当进程退出时，其内部的线程都将全部退出。一个进程可以有多个线程，它们共享该线程提供的系统资源等。</p>
-<h3 id="线程状态"><a href="#线程状态" class="headerlink" title="线程状态"></a>线程状态</h3><p>线程存在许多状态，其转换图如下：</p>
-<p><img src="/2024/10/20/0/0.png"></p>
-<h3 id="分离线程与可结合线程"><a href="#分离线程与可结合线程" class="headerlink" title="分离线程与可结合线程"></a>分离线程与可结合线程</h3><p>Linux线程被分为分离线程与可结合线程，默认情况下创建的线程为可结合线程。两者的区别如下：</p>
-<ol>
-<li><p>是否可以join：分离线程不可以使用join进行结合，可结合线程能够使用join进行结合。</p>
-</li>
-<li><p>资源释放时机：分离线程在线程运行结束后自动释放，可结合线程在调用join结束后释放。</p>
-</li>
-</ol>
-<h2 id="CPP线程库"><a href="#CPP线程库" class="headerlink" title="CPP线程库"></a>CPP线程库</h2><p>在C++11中引入了<code>std::thread</code>类用于创建和管理线程，并在<code>std::this_thread</code>命名空间中引入了一些方法用于更好的对当前线程进行控制。</p>
-<h3 id="std-thread"><a href="#std-thread" class="headerlink" title="std::thread"></a>std::thread</h3><h4 id="API"><a href="#API" class="headerlink" title="API"></a>API</h4><h5 id="创建"><a href="#创建" class="headerlink" title="创建"></a>创建</h5><table>
-<thead>
-<tr>
-<th>方法</th>
-<th>含义</th>
-<th>备注</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>thread() noexcept;</td>
-<td>默认构造函数</td>
-<td>创建一个空线程对象，该对象不对应任何实际线程</td>
-</tr>
-<tr>
-<td>template &lt;class Fn, class… Args&gt;<br>explicit thread(Fn&amp;&amp; fn, Args&amp;&amp;… args);</td>
-<td>初始化构造函数</td>
-<td>根据输入参数创建一个线程，该线程为可结合线程，并且创建后线程立即进入就绪状态。<br>线程中将会自动运行<code>fn(args...)</code>函数</td>
-</tr>
-<tr>
-<td>thread(thread&amp;&amp; x) noexcept;</td>
-<td>移动构造函数</td>
-<td>只涉及线程控制权的转移，调用后新建的线程对象将能够控制输入对象原先管理的实际线程，输入对象变为空线程对象</td>
-</tr>
-</tbody></table>
-<h5 id="移动"><a href="#移动" class="headerlink" title="移动"></a>移动</h5><table>
-<thead>
-<tr>
-<th>方法</th>
-<th>含义</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>thread&amp; operator&#x3D;(thread&amp;&amp; rhs) noexcept;</td>
-<td>移动赋值，仅涉及线程管理权的转移，使用后调用对象获取传入参数实际对应的实际线程的管理权，传入参数变为空对象。</td>
-</tr>
-<tr>
-<td>void swap(std::thread&amp; other) noexcept;</td>
-<td>交换两个线程对象内实际管理线程的管理权。</td>
-</tr>
-</tbody></table>
-<h5 id="状态获取"><a href="#状态获取" class="headerlink" title="状态获取"></a>状态获取</h5><table>
-<thead>
-<tr>
-<th>方法</th>
-<th>含义</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>bool joinable() const noexcept;</td>
-<td>返回是否为活动进程，通常相当于<code>get_id()!=std::thread::id ()</code>。</td>
-</tr>
-<tr>
-<td>std::thread::id get_id() const noexcept;</td>
-<td>返回线程id，线程id在操作系统范围内是唯一的。</td>
-</tr>
-<tr>
-<td>static unsigned int hardware_concurrency() noexcept;</td>
-<td>返回硬件支持的最大并行线程数。对于计算密集型任务，通常用于进行参考。</td>
-</tr>
-</tbody></table>
-<h5 id="线程管理"><a href="#线程管理" class="headerlink" title="线程管理"></a>线程管理</h5><table>
-<thead>
-<tr>
-<th>方法</th>
-<th>含义</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>void join();</td>
-<td>join该对象管理的实际线程，调用该方法的线程将被阻塞直到对应线程对象运行完成且资源完成回收。<br>Linux下，可结合线程只有在调用join后才会释放栈等相关资源。<br>若在不是可结合线程的线程对象上调用该方法将抛出std::system_error。<br>调用结束后原线程对象变为空对象。</td>
-</tr>
-<tr>
-<td>void detach();</td>
-<td>detach相应的线程，调用该方法后该对象管理的线程将处于分离状态。<br>Linux中，分离线程在程序运行结束后将会立即释放资源。<br>若在不是可结合线程的线程对象上调用该方法将抛出std::system_error。<br>调用结束后原线程对象变为空对象。</td>
-</tr>
-</tbody></table>
-<h4 id="参数"><a href="#参数" class="headerlink" title="参数"></a>参数</h4><h5 id="函数参数传递"><a href="#函数参数传递" class="headerlink" title="函数参数传递"></a>函数参数传递</h5><p>对函数而言，共有4种参数：</p>
-<ol>
-<li><p>值参数</p>
-</li>
-<li><p>左值引用</p>
-</li>
-<li><p>常量左值引用</p>
-</li>
-<li><p>右值引用</p>
-</li>
-</ol>
-<p>同时有两种参数传递方式：</p>
-<ol>
-<li><p>值传递：在调用函数时创建对应副本，可以被分为初始化构造、拷贝构造与移动构造。</p>
-</li>
-<li><p>引用传递：不发生拷贝，类似传入指针。</p>
-</li>
-</ol>
-<h5 id="测试代码与执行结果"><a href="#测试代码与执行结果" class="headerlink" title="测试代码与执行结果"></a>测试代码与执行结果</h5><p>使用如下代码进行测试，其中被注释的部分表示会导致编译错误：</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;string&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;thread&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">TestClass</span> &#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="built_in">TestClass</span>(<span class="type">const</span> std::string &amp;s) : <span class="built_in">str</span>(s) &#123;</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&quot;DCtor&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="built_in">TestClass</span>(<span class="type">const</span> TestClass &amp;t) : <span class="built_in">str</span>(<span class="string">&quot;Copy_&quot;</span> + t.str) &#123;</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&quot;CCtor&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="built_in">TestClass</span>(TestClass &amp;&amp;t) : <span class="built_in">str</span>(<span class="string">&quot;Move_&quot;</span> + t.str) &#123;</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&quot;MCtor&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    TestClass &amp;<span class="keyword">operator</span>=(<span class="type">const</span> TestClass &amp;t) &#123;</span><br><span class="line">        str = <span class="string">&quot;CopyA_&quot;</span> + t.str;</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&quot;CAssign&quot;</span>);</span><br><span class="line">        <span class="keyword">return</span> *<span class="keyword">this</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    TestClass &amp;<span class="keyword">operator</span>=(TestClass &amp;&amp;t) &#123;</span><br><span class="line">        str = <span class="string">&quot;MoveA_&quot;</span> + t.str;</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&quot;MAssign&quot;</span>);</span><br><span class="line">        <span class="keyword">return</span> *<span class="keyword">this</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    ~<span class="built_in">TestClass</span>() &#123;</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&quot;Dtor&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">friend</span> std::ostream &amp;<span class="keyword">operator</span>&lt;&lt;(std::ostream &amp;out, <span class="type">const</span> TestClass &amp;tc) &#123;</span><br><span class="line">        <span class="keyword">return</span> out &lt;&lt; <span class="string">&quot;Print: &quot;</span> &lt;&lt; tc.str;</span><br><span class="line">    &#125;</span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">    <span class="function"><span class="type">void</span> <span class="title">print</span><span class="params">(<span class="type">const</span> <span class="type">char</span> *s)</span> </span>&#123;</span><br><span class="line">        std::cout &lt;&lt; s &lt;&lt; <span class="string">&quot;: &quot;</span> &lt;&lt; str &lt;&lt; std::endl;</span><br><span class="line">    &#125;</span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">    std::string str;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">func1</span><span class="params">(TestClass a)</span> </span>&#123;</span><br><span class="line">    std::cout &lt;&lt; a &lt;&lt; std::endl;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">func2</span><span class="params">(TestClass &amp;b)</span> </span>&#123;</span><br><span class="line">    std::cout &lt;&lt; b &lt;&lt; std::endl;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">func3</span><span class="params">(<span class="type">const</span> TestClass &amp;c)</span> </span>&#123;</span><br><span class="line">    std::cout &lt;&lt; c &lt;&lt; std::endl;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">func4</span><span class="params">(TestClass &amp;&amp;d)</span> </span>&#123;</span><br><span class="line">    std::cout &lt;&lt; d &lt;&lt; std::endl;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">test1</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="function">TestClass <span class="title">t</span><span class="params">(__func__)</span></span>;</span><br><span class="line">    std::cout &lt;&lt; __func__ &lt;&lt; <span class="string">&#x27;+&#x27;</span> &lt;&lt; std::endl;</span><br><span class="line">    <span class="comment">// std::thread(func2, __func__).join();</span></span><br><span class="line">    <span class="comment">// std::cout &lt;&lt; &quot;==============================&quot; &lt;&lt; std::endl;</span></span><br><span class="line">    std::<span class="built_in">thread</span>(func1, t).<span class="built_in">join</span>();</span><br><span class="line">    std::cout &lt;&lt; <span class="string">&quot;==============================&quot;</span> &lt;&lt; std::endl;</span><br><span class="line">    std::<span class="built_in">thread</span>(func1, std::<span class="built_in">ref</span>(t)).<span class="built_in">join</span>();</span><br><span class="line">    std::cout &lt;&lt; <span class="string">&quot;==============================&quot;</span> &lt;&lt; std::endl;</span><br><span class="line">    std::<span class="built_in">thread</span>(func1, std::<span class="built_in">cref</span>(t)).<span class="built_in">join</span>();</span><br><span class="line">    std::cout &lt;&lt; <span class="string">&quot;==============================&quot;</span> &lt;&lt; std::endl;</span><br><span class="line">    std::<span class="built_in">thread</span>(func1, std::<span class="built_in">move</span>(t)).<span class="built_in">join</span>();</span><br><span class="line">    std::cout &lt;&lt; __func__ &lt;&lt; <span class="string">&#x27;-&#x27;</span> &lt;&lt; std::endl;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">test2</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="function">TestClass <span class="title">t</span><span class="params">(__func__)</span></span>;</span><br><span class="line">    std::cout &lt;&lt; __func__ &lt;&lt; <span class="string">&#x27;+&#x27;</span> &lt;&lt; std::endl;</span><br><span class="line">    <span class="comment">// std::thread(func2, __func__).join();</span></span><br><span class="line">    <span class="comment">// std::cout &lt;&lt; &quot;==============================&quot; &lt;&lt; std::endl;</span></span><br><span class="line">    <span class="comment">// std::thread(func2, t).join();</span></span><br><span class="line">    <span class="comment">// std::cout &lt;&lt; &quot;==============================&quot; &lt;&lt; std::endl;</span></span><br><span class="line">    std::<span class="built_in">thread</span>(func2, std::<span class="built_in">ref</span>(t)).<span class="built_in">join</span>();</span><br><span class="line">    std::cout &lt;&lt; <span class="string">&quot;==============================&quot;</span> &lt;&lt; std::endl;</span><br><span class="line">    <span class="comment">// std::thread(func2, std::cref(t)).join();</span></span><br><span class="line">    <span class="comment">// std::cout &lt;&lt; &quot;==============================&quot; &lt;&lt; std::endl;</span></span><br><span class="line">    <span class="comment">// std::thread(func2, std::move(t)).join();</span></span><br><span class="line">    <span class="comment">// std::cout &lt;&lt; __func__ &lt;&lt; &#x27;-&#x27; &lt;&lt; std::endl;</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">test3</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="function">TestClass <span class="title">t</span><span class="params">(__func__)</span></span>;</span><br><span class="line">    std::cout &lt;&lt; __func__ &lt;&lt; <span class="string">&#x27;+&#x27;</span> &lt;&lt; std::endl;</span><br><span class="line">    <span class="comment">// std::thread(func3, __func__).join();</span></span><br><span class="line">    <span class="comment">// std::cout &lt;&lt; &quot;==============================&quot; &lt;&lt; std::endl;</span></span><br><span class="line">    std::<span class="built_in">thread</span>(func3, t).<span class="built_in">join</span>();</span><br><span class="line">    std::cout &lt;&lt; <span class="string">&quot;==============================&quot;</span> &lt;&lt; std::endl;</span><br><span class="line">    std::<span class="built_in">thread</span>(func3, std::<span class="built_in">ref</span>(t)).<span class="built_in">join</span>();</span><br><span class="line">    std::cout &lt;&lt; <span class="string">&quot;==============================&quot;</span> &lt;&lt; std::endl;</span><br><span class="line">    std::<span class="built_in">thread</span>(func3, std::<span class="built_in">cref</span>(t)).<span class="built_in">join</span>();</span><br><span class="line">    std::cout &lt;&lt; <span class="string">&quot;==============================&quot;</span> &lt;&lt; std::endl;</span><br><span class="line">    std::<span class="built_in">thread</span>(func3, std::<span class="built_in">move</span>(t)).<span class="built_in">join</span>();</span><br><span class="line">    std::cout &lt;&lt; __func__ &lt;&lt; <span class="string">&#x27;-&#x27;</span> &lt;&lt; std::endl;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">test4</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="function">TestClass <span class="title">t</span><span class="params">(__func__)</span></span>;</span><br><span class="line">    std::cout &lt;&lt; __func__ &lt;&lt; <span class="string">&#x27;+&#x27;</span> &lt;&lt; std::endl;</span><br><span class="line">    <span class="comment">// std::thread(func4, __func__).join();</span></span><br><span class="line">    <span class="comment">// std::cout &lt;&lt; &quot;==============================&quot; &lt;&lt; std::endl;</span></span><br><span class="line">    std::<span class="built_in">thread</span>(func4, t).<span class="built_in">join</span>();</span><br><span class="line">    std::cout &lt;&lt; <span class="string">&quot;==============================&quot;</span> &lt;&lt; std::endl;</span><br><span class="line">    <span class="comment">// std::thread(func4, std::ref(t)).join();</span></span><br><span class="line">    <span class="comment">// std::cout &lt;&lt; &quot;==============================&quot; &lt;&lt; std::endl;</span></span><br><span class="line">    <span class="comment">// std::thread(func4, std::cref(t)).join();</span></span><br><span class="line">    <span class="comment">// std::cout &lt;&lt; &quot;==============================&quot; &lt;&lt; std::endl;</span></span><br><span class="line">    std::<span class="built_in">thread</span>(func4, std::<span class="built_in">move</span>(t)).<span class="built_in">join</span>();</span><br><span class="line">    std::cout &lt;&lt; __func__ &lt;&lt; <span class="string">&#x27;-&#x27;</span> &lt;&lt; std::endl;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">(<span class="type">int</span> argc, <span class="type">char</span> *argv[])</span> </span>&#123;</span><br><span class="line">    <span class="built_in">test1</span>();</span><br><span class="line">    std::cout &lt;&lt; std::endl;</span><br><span class="line">    <span class="built_in">test2</span>();</span><br><span class="line">    std::cout &lt;&lt; std::endl;</span><br><span class="line">    <span class="built_in">test3</span>();</span><br><span class="line">    std::cout &lt;&lt; std::endl;</span><br><span class="line">    <span class="built_in">test4</span>();</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>使用如下命令进行编译运行：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">g++ test.cpp -o <span class="built_in">test</span> -std=c++17</span><br></pre></td></tr></table></figure>
-
-<p>结果如下：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br></pre></td><td class="code"><pre><span class="line">DCtor: test1</span><br><span class="line">test1+</span><br><span class="line">CCtor: Copy_test1</span><br><span class="line">MCtor: Move_Copy_test1</span><br><span class="line">Print: Move_Copy_test1</span><br><span class="line">Dtor: Move_Copy_test1</span><br><span class="line">Dtor: Copy_test1</span><br><span class="line">==============================</span><br><span class="line">CCtor: Copy_test1</span><br><span class="line">Print: Copy_test1</span><br><span class="line">Dtor: Copy_test1</span><br><span class="line">==============================</span><br><span class="line">CCtor: Copy_test1</span><br><span class="line">Print: Copy_test1</span><br><span class="line">Dtor: Copy_test1</span><br><span class="line">==============================</span><br><span class="line">MCtor: Move_test1</span><br><span class="line">MCtor: Move_Move_test1</span><br><span class="line">Print: Move_Move_test1</span><br><span class="line">Dtor: Move_Move_test1</span><br><span class="line">Dtor: Move_test1</span><br><span class="line">test1-</span><br><span class="line">Dtor: test1</span><br><span class="line"></span><br><span class="line">DCtor: test2</span><br><span class="line">test2+</span><br><span class="line">Print: test2</span><br><span class="line">==============================</span><br><span class="line">Dtor: test2</span><br><span class="line"></span><br><span class="line">DCtor: test3</span><br><span class="line">test3+</span><br><span class="line">CCtor: Copy_test3</span><br><span class="line">Print: Copy_test3</span><br><span class="line">Dtor: Copy_test3</span><br><span class="line">==============================</span><br><span class="line">Print: test3</span><br><span class="line">==============================</span><br><span class="line">Print: test3</span><br><span class="line">==============================</span><br><span class="line">MCtor: Move_test3</span><br><span class="line">Print: Move_test3</span><br><span class="line">Dtor: Move_test3</span><br><span class="line">test3-</span><br><span class="line">Dtor: test3</span><br><span class="line"></span><br><span class="line">DCtor: test4</span><br><span class="line">test4+</span><br><span class="line">CCtor: Copy_test4</span><br><span class="line">Print: Copy_test4</span><br><span class="line">Dtor: Copy_test4</span><br><span class="line">==============================</span><br><span class="line">MCtor: Move_test4</span><br><span class="line">Print: Move_test4</span><br><span class="line">Dtor: Move_test4</span><br><span class="line">test4-</span><br><span class="line">Dtor: test4</span><br></pre></td></tr></table></figure>
-
-<h5 id="分析"><a href="#分析" class="headerlink" title="分析"></a>分析</h5><p>实际上，在调用初始化构造函数创建一个实际线程时需要进行三次次参数传递，分别是：</p>
-<ol>
-<li><p>从调用函数传递到构造函数中。在这一步中将会使用万能引用，因此全是引用传递。</p>
-</li>
-<li><p>在构造函数函数中在堆上建立相应的<code>_Invoker</code>对象，传递到新线程中。在这一步中将会创建对应变量，其传递方式由目标函数参数的种类和传入方式决定，其具体传递方法如下表：</p>
-<table>
-<thead>
-<tr>
-<th></th>
-<th>T</th>
-<th>T&amp;</th>
-<th>const T&amp;</th>
-<th>T&amp;&amp;</th>
-</tr>
-</thead>
-<tbody><tr>
-<td><strong>t</strong></td>
-<td>拷贝</td>
-<td>–</td>
-<td>拷贝</td>
-<td>拷贝</td>
-</tr>
-<tr>
-<td><strong>std::ref(t)</strong></td>
-<td>拷贝</td>
-<td>引用</td>
-<td>引用</td>
-<td>–</td>
-</tr>
-<tr>
-<td><strong>std::cref(t)</strong></td>
-<td>拷贝</td>
-<td>–</td>
-<td>引用</td>
-<td>–</td>
-</tr>
-<tr>
-<td><strong>std::move(t)</strong></td>
-<td>移动</td>
-<td>–</td>
-<td>移动</td>
-<td>移动</td>
-</tr>
-</tbody></table>
-</li>
-<li><p>在新线程中调用目标函数。在这一步中将会采用目标函数对应参数的种类决定传递方式，其中值传递将会以移动形式调用，引用传递将使用进行引用传递。</p>
-</li>
-</ol>
-<h3 id="std-this-thread"><a href="#std-this-thread" class="headerlink" title="std::this_thread"></a>std::this_thread</h3><h4 id="方法"><a href="#方法" class="headerlink" title="方法"></a>方法</h4><p><code>std::this_thread</code>命名空间中引入了一些方法，这些方法只作用于调用改代码的线程，用于更好的控制线程运行。这些方法如下：</p>
-<table>
-<thead>
-<tr>
-<th>方法</th>
-<th>含义</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>void yield() noexcept;</td>
-<td>请求操作系统进行新一轮的线程调度，在希望当前运行线程让出处理器时调用。</td>
-</tr>
-<tr>
-<td>std::thread::id get_id() noexcept;</td>
-<td>返回当前线程的线程id。</td>
-</tr>
-<tr>
-<td>template &lt;class Rep, class Period&gt;<br>void sleep_for(const std::chrono::duration&lt;Rep, Period&gt;&amp; sleep_duration);</td>
-<td>当前线程休眠一段时间。通常情况下是当前线程进入阻塞状态sleep_duration，随后进入就绪状态等待运行。<br>由于存在调度延时等，在时间上可能存在较大误差。</td>
-</tr>
-<tr>
-<td>template &lt;class Clock, class Duration&gt;<br>void sleep_until(const std::chrono::time_point&lt;Clock, Duration&gt;&amp; sleep_time);</td>
-<td>当前线程休眠直到指定时间。通常情况下是当前线程进入阻塞状态直到sleep_time，随后进入就绪状态等待运行。<br>由于存在调度延时等，在时间上可能存在较大误差。</td>
-</tr>
-</tbody></table>
-<h4 id="示例"><a href="#示例" class="headerlink" title="示例"></a>示例</h4><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;thread&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;chrono&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> std::chrono_literals;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">func</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">auto</span> id = std::this_thread::<span class="built_in">get_id</span>();</span><br><span class="line">    std::cout &lt;&lt; id &lt;&lt; std::endl;</span><br><span class="line">    std::this_thread::<span class="built_in">sleep_for</span>(<span class="number">2000</span>ms);</span><br><span class="line">    std::this_thread::<span class="built_in">sleep_until</span>(std::chrono::steady_clock::<span class="built_in">now</span>() + <span class="number">2000</span>ms);std::this_thread::<span class="built_in">yield</span>();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">(<span class="type">int</span> argc, <span class="type">char</span> *argv[])</span> </span>&#123;</span><br><span class="line">    std::<span class="built_in">thread</span>(func).<span class="built_in">join</span>();</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2024/10/05/0/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="Loujuch">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Code Bank">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2024/10/05/0/" class="post-title-link" itemprop="url">CPP foreach循环浅析</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">Posted on</span>
-              
-
-              <time title="Created: 2024-10-05 23:31:55 / Modified: 23:53:11" itemprop="dateCreated datePublished" datetime="2024-10-05T23:31:55+08:00">2024-10-05</time>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h2 id="概况"><a href="#概况" class="headerlink" title="概况"></a>概况</h2><p>CPP foreach循环是CPP11引入的新特性，其能够很轻易地完成对可迭代对象的遍历，一般而言，一个典型的foreach循环结构如下：</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> (<span class="type">const</span> <span class="keyword">auto</span> &amp;item : contain) &#123;</span><br><span class="line">    <span class="built_in">do_something</span>(item);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h2 id="可迭代对象"><a href="#可迭代对象" class="headerlink" title="可迭代对象"></a>可迭代对象</h2><p>可迭代对象（上述示例中的contain）是一个可以使用迭代器遍历的对象，其要求满足以下条件：</p>
-<ol>
-<li><p>实现了<code>begin</code>方法，并要求该方法返回一个迭代器且无参数，一个典型的声明如下：</p>
-<p> <code>iterator begin() const;</code></p>
-</li>
-<li><p>实现了<code>end</code>方法，并要求该方法返回一个迭代器且无参数，一个典型的声明如下：</p>
-<p> <code>iterator end() const;</code></p>
-</li>
-</ol>
-<p>而迭代器要求满足以下条件：</p>
-<ol>
-<li><p>实现了相应的构造函数和赋值函数。</p>
-</li>
-<li><p>实现了<code>operator++</code>方法，一个典型的声明如下：</p>
-<p> <code>iterator &amp;operator++();</code></p>
-</li>
-<li><p>实现了<code>operator!=</code>方法，一个典型的声明如下：</p>
-<p> <code>bool operator!=(const iterator &amp;) const;</code></p>
-</li>
-<li><p>实现了<code>operator*</code>方法，一个典型的声明如下：</p>
-<p> <code>T &amp;operator*() const;</code></p>
-</li>
-</ol>
-<h2 id="等价代码"><a href="#等价代码" class="headerlink" title="等价代码"></a>等价代码</h2><p>实际上CPP中的foreach循环是一种语法糖，其等价于如下代码：</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">    iterator first = contain.<span class="built_in">begin</span>();</span><br><span class="line">    iterator last = contain.<span class="built_in">end</span>();</span><br><span class="line">    <span class="keyword">while</span> (first != last) &#123;</span><br><span class="line">        <span class="built_in">do_something</span>(*first);</span><br><span class="line">        ++first;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h2 id="代码示例"><a href="#代码示例" class="headerlink" title="代码示例"></a>代码示例</h2><p>下面展示了一个对自定义可迭代对象进行迭代的Demo示例：</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Range</span> &#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="keyword">class</span> <span class="title class_">RangeIterator</span> &#123;</span><br><span class="line">    <span class="keyword">public</span>:</span><br><span class="line">        <span class="function"><span class="keyword">explicit</span> <span class="title">RangeIterator</span><span class="params">(std::<span class="type">size_t</span> i)</span> :m_number_(i) &#123;</span></span><br><span class="line">            std::cout &lt;&lt; __FILE__ &lt;&lt; <span class="string">&#x27;:&#x27;</span> &lt;&lt; __LINE__ &lt;&lt; <span class="string">&quot; ictor&quot;</span> &lt;&lt; std::endl;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="built_in">RangeIterator</span>(<span class="type">const</span> RangeIterator &amp;it) :<span class="built_in">RangeIterator</span>(it.m_number_) &#123;</span><br><span class="line">            std::cout &lt;&lt; __FILE__ &lt;&lt; <span class="string">&#x27;:&#x27;</span> &lt;&lt; __LINE__ &lt;&lt; <span class="string">&quot; icopy_ctor&quot;</span> &lt;&lt; std::endl;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="built_in">RangeIterator</span>(RangeIterator &amp;&amp;it) :<span class="built_in">RangeIterator</span>(it.m_number_) &#123;</span><br><span class="line">            std::cout &lt;&lt; __FILE__ &lt;&lt; <span class="string">&#x27;:&#x27;</span> &lt;&lt; __LINE__ &lt;&lt; <span class="string">&quot; imove_ctor&quot;</span> &lt;&lt; std::endl;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        RangeIterator &amp;<span class="keyword">operator</span>=(<span class="type">const</span> RangeIterator &amp;it) &#123;</span><br><span class="line">            m_number_ = it.m_number_;</span><br><span class="line">            std::cout &lt;&lt; __FILE__ &lt;&lt; <span class="string">&#x27;:&#x27;</span> &lt;&lt; __LINE__ &lt;&lt; <span class="string">&quot; icopy&quot;</span> &lt;&lt; std::endl;</span><br><span class="line">            <span class="keyword">return</span> *<span class="keyword">this</span>;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        RangeIterator &amp;<span class="keyword">operator</span>=(RangeIterator &amp;&amp;it) &#123;</span><br><span class="line">            m_number_ = it.m_number_;</span><br><span class="line">            std::cout &lt;&lt; __FILE__ &lt;&lt; <span class="string">&#x27;:&#x27;</span> &lt;&lt; __LINE__ &lt;&lt; <span class="string">&quot; imove&quot;</span> &lt;&lt; std::endl;</span><br><span class="line">            <span class="keyword">return</span> *<span class="keyword">this</span>;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="type">bool</span> <span class="keyword">operator</span>!=(<span class="type">const</span> RangeIterator &amp;rit) <span class="type">const</span> &#123;</span><br><span class="line">            std::cout &lt;&lt; __FILE__ &lt;&lt; <span class="string">&#x27;:&#x27;</span> &lt;&lt; __LINE__ &lt;&lt; <span class="string">&quot; operator!=&quot;</span> &lt;&lt; std::endl;</span><br><span class="line">            <span class="keyword">return</span> m_number_ != rit.m_number_;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        RangeIterator &amp;<span class="keyword">operator</span>++() &#123;</span><br><span class="line">            std::cout &lt;&lt; __FILE__ &lt;&lt; <span class="string">&#x27;:&#x27;</span> &lt;&lt; __LINE__ &lt;&lt; <span class="string">&quot; operator++&quot;</span> &lt;&lt; std::endl;</span><br><span class="line">            ++m_number_;</span><br><span class="line">            <span class="keyword">return</span> *<span class="keyword">this</span>;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        std::<span class="type">size_t</span> <span class="keyword">operator</span>*() <span class="type">const</span> &#123;</span><br><span class="line">            std::cout &lt;&lt; __FILE__ &lt;&lt; <span class="string">&#x27;:&#x27;</span> &lt;&lt; __LINE__ &lt;&lt; <span class="string">&quot; *&quot;</span> &lt;&lt; std::endl;</span><br><span class="line">            <span class="keyword">return</span> m_number_;</span><br><span class="line">        &#125;</span><br><span class="line">    <span class="keyword">private</span>:</span><br><span class="line">        std::<span class="type">size_t</span> m_number_;</span><br><span class="line">    &#125;;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function"><span class="keyword">explicit</span> <span class="title">Range</span><span class="params">(std::<span class="type">size_t</span> first = <span class="number">0</span>, std::<span class="type">size_t</span> last = SIZE_MAX)</span> :</span></span><br><span class="line"><span class="function">        m_first_(first), m_last_(last) &#123;</span></span><br><span class="line">        std::cout &lt;&lt; __FILE__ &lt;&lt; <span class="string">&#x27;:&#x27;</span> &lt;&lt; __LINE__ &lt;&lt; <span class="string">&quot; ctor&quot;</span> &lt;&lt; std::endl;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="built_in">Range</span>(<span class="type">const</span> Range &amp;range) :</span><br><span class="line">        <span class="built_in">m_first_</span>(range.m_first_), <span class="built_in">m_last_</span>(range.m_last_) &#123;</span><br><span class="line">        std::cout &lt;&lt; __FILE__ &lt;&lt; <span class="string">&#x27;:&#x27;</span> &lt;&lt; __LINE__ &lt;&lt; <span class="string">&quot; copy_ctor&quot;</span> &lt;&lt; std::endl;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="built_in">Range</span>(Range &amp;&amp;range) :</span><br><span class="line">        <span class="built_in">m_first_</span>(std::<span class="built_in">move</span>(range.m_first_)), <span class="built_in">m_last_</span>(std::<span class="built_in">move</span>(range.m_last_)) &#123;</span><br><span class="line">        std::cout &lt;&lt; __FILE__ &lt;&lt; <span class="string">&#x27;:&#x27;</span> &lt;&lt; __LINE__ &lt;&lt; <span class="string">&quot; move_ctor&quot;</span> &lt;&lt; std::endl;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    Range &amp;<span class="keyword">operator</span>=(<span class="type">const</span> Range &amp;range) &#123;</span><br><span class="line">        m_first_ = range.m_first_;</span><br><span class="line">        m_last_ = range.m_last_;</span><br><span class="line">        std::cout &lt;&lt; __FILE__ &lt;&lt; <span class="string">&#x27;:&#x27;</span> &lt;&lt; __LINE__ &lt;&lt; <span class="string">&quot; copy&quot;</span> &lt;&lt; std::endl;</span><br><span class="line">        <span class="keyword">return</span> *<span class="keyword">this</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    Range &amp;<span class="keyword">operator</span>=(Range &amp;&amp;range) &#123;</span><br><span class="line">        m_first_ = std::<span class="built_in">move</span>(range.m_first_);</span><br><span class="line">        m_last_ = std::<span class="built_in">move</span>(range.m_last_);</span><br><span class="line">        std::cout &lt;&lt; __FILE__ &lt;&lt; <span class="string">&#x27;:&#x27;</span> &lt;&lt; __LINE__ &lt;&lt; <span class="string">&quot; move_ctor&quot;</span> &lt;&lt; std::endl;</span><br><span class="line">        <span class="keyword">return</span> *<span class="keyword">this</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function">RangeIterator <span class="title">begin</span><span class="params">()</span> <span class="type">const</span> </span>&#123;</span><br><span class="line">        std::cout &lt;&lt; __FILE__ &lt;&lt; <span class="string">&#x27;:&#x27;</span> &lt;&lt; __LINE__ &lt;&lt; <span class="string">&quot; begin&quot;</span> &lt;&lt; std::endl;</span><br><span class="line">        <span class="keyword">return</span> m_first_;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function">RangeIterator <span class="title">end</span><span class="params">()</span> <span class="type">const</span> </span>&#123;</span><br><span class="line">        std::cout &lt;&lt; __FILE__ &lt;&lt; <span class="string">&#x27;:&#x27;</span> &lt;&lt; __LINE__ &lt;&lt; <span class="string">&quot; end&quot;</span> &lt;&lt; std::endl;</span><br><span class="line">        <span class="keyword">return</span> m_last_;</span><br><span class="line">    &#125;</span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">    RangeIterator m_first_;</span><br><span class="line">    RangeIterator m_last_;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">for</span> (<span class="type">const</span> <span class="keyword">auto</span> &amp;i : <span class="built_in">Range</span>(<span class="number">0</span>, <span class="number">4</span>)) &#123;</span><br><span class="line">        std::cout &lt;&lt; __FILE__ &lt;&lt; <span class="string">&#x27;:&#x27;</span> &lt;&lt; __LINE__ &lt;&lt; <span class="string">&#x27; &#x27;</span> &lt;&lt; i &lt;&lt; std::endl;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>编译运行后的结果为：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">test0.cpp:8 ictor</span><br><span class="line">test0.cpp:8 ictor</span><br><span class="line">test0.cpp:52 ctor</span><br><span class="line">test0.cpp:80 begin</span><br><span class="line">test0.cpp:8 ictor</span><br><span class="line">test0.cpp:12 icopy_ctor</span><br><span class="line">test0.cpp:85 end</span><br><span class="line">test0.cpp:8 ictor</span><br><span class="line">test0.cpp:12 icopy_ctor</span><br><span class="line">test0.cpp:32 operator!=</span><br><span class="line">test0.cpp:43 *</span><br><span class="line">test0.cpp:95 0</span><br><span class="line">test0.cpp:37 operator++</span><br><span class="line">test0.cpp:32 operator!=</span><br><span class="line">test0.cpp:43 *</span><br><span class="line">test0.cpp:95 1</span><br><span class="line">test0.cpp:37 operator++</span><br><span class="line">test0.cpp:32 operator!=</span><br><span class="line">test0.cpp:43 *</span><br><span class="line">test0.cpp:95 2</span><br><span class="line">test0.cpp:37 operator++</span><br><span class="line">test0.cpp:32 operator!=</span><br><span class="line">test0.cpp:43 *</span><br><span class="line">test0.cpp:95 3</span><br><span class="line">test0.cpp:37 operator++</span><br><span class="line">test0.cpp:32 operator!=</span><br></pre></td></tr></table></figure>
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
-    <a class="extend prev" rel="prev" href="/"><i class="fa fa-angle-left" aria-label="Previous page"></i></a><a class="page-number" href="/">1</a><span class="page-number current">2</span><a class="page-number" href="/page/3/">3</a><a class="page-number" href="/page/4/">4</a><a class="extend next" rel="next" href="/page/3/"><i class="fa fa-angle-right" aria-label="Next page"></i></a>
+    <a class="extend prev" rel="prev" href="/"><i class="fa fa-angle-left" aria-label="الصفحة السابقة"></i></a><a class="page-number" href="/">1</a><span class="page-number current">2</span><a class="page-number" href="/page/3/">3</a><span class="space">&hellip;</span><a class="page-number" href="/page/5/">5</a><a class="extend next" rel="next" href="/page/3/"><i class="fa fa-angle-right" aria-label="الصفحة التالية"></i></a>
   </nav>
 
 
@@ -1798,10 +1751,10 @@
 
       <ul class="sidebar-nav motion-element">
         <li class="sidebar-nav-toc">
-          Table of Contents
+          المحتويات
         </li>
         <li class="sidebar-nav-overview">
-          Overview
+          عام
         </li>
       </ul>
 
@@ -1820,13 +1773,13 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">39</span>
-          <span class="site-state-item-name">posts</span>
+          <span class="site-state-item-count">41</span>
+          <span class="site-state-item-name">المقالات</span>
         </a>
       </div>
       <div class="site-state-item site-state-tags">
-        <span class="site-state-item-count">25</span>
-        <span class="site-state-item-name">tags</span>
+        <span class="site-state-item-count">26</span>
+        <span class="site-state-item-name">الوسوم</span>
       </div>
   </nav>
 </div>
@@ -1858,7 +1811,7 @@
   </span>
   <span class="author" itemprop="copyrightHolder">Loujuch</span>
 </div>
-  <div class="powered-by">Powered by <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://mist.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a>
+  <div class="powered-by">تطبيق الموقع <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://mist.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a>
   </div>
 
         
